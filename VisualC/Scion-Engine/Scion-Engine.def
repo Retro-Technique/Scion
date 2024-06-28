@@ -1,4 +1,4 @@
-; Scion.def : déclare les paramètres du module pour la DLL.
+; Scion-Engine.def : déclare les paramètres du module pour la DLL.
 
 LIBRARY
 

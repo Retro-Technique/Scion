@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Utilisé par Scion.rc
+// Utilisé par Scion-Engine.rc
 //
 
 // Valeurs par défaut suivantes des nouveaux objets

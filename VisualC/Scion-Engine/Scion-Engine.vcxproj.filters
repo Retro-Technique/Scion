@@ -14,22 +14,37 @@
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="include">
-      <UniqueIdentifier>{0ef4b308-7e25-4ca9-aab9-8e88d78b67cc}</UniqueIdentifier>
+      <UniqueIdentifier>{7f1d1a5a-6016-4662-95d5-8e71da147c9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>local</Filter>
+    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>local</Filter>
     </ClCompile>
-    <ClCompile Include="Scion.cpp">
+    <ClCompile Include="Scion-Engine.cpp">
       <Filter>local</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Manager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\ResourceManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\GameEngine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\SceneManager.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Scion.rc2">
+    <None Include="res\Scion-Engine.rc2">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="Scion.def">
+    <None Include="Scion-Engine.def">
       <Filter>local</Filter>
     </None>
   </ItemGroup>
@@ -43,15 +58,24 @@
     <ClInclude Include="Resource.h">
       <Filter>local</Filter>
     </ClInclude>
-    <ClInclude Include="Scion.h">
-      <Filter>local</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>local</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\Manager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\ResourceManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\GameEngine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\SceneManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Scion.rc">
+    <ResourceCompile Include="Scion-Engine.rc">
       <Filter>Fichiers de ressources</Filter>
     </ResourceCompile>
   </ItemGroup>
