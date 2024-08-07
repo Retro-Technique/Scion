@@ -37,78 +37,87 @@
  *
  */
 
-#pragma once
+#include "pch.h"
+#include "BrushResource.h"
 
 namespace scion
 {
-	namespace engine
+	namespace gfx
 	{
-		namespace sfx
-		{
-			namespace priv
-			{
 
-				struct TMMIOFile;
-
-			}
-
-			class AFX_EXT_CLASS CMMIOFile : public CObject
-			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+		IMPLEMENT_SERIAL(CBrushResource, engine::CResource, 1);
 
-			public:
+		CBrushResource::CBrushResource()
+			: m_pBrush(NULL)
+			, m_propBrush { 0 }
+		{
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+		}
 
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				priv::TMMIOFile* m_pImpl;
-
-			private:
-
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
+		CBrushResource::~CBrushResource()
+		{
+			
+		}
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+		void CBrushResource::SetProperty(INT nProperty, const COleVariant& varValue)
+		{
+			engine::CResource::SetProperty(nProperty, varValue);
 
-#if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+			switch (nProperty)
+			{
+			case EProperty_Opacity:
+				SetOpacity(varValue.fltVal);
+				break;
+			default:
+				break;
+			}
+		}
+
+		void CBrushResource::Unload()
+		{
+			if (m_pBrush)
+			{
+				m_pBrush->Release();
+				m_pBrush = NULL;
+			}
+		}
+
+		void CBrushResource::Serialize(CArchive& ar)
+		{
+			engine::CResource::Serialize(ar);
+
+			if (ar.IsStoring())
+			{
+				ar << m_propBrush.opacity;
+			}
+			else
+			{
+				ar >> m_propBrush.opacity;
+			}
+		}
+
+#ifdef _DEBUG
+
+		void CBrushResource::AssertValid() const
+		{
+			engine::CResource::AssertValid();
+
+		}
+
+		void CBrushResource::Dump(CDumpContext& dc) const
+		{
+			engine::CResource::Dump(dc);
+
+			dc << _T("Opacity: ") << m_propBrush.opacity << _T("\n");
+		}
+
 #endif
 
 #pragma endregion
-#pragma region Implementations
-
-			private:
-
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
-
-#pragma endregion
-			};
-
-		}
 	}
 }

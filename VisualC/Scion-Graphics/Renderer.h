@@ -41,74 +41,56 @@
 
 namespace scion
 {
-	namespace engine
+	namespace gfx
 	{
-		namespace sfx
+	
+		class CRenderer : public CObject, public IRenderer
 		{
-			namespace priv
-			{
-
-				struct TMMIOFile;
-
-			}
-
-			class AFX_EXT_CLASS CMMIOFile : public CObject
-			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+		public:
 
-			public:
+			DECLARE_DYNAMIC(CRenderer);
+			
+		public:
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+			CRenderer(CHwndRenderTarget* pHwndRenderTarget);
+			virtual ~CRenderer();
 
 #pragma endregion
 #pragma region Attributes
 
-			private:
+		private:
 
-				priv::TMMIOFile* m_pImpl;
-
-			private:
-
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
+			ID2D1DeviceContext7* m_pDeviceContext;
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+		public:
+
+			void SetTransform(const D2D1::Matrix3x2F& mMatrix) override;
+			void Clear(const D2D1_COLOR_F& clrClear) override;
+			void DrawBitmap() override;
+			void DrawGeometry() override;
+			void FillGeometry() override;
+			void DrawText() override;
+			void DrawSpriteBatch() override;
 
 #if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+			void AssertValid() const override;
+			void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
 #pragma region Implementations
 
-			private:
+		private:
 
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
+			void QueryDeviceContext(CHwndRenderTarget* pHwndRenderTarget);
 
 #pragma endregion
-			};
+		};
 
-		}
 	}
 }

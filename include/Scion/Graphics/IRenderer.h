@@ -37,78 +37,49 @@
  *
  */
 
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#error Do not include IRenderer.h directly, include the Graphics.h file
+#endif
+
 #pragma once
 
 namespace scion
 {
-	namespace engine
+	namespace gfx
 	{
-		namespace sfx
+		
+		class IRenderer
 		{
-			namespace priv
-			{
+		public:
+			
+			virtual void SetTransform(const D2D1::Matrix3x2F& mMatrix) = 0;
+			virtual void Clear(const D2D1_COLOR_F& clrClear) = 0;
+			virtual void DrawBitmap(IBitmapResource* pBitmap, const D2D_RECT_F& rcDst, EBitmapInterpolationMode eInterpolationMode, const D2D_RECT_F& rcSrc) = 0;
+			virtual void DrawGeometry(IGeometryResource* pGeometry, IBrushResource* pBrush, FLOAT fStrokeWidth, IStrokeStyleResource* pStrokeStyle) = 0;
+			virtual void FillGeometry(IGeometryResource* pGeometry, IBrushResource* pBrush, IBrushResource* pOpacityBrush) = 0;
+			virtual void DrawText() = 0;
+			virtual void DrawSpriteBatch(ISpriteBatchResource* pSpriteBatch, UINT uStartIndex, UINT uSpriteCount, IBitmapResource* pBitmap, EBitmapInterpolationMode eInterpolationMode, EBitmapSpriteOptions eSpriteOptions) = 0;
 
-				struct TMMIOFile;
+		public:
 
-			}
+			static AFX_EXT_API IRenderer* Create(CHwndRenderTarget* pRenderTarget);
+			static AFX_EXT_API void Free(IRenderer* pRenderer);
 
-			class AFX_EXT_CLASS CMMIOFile : public CObject
-			{
-#pragma region Constructors
+		};
 
-				DECLARE_DYNAMIC(CMMIOFile)
+		enum EBitmapInterpolationMode { };
+		enum EBitmapSpriteOptions { };
 
-			public:
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+		class IResource { };
+		class IBitmapResource : public IResource { };
+		class IGeometryResource : public IResource { };
+		class ITextFormatResource : public IResource { };
+		class ISpriteBatchResource : public IResource { };
+		class IStrokeStyleResource :public IResource { };
+		class IBrushResource : public IResource { };
+		class ISolidColorResource : public IBrushResource { };
+		class ILinearGradientResource : public IBrushResource { };
 
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				priv::TMMIOFile* m_pImpl;
-
-			private:
-
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-#if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
-
-#pragma endregion
-#pragma region Implementations
-
-			private:
-
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
-
-#pragma endregion
-			};
-
-		}
 	}
 }

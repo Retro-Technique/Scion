@@ -84,7 +84,7 @@ namespace ScionAudioTest
 			HRESULT hr = S_OK;
 
 			{
-				scion::sfx::CMMIOFile MMIOFile;
+				scion::engine::sfx::CMMIOFile MMIOFile;
 
 				hr = MMIOFile.LoadFromFile(pszFileName);
 

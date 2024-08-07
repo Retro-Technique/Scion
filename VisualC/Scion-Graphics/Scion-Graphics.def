@@ -1,0 +1,6 @@
+; Scion-Graphics.def : déclare les paramètres du module pour la DLL.
+
+LIBRARY
+
+EXPORTS
+    ; Les exportations explicites peuvent être placées ici

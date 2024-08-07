@@ -39,76 +39,9 @@
 
 #pragma once
 
-namespace scion
-{
-	namespace engine
-	{
-		namespace sfx
-		{
-			namespace priv
-			{
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#define __SCION_GRAPHICS_H_INCLUDED__
 
-				struct TMMIOFile;
+#include <Scion/Graphics/GraphicsManager.h>
 
-			}
-
-			class AFX_EXT_CLASS CMMIOFile : public CObject
-			{
-#pragma region Constructors
-
-				DECLARE_DYNAMIC(CMMIOFile)
-
-			public:
-
-				CMMIOFile();
-				virtual ~CMMIOFile();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				priv::TMMIOFile* m_pImpl;
-
-			private:
-
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-#if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-			private:
-
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
-
-#pragma endregion
-			};
-
-		}
-	}
-}

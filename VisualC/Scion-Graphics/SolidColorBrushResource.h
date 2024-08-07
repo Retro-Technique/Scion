@@ -37,78 +37,68 @@
  *
  */
 
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#error Do not include SolidColorBrushResource.h directly, include the Graphics.h file
+#endif
+
 #pragma once
+
+#include "BrushResource.h"
 
 namespace scion
 {
-	namespace engine
+	namespace gfx
 	{
-		namespace sfx
+
+		class AFX_EXT_CLASS CSolidColorBrushResource : public CBrushResource
 		{
-			namespace priv
-			{
-
-				struct TMMIOFile;
-
-			}
-
-			class AFX_EXT_CLASS CMMIOFile : public CObject
-			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+		public:
 
-			public:
+			enum EProperty : INT
+			{
+				EProperty_Color = CBrushResource::EProperty_COUNT,
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+				EProperty_COUNT
+			};
+
+		public:
+
+			DECLARE_SERIAL(CSolidColorBrushResource);
+
+		public:
+
+			CSolidColorBrushResource();
+			virtual ~CSolidColorBrushResource();
 
 #pragma endregion
 #pragma region Attributes
 
-			private:
+		private:
 
-				priv::TMMIOFile* m_pImpl;
+			D2D1::ColorF	m_clrBrush;
 
-			private:
+		public:
 
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
+			inline void SetColor(const D2D1::ColorF& clrBrush) { m_clrBrush = clrBrush; m_bNeedUpdate = TRUE; }
+			inline const D2D1::ColorF& GetColor() const { return m_clrBrush; }
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+		public:
 
-#if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+			void SetProperty(INT nProperty, const COleVariant& varValue) override;
+			HRESULT Load(ID2D1HwndRenderTarget* pRenderTarget) override;
+			void Serialize(CArchive& ar) override;
+#ifdef _DEBUG
+			void AssertValid() const override;
+			void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
-#pragma region Implementations
+		};
 
-			private:
-
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
-
-#pragma endregion
-			};
-
-		}
 	}
 }

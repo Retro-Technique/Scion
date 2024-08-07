@@ -41,74 +41,69 @@
 
 namespace scion
 {
-	namespace engine
+	namespace gfx
 	{
-		namespace sfx
+
+		class CMatrixStack : public CObject
 		{
-			namespace priv
-			{
-
-				struct TMMIOFile;
-
-			}
-
-			class AFX_EXT_CLASS CMMIOFile : public CObject
-			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+			DECLARE_DYNAMIC(CMatrixStack);
 
-			public:
+		public:
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+			CMatrixStack();
+			virtual ~CMatrixStack();
 
 #pragma endregion
 #pragma region Attributes
 
-			private:
+		private:
 
-				priv::TMMIOFile* m_pImpl;
+			static constexpr const INT_PTR START_SIZE = 16;
 
-			private:
+		private:
 
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
+			INT_PTR				m_nSackSize;
+			INT_PTR				m_nCurrent;
+			D2D1::Matrix3x2F*	m_pStack;
 
 #pragma endregion
 #pragma region Operations
 
-			public:
+		public:
 
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
+			const D2D1::Matrix3x2F Top() const;
+			const D2D1::Matrix3x2F* GetTop() const;
+			INT_PTR GetSize() const;
+			void Pop();
+			void Push();
+			void LoadIdentity();
+			void LoadMatrix(const D2D1::Matrix3x2F& mMatrix);
+			void MultiplyMatrix(const D2D1::Matrix3x2F& mMatrix);
+			void Rotate(FLOAT fAngle, const D2D1_POINT_2F& ptOrigin);
+			void Scale(FLOAT fScale, const D2D1_POINT_2F& ptOrigin);
+			void Translate(const D2D1_SIZE_F& szTranslation);
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+		public:
 
 #if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+			void AssertValid() const override;
+			void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
 #pragma region Implementations
 
-			private:
+		private:
 
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
+			void Allocate(INT_PTR nNewSize);
 
 #pragma endregion
-			};
+		};
 
-		}
 	}
 }

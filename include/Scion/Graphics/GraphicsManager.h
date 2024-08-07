@@ -43,68 +43,51 @@ namespace scion
 {
 	namespace engine
 	{
-		namespace sfx
+		namespace gfx
 		{
 			namespace priv
 			{
 
-				struct TMMIOFile;
+				struct TDevice;
 
 			}
 
-			class AFX_EXT_CLASS CMMIOFile : public CObject
+			class AFX_EXT_CLASS CGraphicsManager : public CObject
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+				DECLARE_DYNAMIC(CGraphicsManager);
 
 			public:
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+				CGraphicsManager();
+				virtual ~CGraphicsManager();
 
 #pragma endregion
 #pragma region Attributes
 
 			private:
 
-				priv::TMMIOFile* m_pImpl;
-
-			private:
-
-				LPBYTE m_pData;
+				priv::TDevice* m_pImpl;
 
 			public:
 
-				inline LPBYTE GetData() const { return m_pData; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
+				inline ID2D1Factory8* GetD2DFactory() { return m_pD2DFactory; }
+				inline IDWriteFactory8* GetDWriteFactory() { return m_pDWriteFactory; }
+				inline IWICImagingFactory2* GetWICFactory() { return m_pWICFactory; }
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+			private:
+
+				HRESULT Load(_AFX_D2D_STATE* pD2DState) override;
+				void Unload() override;
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-			private:
-
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
 
 #pragma endregion
 			};
