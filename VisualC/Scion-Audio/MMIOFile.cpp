@@ -38,7 +38,6 @@
  */
 
 #include "pch.h"
-#include "MMIOFile.h"
 
 namespace scion
 {
@@ -55,6 +54,27 @@ namespace scion
 				MMCKINFO		_ckInRIFF;
 			};
 
+		}
+
+		static inline HRESULT MMRESULT_HRESULT(MMRESULT mmRes)
+		{
+			switch (mmRes)
+			{
+			case MMIOERR_ACCESSDENIED: return E_MMIOERR_ACCESSDENIED;
+			case MMIOERR_INVALIDFILE: return E_MMIOERR_INVALIDFILE;
+			case MMIOERR_NETWORKERROR: return E_MMIOERR_NETWORKERROR;
+			case MMIOERR_PATHNOTFOUND: return E_MMIOERR_PATHNOTFOUND;
+			case MMIOERR_SHARINGVIOLATION: return E_MMIOERR_SHARINGVIOLATION;
+			case MMIOERR_TOOMANYOPENFILES: return E_MMIOERR_TOOMANYOPENFILES;
+			case MMIOERR_CHUNKNOTFOUND: return E_MMIOERR_CHUNKNOTFOUND;
+			case MMIOERR_CANNOTSEEK: return E_MMIOERR_CANNOTSEEK;
+			case MMIOERR_CANNOTWRITE: return E_MMIOERR_CANNOTWRITE;
+			case MMIOERR_CANNOTEXPAND: return E_MMIOERR_CANNOTEXPAND;
+			case MMIOERR_CANNOTREAD: return E_MMIOERR_CANNOTREAD;
+			case MMIOERR_OUTOFMEMORY: return E_MMIOERR_OUTOFMEMORY;
+			case MMIOERR_UNBUFFERED: return E_MMIOERR_UNBUFFERED;
+			default: return E_FAIL;
+			}
 		}
 
 #pragma region Constructors
@@ -109,8 +129,7 @@ namespace scion
 					break;
 				}
 
-				WORD uActualRead = 0;
-				hr = Read(m_pImpl->_ckIn.cksize, m_pData, &uActualRead);
+				hr = Read(m_pImpl->_ckIn.cksize, m_pData);
 
 			} while (FALSE);
 
@@ -121,7 +140,7 @@ namespace scion
 		{
 			if (m_pData)
 			{
-				VirtualFree(m_pData, dzd, MEM_DECOMMIT);
+				VirtualFree(m_pData, m_pImpl->_ckIn.cksize, MEM_DECOMMIT);
 				m_pData = NULL;
 			}
 
@@ -159,31 +178,24 @@ namespace scion
 
 			do
 			{
-				m_pImpl->_hMMIO = mmioOpen(const_cast<LPTSTR>(pszFileName), NULL, MMIO_ALLOCBUF | MMIO_READWRITE);
+				MMIOINFO mmioInfo = { 0 };
+				m_pImpl->_hMMIO = mmioOpen(const_cast<LPTSTR>(pszFileName), &mmioInfo, MMIO_ALLOCBUF | MMIO_READWRITE);
 				if (!m_pImpl->_hMMIO)
 				{
-					MMIOERR_ACCESSDENIED;
-					MMIOERR_INVALIDFILE;
-					MMIOERR_NETWORKERROR;
-					MMIOERR_PATHNOTFOUND;
-					MMIOERR_SHARINGVIOLATION;
-					MMIOERR_TOOMANYOPENFILES;
-					hr = E_FAIL;
+					hr = MMRESULT_HRESULT(mmioInfo.wErrorRet);
 					break;
 				}
 				
 				MMRESULT mmRes = mmioDescend(m_pImpl->_hMMIO, &m_pImpl->_ckInRIFF, NULL, 0);
 				if (MMSYSERR_NOERROR != mmRes)
 				{
-					MMIOERR_CHUNKNOTFOUND;
-					hr = E_FAIL;
+					hr = MMRESULT_HRESULT(mmRes);
 					break;
 				}
 
 				if ((FOURCC_RIFF != m_pImpl->_ckInRIFF.ckid) || mmioFOURCC('W', 'A', 'V', 'E') != m_pImpl->_ckInRIFF.fccType)
 				{
-					// not a wave file
-					hr = E_FAIL;
+					hr = E_MMIOERR_NOTWAVEFILE;
 					break;
 				}
 
@@ -191,15 +203,13 @@ namespace scion
 				mmRes = mmioDescend(m_pImpl->_hMMIO, &m_pImpl->_ckIn, &m_pImpl->_ckInRIFF, MMIO_FINDCHUNK);
 				if (MMSYSERR_NOERROR != mmRes)
 				{
-					MMIOERR_CHUNKNOTFOUND;
-					hr = E_FAIL;
+					hr = MMRESULT_HRESULT(mmRes);
 					break;
 				}
 
 				if (sizeof(PCMWAVEFORMAT) > m_pImpl->_ckIn.cksize)
 				{
-					// not a wave file
-					hr = E_FAIL;
+					hr = E_MMIOERR_NOTWAVEFILE;
 					break;
 				}
 
@@ -207,8 +217,7 @@ namespace scion
 				mmRes = mmioRead(m_pImpl->_hMMIO, reinterpret_cast<HPSTR>(&pcmWaveFormat), sizeof(PCMWAVEFORMAT));
 				if (sizeof(PCMWAVEFORMAT) != mmRes)
 				{
-					// cannot read
-					hr = E_FAIL;
+					hr = E_MMIOERR_CANNOTREAD;
 					break;
 				}
 
@@ -218,8 +227,7 @@ namespace scion
 					mmRes = mmioRead(m_pImpl->_hMMIO, reinterpret_cast<HPSTR>(&uExtraAlloc), sizeof(WORD));
 					if (sizeof(WORD) != mmRes)
 					{
-						// cannot read
-						hr = E_FAIL;
+						hr = E_MMIOERR_CANNOTREAD;
 						break;
 					}
 				}
@@ -237,8 +245,7 @@ namespace scion
 					mmRes = mmioRead(m_pImpl->_hMMIO, reinterpret_cast<HPSTR>(&m_pImpl->_pWaveFormat->cbSize) + sizeof(WORD), uExtraAlloc);
 					if (uExtraAlloc != mmRes)
 					{
-						// not a wave file
-						hr = E_FAIL;
+						hr = E_MMIOERR_NOTWAVEFILE;
 						break;
 					}
 				}
@@ -246,9 +253,7 @@ namespace scion
 				mmRes = mmioAscend(m_pImpl->_hMMIO, &m_pImpl->_ckIn, 0);
 				if (MMSYSERR_NOERROR != mmRes)
 				{
-					MMIOERR_CANNOTSEEK;
-					MMIOERR_CANNOTWRITE;
-					hr = E_FAIL;
+					hr = MMRESULT_HRESULT(mmRes);
 					break;
 				}
 
@@ -269,22 +274,20 @@ namespace scion
 			LONG nRet = mmioSeek(m_pImpl->_hMMIO, m_pImpl->_ckInRIFF.dwDataOffset + sizeof(FOURCC), SEEK_SET);
 			if (-1 == nRet)
 			{
-				// fail seek
-				return E_FAIL;
+				return E_MMIOERR_CANNOTSEEK;
 			}
 
 			m_pImpl->_ckIn.ckid = mmioFOURCC('d', 'a', 't', 'a');
 			MMRESULT mmRes = mmioDescend(m_pImpl->_hMMIO, &m_pImpl->_ckIn, &m_pImpl->_ckInRIFF, MMIO_FINDCHUNK);
 			if (MMSYSERR_NOERROR != mmRes)
 			{
-				MMIOERR_CHUNKNOTFOUND;
-				return E_FAIL;
+				return MMRESULT_HRESULT(mmRes);
 			}
 
 			return S_OK;
 		}
 
-		HRESULT CMMIOFile::Read(DWORD uRead, LPBYTE pData, WORD* pActualRead)
+		HRESULT CMMIOFile::Read(DWORD uRead, LPBYTE pData)
 		{
 			ASSERT_VALID(this);
 
@@ -292,7 +295,6 @@ namespace scion
 			MMRESULT mmRes = mmioGetInfo(m_pImpl->_hMMIO, &mmioInfoIn, 0);
 			if (MMSYSERR_NOERROR != mmRes)
 			{
-				// fail get info
 				return E_FAIL;
 			}
 
@@ -302,8 +304,6 @@ namespace scion
 				uDataIn = m_pImpl->_ckIn.cksize;
 			}
 
-			m_pImpl->_ckIn.cksize -= uDataIn;
-
 			for (UINT i = 0; i < uDataIn; i++)
 			{
 				if (mmioInfoIn.pchNext == mmioInfoIn.pchEndRead)
@@ -311,18 +311,12 @@ namespace scion
 					mmRes = mmioAdvance(m_pImpl->_hMMIO, &mmioInfoIn, MMIO_READ);
 					if (MMSYSERR_NOERROR != mmRes)
 					{
-						MMIOERR_CANNOTEXPAND;
-						MMIOERR_CANNOTREAD;
-						MMIOERR_CANNOTWRITE;
-						MMIOERR_OUTOFMEMORY;
-						MMIOERR_UNBUFFERED;
-						return E_FAIL;
+						return MMRESULT_HRESULT(mmRes);
 					}
 
 					if (mmioInfoIn.pchNext == mmioInfoIn.pchEndRead)
 					{
-						// corrupt wave file
-						return E_FAIL;
+						return E_MMIOERR_CORRUPTWAVEFILE;
 					}
 				}
 
@@ -333,11 +327,8 @@ namespace scion
 			mmRes = mmioSetInfo(m_pImpl->_hMMIO, &mmioInfoIn, 0);
 			if (MMSYSERR_NOERROR != mmRes)
 			{
-				// fail set info
 				return E_FAIL;
 			}
-
-			*pActualRead = uDataIn;
 
 			return S_OK;
 		}

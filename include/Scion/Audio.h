@@ -42,4 +42,6 @@
 #ifndef __SCION_AUDIO_H_INCLUDED__
 #define __SCION_AUDIO_H_INCLUDED__
 
+#include <Scion/Audio/MMIOFile.h>
+
 #endif

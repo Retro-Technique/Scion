@@ -50,7 +50,7 @@ namespace scion
 
 		}
 
-		class CMMIOFile : public CObject
+		class AFX_EXT_CLASS CMMIOFile : public CObject
 		{
 #pragma region Constructors
 
@@ -101,7 +101,7 @@ namespace scion
 
 			HRESULT Open(LPCTSTR pszFileName);
 			HRESULT StartRead();
-			HRESULT Read(DWORD uRead, LPBYTE pData, WORD* pActualRead);
+			HRESULT Read(DWORD uRead, LPBYTE pData);
 			void Close();
 
 #pragma endregion

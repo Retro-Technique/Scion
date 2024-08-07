@@ -49,8 +49,8 @@
     <ClInclude Include="targetver.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="MMIOFile.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\include\Scion\Audio\MMIOFile.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,14 +8,10 @@
 #define PCH_H
 
 // ajouter les en-têtes à précompiler ici
-#include "framework.h"
+#include <afxwin.h>
 
 #include <Scion/Audio.h>
-#include <ErrorCode.h>
 
-#include <mmsystem.h>
-#include <dsound.h>
-
-#pragma comment(lib, "Winmm.lib")
+#include <comdef.h>
 
 #endif //PCH_H
