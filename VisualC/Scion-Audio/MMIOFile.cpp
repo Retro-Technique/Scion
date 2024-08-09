@@ -83,7 +83,7 @@ namespace scion
 
 			IMPLEMENT_DYNAMIC(CMMIOFile, CObject)
 
-				CMMIOFile::CMMIOFile()
+			CMMIOFile::CMMIOFile()
 				: m_pImpl(NULL)
 				, m_pData(NULL)
 			{

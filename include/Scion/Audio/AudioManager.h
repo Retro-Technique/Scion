@@ -38,7 +38,7 @@
  */
 
 #ifndef __SCION_AUDIO_H_INCLUDED__
-#error Do not include MMIOFile.h directly, include the Audio.h file
+#error Do not include AudioManager.h directly, include the Audio.h file
 #endif
 
 #pragma once
@@ -52,43 +52,41 @@ namespace scion
 			namespace priv
 			{
 
-				struct TMMIOFile;
+				struct TAudioDevice;
 
 			}
 
-			class AFX_EXT_CLASS CMMIOFile : public CObject
+			class AFX_EXT_CLASS CAudioManager : public CWinThread
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+				DECLARE_DYNCREATE(CAudioManager)
 
 			public:
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+				CAudioManager();
+				virtual ~CAudioManager();
 
 #pragma endregion
 #pragma region Attributes
 
 			private:
 
-				priv::TMMIOFile* m_pImpl;
+				static constexpr const WORD DEFAULT_CHANNEL_COUNT = 2;
+				static constexpr const WORD DEFAULT_FREQUENCY = 44100;
+				static constexpr const WORD DEFAULT_FORMAT = 16;
 
 			private:
 
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
+				priv::TAudioDevice* m_pImpl;
 
 #pragma endregion
 #pragma region Operations
 
 			public:
 
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				void Unload();
+				HRESULT Initialize(HWND hWnd);
+				void Quit();
 
 #pragma endregion
 #pragma region Overridables
@@ -105,10 +103,21 @@ namespace scion
 
 			private:
 
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
+				HRESULT CreateDevice(HWND hWnd);
+				HRESULT CreatePrimaryBuffer();
+				HRESULT StartThread();
+				void StopThread();
+				void DestroyPrimaryBuffer();
+				void DestroyDevice();
+
+#pragma endregion
+#pragma region Messages
+
+			private:
+
+				DECLARE_MESSAGE_MAP()
+
+				afx_msg void OnSoundHandling(WPARAM wParam, LPARAM lParam);
 
 #pragma endregion
 			};

@@ -16,6 +16,9 @@
 #include <mmsystem.h>
 #include <dsound.h>
 
+#pragma comment(lib, "Dsound.lib")
 #pragma comment(lib, "Winmm.lib")
+
+#define WM_SOUND_HANDLING WM_USER + 666
 
 #endif //PCH_H

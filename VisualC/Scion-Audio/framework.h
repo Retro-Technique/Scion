@@ -32,4 +32,4 @@
 #include <afxcmn.h>                     // Prise en charge des MFC pour les contrôles communs Windows
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-
+#include <afxmt.h>

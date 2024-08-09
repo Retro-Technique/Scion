@@ -203,6 +203,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
@@ -231,6 +232,7 @@
     <None Include="Scion-Audio.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\Scion\Audio\AudioManager.h" />
     <ClInclude Include="..\..\include\Scion\Audio\MMIOFile.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
