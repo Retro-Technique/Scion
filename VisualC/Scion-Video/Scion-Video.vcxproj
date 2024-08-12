@@ -224,6 +224,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Scion-Video.cpp" />
+    <ClCompile Include="VideoBuffer.cpp" />
+    <ClCompile Include="VideoBufferImpl.cpp" />
     <ClCompile Include="VideoManager.cpp" />
     <ClCompile Include="VideoManagerImpl.cpp" />
   </ItemGroup>
@@ -232,11 +234,13 @@
     <None Include="Scion-Video.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\Scion\Video\VideoBuffer.h" />
     <ClInclude Include="..\..\include\Scion\Video\VideoManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VideoBufferImpl.h" />
     <ClInclude Include="VideoManagerImpl.h" />
   </ItemGroup>
   <ItemGroup>
