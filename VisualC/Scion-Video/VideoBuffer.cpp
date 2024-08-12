@@ -37,12 +37,66 @@
  *
  */
 
-#pragma once
+#include "pch.h"
+#include "VideoBufferImpl.h"
 
-#ifndef __SCION_VIDEO_H_INCLUDED__
-#define __SCION_VIDEO_H_INCLUDED__
+namespace scion
+{
+	namespace engine
+	{
+		namespace vfx
+		{
 
-#include <Scion/Video/VideoBuffer.h>
-#include <Scion/Video/VideoManager.h>
+#pragma region Constructors
+
+			IMPLEMENT_DYNAMIC(CVideoBuffer, CObject)
+
+			CVideoBuffer::CVideoBuffer()
+				: m_pImpl(new priv::CVideoBufferImpl)
+			{
+
+			}
+
+			CVideoBuffer::~CVideoBuffer()
+			{
+				delete m_pImpl;
+			}
+
+#pragma endregion
+#pragma region Operations
+
+			HRESULT CVideoBuffer::LoadFromFile(LPCTSTR pszFileName)
+			{
+				return m_pImpl->LoadFromFile(pszFileName);
+			}
+
+			void CVideoBuffer::Unload()
+			{
+				m_pImpl->Unload();
+			}
+		
+#pragma endregion
+#pragma region Overridables
+
+#if defined(_DEBUG) || defined(_AFXDLL)
+
+			void CVideoBuffer::AssertValid() const
+			{
+				CObject::AssertValid();
+
+				ASSERT_VALID(m_pImpl);
+			}
+
+			void CVideoBuffer::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+
+				AFXDUMP(m_pImpl);
+			}
 
 #endif
+
+#pragma endregion
+		}
+	}
+}

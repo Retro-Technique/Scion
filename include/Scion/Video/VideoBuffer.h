@@ -37,12 +37,64 @@
  *
  */
 
+#ifndef __SCION_VIDEO_H_INCLUDED__
+#error Do not include VideoBuffer.h directly, include the Video.h file
+#endif
+
 #pragma once
 
-#ifndef __SCION_VIDEO_H_INCLUDED__
-#define __SCION_VIDEO_H_INCLUDED__
+namespace scion
+{
+	namespace engine
+	{
+		namespace vfx
+		{
+			namespace priv
+			{
 
-#include <Scion/Video/VideoBuffer.h>
-#include <Scion/Video/VideoManager.h>
+				class CVideoBufferImpl;
 
+			}
+			
+			class AFX_EXT_CLASS CVideoBuffer : public CObject
+			{
+#pragma region Constructors
+
+				DECLARE_DYNAMIC(CVideoBuffer)
+
+			public:
+
+				CVideoBuffer();
+				virtual ~CVideoBuffer();
+
+#pragma endregion
+#pragma region Attributes
+
+			private:
+
+				priv::CVideoBufferImpl* m_pImpl;
+
+#pragma endregion
+#pragma region Operations
+
+			public:
+
+				HRESULT LoadFromFile(LPCTSTR pszFileName);
+				void Unload();
+
+#pragma endregion
+#pragma region Overridables
+
+			public:
+
+#if defined(_DEBUG) || defined(_AFXDLL)
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+			};
+
+		}
+	}
+}

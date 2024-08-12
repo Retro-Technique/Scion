@@ -39,10 +39,57 @@
 
 #pragma once
 
-#ifndef __SCION_VIDEO_H_INCLUDED__
-#define __SCION_VIDEO_H_INCLUDED__
+namespace scion
+{
+	namespace engine
+	{
+		namespace vfx
+		{
+			namespace priv
+			{
 
-#include <Scion/Video/VideoBuffer.h>
-#include <Scion/Video/VideoManager.h>
+				class AFX_EXT_CLASS CVideoBufferImpl : public CObject
+				{
+#pragma region Constructors
 
+					DECLARE_DYNAMIC(CVideoBufferImpl)
+
+				public:
+
+					CVideoBufferImpl();
+					virtual ~CVideoBufferImpl();
+
+#pragma endregion
+#pragma region Attributes
+
+				private:
+
+					PAVIFILE		m_pAviFile;
+					PAVISTREAM		m_pAviStream;
+					AVISTREAMINFO	m_aviStreamInfo;
+
+#pragma endregion
+#pragma region Operations
+
+				public:
+
+					HRESULT LoadFromFile(LPCTSTR pszFileName);
+					void Unload();
+
+#pragma endregion
+#pragma region Overridables
+
+				public:
+
+#if defined(_DEBUG) || defined(_AFXDLL)
+					void AssertValid() const override;
+					void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+				};
+
+			}
+		}
+	}
+}
