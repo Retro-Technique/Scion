@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{70767485
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Scion-Audio.Test", "Scion-Audio.Test\Scion-Audio.Test.vcxproj", "{0A60775E-1C71-411F-8B62-D644FF71F53D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Scion-Video", "Scion-Video\Scion-Video.vcxproj", "{44AE0905-B260-40F2-B9E2-666024FE39BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -87,6 +89,14 @@ Global
 		{0A60775E-1C71-411F-8B62-D644FF71F53D}.Release|x64.Build.0 = Release|x64
 		{0A60775E-1C71-411F-8B62-D644FF71F53D}.Release|x86.ActiveCfg = Release|Win32
 		{0A60775E-1C71-411F-8B62-D644FF71F53D}.Release|x86.Build.0 = Release|Win32
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Debug|x64.ActiveCfg = Debug|x64
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Debug|x64.Build.0 = Debug|x64
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Debug|x86.ActiveCfg = Debug|Win32
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Debug|x86.Build.0 = Debug|Win32
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Release|x64.ActiveCfg = Release|x64
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Release|x64.Build.0 = Release|x64
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Release|x86.ActiveCfg = Release|Win32
+		{44AE0905-B260-40F2-B9E2-666024FE39BC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +109,7 @@ Global
 		{F62ADB75-CE98-49A6-918C-A0F984CC0435} = {2194FFA0-8596-472A-819B-916C1B34EBC8}
 		{A03167F6-097A-406E-B924-71CA4930DB16} = {2194FFA0-8596-472A-819B-916C1B34EBC8}
 		{0A60775E-1C71-411F-8B62-D644FF71F53D} = {70767485-1B38-406C-B2B4-10FF4FCD3569}
+		{44AE0905-B260-40F2-B9E2-666024FE39BC} = {2194FFA0-8596-472A-819B-916C1B34EBC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C09A3FA7-4F63-4FC8-8E10-116CE58D049F}
