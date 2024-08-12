@@ -80,6 +80,9 @@ namespace scion
 			public:
 
 				HRESULT LoadFromFile(LPCTSTR pszFileName);
+				BOOL IsLoaded() const;
+				FLOAT GetFrameRate() const;
+				CTimeSpan GetDuration() const;
 				void Unload();
 
 #pragma endregion

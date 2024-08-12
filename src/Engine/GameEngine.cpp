@@ -61,46 +61,62 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CGameEngine::OnSetup()
+		HRESULT CGameEngine::Initialize(CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
 		{
 			HRESULT hr = S_OK;
 
-			hr = CreateManagers();
-
-			POSITION pos = m_listManagers.GetHeadPosition();
-			while (pos)
+			do
 			{
-				CObject* pEntry = m_listManagers.GetNext(pos);
-				ASSERT_POINTER(pEntry, CObject);
-				ASSERT_KINDOF(CManager, pEntry);
-
-				CManager* pManager = STATIC_DOWNCAST(CManager, pEntry);
-				ASSERT_VALID(pManager);
-
-				hr = pManager->OnSetup();
+				hr = m_GraphicsManager.Initialize(pD2DState);
 				if (FAILED(hr))
 				{
 					break;
 				}
-			}
+
+				hr = m_AudioManager.Initialize(pMainWnd);
+				if (FAILED(hr))
+				{
+					break;
+				}
+
+				hr = m_VideoManager.Initialize();
+				if (FAILED(hr))
+				{
+					break;
+				}
+
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 			return hr;
 		}
 
-		void CGameEngine::OnLoop()
+		void CGameEngine::Quit()
 		{
-			POSITION pos = m_listManagers.GetHeadPosition();
-			while (pos)
-			{
-				CObject* pEntry = m_listManagers.GetNext(pos);
-				ASSERT_POINTER(pEntry, CObject);
-				ASSERT_KINDOF(CManager, pEntry);
+			m_VideoManager.Quit();
+			m_AudioManager.Quit();
+			m_GraphicsManager.Quit();
+		}
 
-				CManager* pManager = STATIC_DOWNCAST(CManager, pEntry);
-				ASSERT_VALID(pManager);
+		void CGameEngine::InitialUpdate()
+		{
 
-				pManager->OnLoop();
-			}
+		}
+
+		void CGameEngine::Update()
+		{
+//			const ULONGLONG uElapsedTime = m_GameTime.Restart();
+
+			
+		}
+
+		void CGameEngine::Draw()
+		{
+
+		}
+
+		void CGameEngine::Unload()
+		{
+			DestroyManagers();
 		}
 
 #pragma endregion
@@ -161,44 +177,20 @@ namespace scion
 			return S_OK;
 		}
 
-		HRESULT CGameEngine::LoadManagers()
-		{
-			HRESULT hr = S_OK;
-
-			POSITION pos = m_listManagers.GetHeadPosition();
-			while (pos)
-			{
-				CObject* pEntry = m_listManagers.GetNext(pos);
-				ASSERT_POINTER(pEntry, CObject);
-				ASSERT_KINDOF(CManager, pEntry);
-
-				CManager* pManager = STATIC_DOWNCAST(CManager, pEntry);
-				ASSERT_VALID(pManager);
-
-			/*	hr = pManager->Load();
-				if (FAILED(hr))
-				{
-					return hr;
-				}*/
-			}
-
-			return hr;
-		}
-
-		void CGameEngine::UnloadManagers()
+		void CGameEngine::DestroyManagers()
 		{
 			POSITION pos = m_listManagers.GetHeadPosition();
 			while (pos)
 			{
-				CObject* pEntry = m_listManagers.GetNext(pos);
-				ASSERT_POINTER(pEntry, CObject);
-				ASSERT_KINDOF(CManager, pEntry);
-
-				CManager* pManager = STATIC_DOWNCAST(CManager, pEntry);
-				ASSERT_VALID(pManager);
-
-				//pManager->Unload();
+				CObject* pObject = m_listManagers.GetNext(pos);
+				ASSERT_POINTER(pObject, CObject);
+				ASSERT_KINDOF(CManager, pObject);
+				ASSERT_VALID(pObject);
+				
+				delete pObject;
 			}
+
+			m_listManagers.RemoveAll();
 		}
 
 #pragma endregion

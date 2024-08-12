@@ -21,12 +21,21 @@ public:
 
 	BOOL  m_bHiColorIcons;
 
-#pragma endregion
-#pragma region Operations
+private:
+
+	scion::engine::CGameEngine	m_GameEngine;
+
+private:
+
+	CString m_strProductVersion;
+	CString m_strProductName;
+	CString m_strLegalCopyright;
 
 public:
 
-	CString GetVersion() const;
+	inline LPCTSTR GetProductVersion() const { return m_strProductVersion.GetString(); }
+	inline LPCTSTR GetProductName() const { return m_strProductName.GetString(); }
+	inline LPCTSTR GetLegalCopyright() const { return m_strLegalCopyright.GetString(); }
 
 #pragma endregion
 #pragma region Overridables
@@ -38,6 +47,13 @@ public:
 	void PreLoadState() override;
 	void LoadCustomState() override;
 	void SaveCustomState() override;
+
+#pragma endregion
+#pragma region Implementations
+
+private:
+
+	void InitAppInfo();
 
 #pragma endregion
 #pragma region Messages

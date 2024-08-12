@@ -66,15 +66,23 @@ namespace scion
 
 		private:
 
+			gfx::CGraphicsManager	m_GraphicsManager;
+			sfx::CAudioManager		m_AudioManager;
+			vfx::CVideoManager		m_VideoManager;
 			CObList m_listManagers;
+			//retro::core::CClock	m_GameTime;
 
 #pragma endregion
 #pragma region Operations
 
 		public:
 
-			HRESULT OnSetup();
-			void OnLoop();
+			HRESULT Initialize(CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState);
+			void Quit();
+			void InitialUpdate();
+			void Update();
+			void Draw();
+			void Unload();
 
 #pragma endregion
 #pragma region Overridables
@@ -93,8 +101,7 @@ namespace scion
 		private:
 
 			HRESULT CreateManagers();
-			HRESULT LoadManagers();
-			void UnloadManagers();
+			void DestroyManagers();
 
 #pragma endregion
 		};

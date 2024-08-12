@@ -24,10 +24,22 @@
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="MMIOFile.cpp">
+    <ClCompile Include="MMIOFileImpl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManagerImpl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBuffer.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="AudioManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MMIOFile.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBufferImpl.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -52,11 +64,23 @@
     <ClInclude Include="targetver.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Audio\MMIOFile.h">
+    <ClInclude Include="..\..\include\Scion\Audio\SoundBuffer.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManagerImpl.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Scion\Audio\AudioManager.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="MMIOFileImpl.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Audio\MMIOFile.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundBufferImpl.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

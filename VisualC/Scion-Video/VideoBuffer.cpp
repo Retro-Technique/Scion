@@ -70,6 +70,21 @@ namespace scion
 				return m_pImpl->LoadFromFile(pszFileName);
 			}
 
+			BOOL CVideoBuffer::IsLoaded() const
+			{
+				return m_pImpl->IsLoaded();
+			}
+
+			FLOAT CVideoBuffer::GetFrameRate() const
+			{
+				return m_pImpl->GetFrameRate();
+			}
+
+			CTimeSpan CVideoBuffer::GetDuration() const
+			{
+				return m_pImpl->GetDuration();
+			}
+
 			void CVideoBuffer::Unload()
 			{
 				m_pImpl->Unload();

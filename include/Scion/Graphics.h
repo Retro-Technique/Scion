@@ -39,9 +39,12 @@
 
 #pragma once
 
+#include <Scion/Common.h>
+
 #ifndef __SCION_GRAPHICS_H_INCLUDED__
 #define __SCION_GRAPHICS_H_INCLUDED__
 
+#include <Scion/Graphics/MatrixStack.h>
 #include <Scion/Graphics/GraphicsManager.h>
 
 #endif

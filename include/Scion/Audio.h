@@ -39,10 +39,13 @@
 
 #pragma once
 
+#include <Scion/Common.h>
+
 #ifndef __SCION_AUDIO_H_INCLUDED__
 #define __SCION_AUDIO_H_INCLUDED__
 
 #include <Scion/Audio/MMIOFile.h>
+#include <Scion/Audio/SoundBuffer.h>
 #include <Scion/Audio/AudioManager.h>
 
 #endif

@@ -19,7 +19,7 @@
 #include "Messages.h"
 #include "Helpers.h"
 
-#define APP_MODE_MDI
+#define APP_MODE_SDI
 
 #ifdef APP_MODE_MDI
 #define FrameWnd CMDIFrameWndEx
@@ -27,6 +27,6 @@
 #define FrameWnd CFrameWndEx
 #endif
 
-#include <ScionEngine.h>
+#include <Scion/Engine.h>
 
 #endif //PCH_H

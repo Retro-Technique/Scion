@@ -18,6 +18,7 @@ public:
 private:
 
 	CString m_strProductVer;
+	CString m_strLegalCopyright;
 
 #pragma endregion
 #pragma region Overridables
@@ -34,6 +35,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-#pragma endregion
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
+#pragma endregion
 };

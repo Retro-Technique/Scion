@@ -39,6 +39,12 @@
     <ClCompile Include="..\..\src\Engine\SceneManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Node.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Resource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Scion-Engine.rc2">
@@ -71,6 +77,15 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Scion\Engine\SceneManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\Node.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\Resource.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Engine\INode.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -105,11 +105,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;_AFXEXT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\Scion-Engine.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\lib\$(PlatformTarget)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RetroCode-Core.lib;RetroCode-Image.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -128,11 +131,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_AFXEXT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\Scion-Engine.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\lib\$(PlatformTarget)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RetroCode-Core.lib;RetroCode-Image.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -153,13 +159,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_AFXEXT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>.\Scion-Engine.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\lib\$(PlatformTarget)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RetroCode-Core.lib;RetroCode-Image.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -180,13 +189,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;_AFXEXT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\include;$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>.\Scion-Engine.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\3rdParty\RetroCode-1.0.0.1\lib\$(PlatformTarget)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RetroCode-Core.lib;RetroCode-Image.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -201,6 +213,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Engine\GameEngine.cpp" />
     <ClCompile Include="..\..\src\Engine\Manager.cpp" />
+    <ClCompile Include="..\..\src\Engine\Node.cpp" />
+    <ClCompile Include="..\..\src\Engine\Resource.cpp" />
     <ClCompile Include="..\..\src\Engine\ResourceManager.cpp" />
     <ClCompile Include="..\..\src\Engine\SceneManager.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -231,7 +245,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Scion\Engine\GameEngine.h" />
+    <ClInclude Include="..\..\include\Scion\Engine\INode.h" />
     <ClInclude Include="..\..\include\Scion\Engine\Manager.h" />
+    <ClInclude Include="..\..\include\Scion\Engine\Node.h" />
+    <ClInclude Include="..\..\include\Scion\Engine\Resource.h" />
     <ClInclude Include="..\..\include\Scion\Engine\ResourceManager.h" />
     <ClInclude Include="..\..\include\Scion\Engine\SceneManager.h" />
     <ClInclude Include="framework.h" />
@@ -241,6 +258,21 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Scion-Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Scion-Audio\Scion-Audio.vcxproj">
+      <Project>{f62adb75-ce98-49a6-918c-a0f984cc0435}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Scion-Common\Scion-Common.vcxproj">
+      <Project>{a03167f6-097a-406e-b924-71ca4930db16}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\Scion-Graphics\Scion-Graphics.vcxproj">
+      <Project>{ecee681d-9c59-4e56-b020-808521570c38}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Scion-Video\Scion-Video.vcxproj">
+      <Project>{44ae0905-b260-40f2-b9e2-666024fe39bc}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

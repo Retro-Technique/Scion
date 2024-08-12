@@ -37,6 +37,64 @@
  *
  */
 
+#ifndef __SCION_AUDIO_H_INCLUDED__
+#error Do not include SoundBuffer.h directly, include the Audio.h file
+#endif
+
 #pragma once
 
-#include <RetroCode/Core.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace sfx
+		{
+			namespace priv
+			{
+
+				class CSoundBufferImpl;
+
+			}
+
+			class AFX_EXT_CLASS CSoundBuffer : public CObject
+			{
+#pragma region Constructors
+
+				DECLARE_DYNAMIC(CSoundBuffer)
+
+			public:
+
+				CSoundBuffer();
+				virtual ~CSoundBuffer();
+
+#pragma endregion
+#pragma region Attributes
+
+			private:
+
+				priv::CSoundBufferImpl* m_pImpl;
+
+#pragma endregion
+#pragma region Operations
+
+			public:
+
+				HRESULT LoadFromFile(LPCTSTR pszFileName);
+				void Unload();
+
+#pragma endregion
+#pragma region Overridables
+
+			public:
+
+#if defined(_DEBUG) || defined(_AFXDLL)
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
+#endif
+
+#pragma endregion
+			};
+
+		}
+	}
+}

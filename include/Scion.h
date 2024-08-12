@@ -45,5 +45,6 @@
 #define __SCION_H_INCLUDED__
 
 #include <Scion/Manager.h>
+#include <Scion/Node.h>
 
 #endif

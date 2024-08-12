@@ -39,6 +39,8 @@
 
 #pragma once
 
+#include <Scion/Common.h>
+
 #ifndef __SCION_VIDEO_H_INCLUDED__
 #define __SCION_VIDEO_H_INCLUDED__
 

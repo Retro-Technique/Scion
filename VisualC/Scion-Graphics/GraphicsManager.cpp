@@ -73,9 +73,9 @@ namespace scion
 			}
 
 #pragma endregion
-#pragma region Overridables
+#pragma region Operations
 
-			HRESULT CGraphicsManager::Load(_AFX_D2D_STATE* pD2DState)
+			HRESULT CGraphicsManager::Initialize(_AFX_D2D_STATE* pD2DState)
 			{
 				if (!pD2DState)
 				{
@@ -109,7 +109,7 @@ namespace scion
 				return hr;
 			}
 
-			void CGraphicsManager::Unload()
+			void CGraphicsManager::Quit()
 			{
 				if (m_pImpl->_pWICFactory)
 				{
@@ -129,6 +129,9 @@ namespace scion
 					m_pImpl->_pD2DFactory = NULL;
 				}
 			}
+
+#pragma endregion
+#pragma region Overridables
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 

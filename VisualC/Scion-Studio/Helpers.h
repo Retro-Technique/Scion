@@ -35,3 +35,5 @@ static inline CDocument* AcquireActiveDocument(CRuntimeClass* pClass)
 }
 
 #define ACQUIRE_ACTIVE_DOCUMENT(x) STATIC_DOWNCAST(x, AcquireActiveDocument(RUNTIME_CLASS(x)))
+#define UPDATE_DATA_BACK_TO_FRONT FALSE
+#define UPDATE_DATA_FRONT_TO_BACK TRUE

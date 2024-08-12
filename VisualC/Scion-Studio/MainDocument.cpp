@@ -23,6 +23,24 @@ CMainDocument::~CMainDocument()
 }
 
 #pragma endregion
+#pragma region Operations
+
+void CMainDocument::InitialUpdateScene()
+{
+	
+}
+
+void CMainDocument::UpdateScene()
+{
+	
+}
+
+void CMainDocument::DrawScene()
+{
+	
+}
+
+#pragma endregion
 #pragma region Overridables
 
 BOOL CMainDocument::OnNewDocument()
@@ -31,9 +49,6 @@ BOOL CMainDocument::OnNewDocument()
 	{
 		return FALSE;
 	}
-
-	// TODO: ajoutez ici le code de réinitialisation
-	// (les documents SDI réutiliseront ce document)
 
 	return TRUE;
 }
@@ -44,8 +59,6 @@ BOOL CMainDocument::OnOpenDocument(LPCTSTR pszPathName)
 	{
 		return FALSE;
 	}
-
-	// TODO:  Ajoutez ici votre code de création spécialisé
 
 	return TRUE;
 }
@@ -59,21 +72,12 @@ BOOL CMainDocument::OnSaveDocument(LPCTSTR pszPathName)
 
 void CMainDocument::OnCloseDocument()
 {
-	// TODO: ajoutez ici votre code spécialisé et/ou l'appel de la classe de base
-
 	CDocument::OnCloseDocument();
 }
 
 void CMainDocument::Serialize(CArchive& ar)
 {
-	if (ar.IsStoring())
-	{
-		// TODO: ajoutez ici le code de stockage
-	}
-	else
-	{
-		// TODO: ajoutez ici le code de chargement
-	}
+	
 }
 
 #ifdef _DEBUG
@@ -81,11 +85,13 @@ void CMainDocument::Serialize(CArchive& ar)
 void CMainDocument::AssertValid() const
 {
 	CDocument::AssertValid();
+
 }
 
 void CMainDocument::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
+
 }
 
 #endif 

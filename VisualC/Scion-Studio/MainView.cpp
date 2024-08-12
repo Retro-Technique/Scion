@@ -46,16 +46,35 @@ BOOL CMainView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
-void CMainView::OnDraw(CDC* /*pDC*/)
+void CMainView::OnInitialUpdate()
+{
+	CView::OnInitialUpdate();
+
+	CMainDocument* pDoc = GetDocument();
+	ASSERT_POINTER(pDoc, CMainDocument);
+	ASSERT_VALID(pDoc);
+
+	pDoc->InitialUpdateScene();
+}
+
+void CMainView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
 {
 	CMainDocument* pDoc = GetDocument();
+	ASSERT_POINTER(pDoc, CMainDocument);
 	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	{
-		return;
-	}
 
-	// TODO: ajoutez ici le code de dessin pour les données natives
+	CHwndRenderTarget* pRenderTarget = GetRenderTarget();
+	ASSERT_POINTER(pRenderTarget, CHwndRenderTarget);
+	ASSERT_VALID(pRenderTarget);
+	
+	pDoc->UpdateScene();
+
+	Invalidate();
+}
+
+void CMainView::OnDraw(CDC* pDC)
+{
+	UNUSED_ALWAYS(pDC);
 }
 
 #ifdef _DEBUG
@@ -76,7 +95,31 @@ void CMainView::Dump(CDumpContext& dc) const
 BEGIN_MESSAGE_MAP(CMainView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_WM_TIMER()
+	ON_WM_CREATE()
+	ON_REGISTERED_MESSAGE(AFX_WM_DRAW2D, &CMainView::OnAfxDraw2d)
+	ON_REGISTERED_MESSAGE(AFX_WM_RECREATED2DRESOURCES, &CMainView::OnAfxRecreated2dresources)
 END_MESSAGE_MAP()
+
+int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CView::OnCreate(lpCreateStruct) == -1)
+	{
+		return -1;
+	}
+
+	EnableD2DSupport();
+
+	if (!IsD2DSupportEnabled())
+	{
+		TRACE(_T("D2D support hasn't been enabled\n"));
+		return -1;
+	}
+
+	SetTimer(TIMER_REFRESH_ID, TIMER_REFRESH_ELAPSE, NULL);
+
+	return 0;
+}
 
 void CMainView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
@@ -91,4 +134,41 @@ void CMainView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 #endif
 }
 
+void CMainView::OnTimer(UINT_PTR nIDEvent)
+{
+	if (TIMER_REFRESH_ID == nIDEvent)
+	{
+		CMainDocument* pDoc = GetDocument();
+		pDoc->UpdateAllViews(NULL);
+	}
+
+	CView::OnTimer(nIDEvent);
+}
+
+afx_msg LRESULT CMainView::OnAfxDraw2d(WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(wParam);
+
+	CHwndRenderTarget* pRenderTarget = (CHwndRenderTarget*)lParam;
+	ASSERT_POINTER(pRenderTarget, CHwndRenderTarget);
+	ASSERT_VALID(pRenderTarget);
+
+	CMainDocument* pDoc = GetDocument();
+	ASSERT_POINTER(pDoc, CMainDocument);
+	ASSERT_VALID(pDoc);
+
+	ID2D1HwndRenderTarget* pD2DRenderTarget = pRenderTarget->GetHwndRenderTarget();
+
+	pDoc->DrawScene();
+
+	return 0;
+}
+
 #pragma endregion
+
+afx_msg LRESULT CMainView::OnAfxRecreated2dresources(WPARAM wParam, LPARAM lParam)
+{
+	TRACE(_T("Render target has been lost and re-created\n"));
+
+	return 0;
+}

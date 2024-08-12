@@ -11,7 +11,6 @@
 #include "framework.h"
 
 #include <Scion/Audio.h>
-#include <ErrorCode.h>
 
 #include <mmsystem.h>
 #include <dsound.h>
@@ -20,5 +19,13 @@
 #pragma comment(lib, "Winmm.lib")
 
 #define WM_SOUND_HANDLING WM_USER + 666
+
+#ifndef DSBCAPS_CTRLDEFAULT         
+#define DSBCAPS_CTRLDEFAULT         0x000000E0  // Pan + volume + frequence
+#endif
+
+#ifndef DSBCAPS_CTRLALL
+#define DSBCAPS_CTRLALL             0x000000F0  // Tous les contrôles
+#endif
 
 #endif //PCH_H

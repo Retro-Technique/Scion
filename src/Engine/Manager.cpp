@@ -55,7 +55,7 @@ namespace scion
 
 		CManager::~CManager()
 		{
-
+			
 		}
 
 #pragma endregion

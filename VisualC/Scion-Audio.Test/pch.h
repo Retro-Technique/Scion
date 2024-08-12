@@ -8,10 +8,6 @@
 #define PCH_H
 
 // ajouter les en-têtes à précompiler ici
-#include <afxwin.h>
-
 #include <Scion/Audio.h>
-
-#include <comdef.h>
 
 #endif //PCH_H

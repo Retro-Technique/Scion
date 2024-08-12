@@ -24,15 +24,6 @@
     <ClCompile Include="Scion-Graphics.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="SolidColorBrushResource.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="BrushResource.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -61,25 +52,10 @@
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsManager.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidColorBrushResource.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="BrushResource.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="MatrixStack.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Graphics\IRenderer.h">
+    <ClInclude Include="..\..\include\Scion\Graphics\GraphicsManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Graphics\IGraphicDevice.h">
+    <ClInclude Include="..\..\include\Scion\Graphics\MatrixStack.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

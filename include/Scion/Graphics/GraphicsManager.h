@@ -37,6 +37,10 @@
  *
  */
 
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#error Do not include GraphicsManager.h directly, include the Graphics.h file
+#endif
+
 #pragma once
 
 namespace scion
@@ -70,19 +74,18 @@ namespace scion
 
 				priv::TDevice* m_pImpl;
 
+#pragma endregion
+#pragma region Operations
+
 			public:
 
-				inline ID2D1Factory8* GetD2DFactory() { return m_pD2DFactory; }
-				inline IDWriteFactory8* GetDWriteFactory() { return m_pDWriteFactory; }
-				inline IWICImagingFactory2* GetWICFactory() { return m_pWICFactory; }
+				HRESULT Initialize(_AFX_D2D_STATE* pD2DState);
+				void Quit();
 
 #pragma endregion
 #pragma region Overridables
 
-			private:
-
-				HRESULT Load(_AFX_D2D_STATE* pD2DState) override;
-				void Unload() override;
+			public:
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 				void AssertValid() const override;

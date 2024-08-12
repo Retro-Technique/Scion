@@ -106,7 +106,7 @@ namespace scion
 
 						AVIStreamGetFrameClose(pGetFrame);
 
-					} while (FALSE);
+					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 					if (FAILED(hr))
 					{
@@ -114,6 +114,40 @@ namespace scion
 					}
 
 					return hr;
+				}
+
+				BOOL CVideoBufferImpl::IsLoaded() const
+				{
+					return (m_pAviFile && m_pAviStream);
+				}
+
+				FLOAT CVideoBufferImpl::GetFrameRate() const
+				{
+					if (!IsLoaded())
+					{
+						return 0.f;
+					}
+
+					if (m_aviStreamInfo.dwScale == 0)
+					{
+						return 0.f;
+					}
+
+					return static_cast<FLOAT>(m_aviStreamInfo.dwRate) / m_aviStreamInfo.dwScale;
+				}
+
+				CTimeSpan CVideoBufferImpl::GetDuration() const
+				{
+					const FLOAT fFramePerSecond = GetFrameRate();
+					if (fFramePerSecond == 0.f)
+					{
+						return CTimeSpan();
+					}
+
+					const FLOAT fSeconds = static_cast<FLOAT>(m_aviStreamInfo.dwLength) / GetFrameRate();
+					const INT nSeconds = static_cast<INT>(fSeconds);
+
+					return CTimeSpan(0, 0, 0, nSeconds);
 				}
 
 				void CVideoBufferImpl::Unload()
@@ -146,6 +180,9 @@ namespace scion
 				void CVideoBufferImpl::Dump(CDumpContext& dc) const
 				{
 					CObject::Dump(dc);
+
+					dc << _T("FrameRate: ") << GetFrameRate() << _T("\n");
+					dc << _T("Duration: ") << GetDuration() << _T("\n");
 				}
 
 #endif

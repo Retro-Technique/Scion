@@ -16,4 +16,6 @@
 #include <d2d1_3helper.h>
 #include <dwrite_3.h>
 
+#pragma comment(lib, "D2d1.lib")
+
 #endif //PCH_H

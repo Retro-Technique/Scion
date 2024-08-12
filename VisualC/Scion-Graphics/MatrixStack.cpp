@@ -38,156 +38,174 @@
  */
 
 #include "pch.h"
-#include "MatrixStack.h"
 
 namespace scion
 {
-	namespace gfx
+	namespace engine
 	{
+		namespace gfx
+		{
 
 #pragma region Constructors
 
-		IMPLEMENT_DYNAMIC(CMatrixStack, CObject);
+			IMPLEMENT_DYNAMIC(CMatrixStack, CObject);
 
-		CMatrixStack::CMatrixStack()
-			: m_nSackSize(0)
-			, m_nCurrent(0)
-			, m_pStack(NULL)
-		{
-			Allocate(START_SIZE);
-			LoadIdentity();
-		}
-
-		CMatrixStack::~CMatrixStack()
-		{
-			if (m_pStack)
+			CMatrixStack::CMatrixStack()
+				: m_nSackSize(0)
+				, m_nCurrent(0)
+				, m_pStack(NULL)
 			{
-				_aligned_free(m_pStack);
-				m_pStack = NULL;
+				Allocate();
+				LoadIdentity();
 			}
-		}
+
+			CMatrixStack::~CMatrixStack()
+			{
+				Free();
+			}
 
 #pragma endregion
 #pragma region Operations
 
-		const D2D1::Matrix3x2F CMatrixStack::Top() const
-		{
-			return m_pStack[m_nCurrent];
-		}
-
-		const D2D1::Matrix3x2F* CMatrixStack::GetTop() const
-		{
-			return &m_pStack[m_nCurrent];
-		}
-
-		INT_PTR CMatrixStack::GetSize() const
-		{
-			return m_nCurrent + 1;
-		}
-
-		void CMatrixStack::Pop()
-		{
-			if (m_nCurrent > 0)
+			const D2D1::Matrix3x2F CMatrixStack::Top() const
 			{
-				m_nCurrent--;
-			}
-		}
-
-		void CMatrixStack::Push()
-		{
-			m_nCurrent++;
-
-			if (m_nCurrent >= m_nSackSize)
-			{
-				Allocate(m_nSackSize * 2);
+				return m_pStack[m_nCurrent];
 			}
 
-			m_pStack[m_nCurrent] = m_pStack[m_nCurrent - 1];
-		}
+			const D2D1::Matrix3x2F* CMatrixStack::GetTop() const
+			{
+				return &m_pStack[m_nCurrent];
+			}
 
-		void CMatrixStack::LoadIdentity()
-		{
-			m_pStack[m_nCurrent] = D2D1::Matrix3x2F::Identity();
-		}
+			INT_PTR CMatrixStack::GetSize() const
+			{
+				return m_nCurrent + 1;
+			}
 
-		void CMatrixStack::LoadMatrix(const D2D1::Matrix3x2F& mMatrix)
-		{
-			m_pStack[m_nCurrent] = mMatrix;
-		}
+			void CMatrixStack::Pop()
+			{
+				if (m_nCurrent > 0)
+				{
+					m_nCurrent--;
+				}
+			}
 
-		void CMatrixStack::MultiplyMatrix(const D2D1::Matrix3x2F& mMatrix)
-		{
-			m_pStack[m_nCurrent] = m_pStack[m_nCurrent] * mMatrix;
-		}
+			void CMatrixStack::Push()
+			{
+				m_nCurrent++;
 
-		void CMatrixStack::Rotate(FLOAT fAngle, const D2D1_POINT_2F& ptOrigin)
-		{
-			const D2D1::Matrix3x2F mMatrix = D2D1::Matrix3x2F::Rotation(fAngle, ptOrigin);
-			MultiplyMatrix(mMatrix);
-		}
+				if (m_nCurrent >= m_nSackSize)
+				{
+					Reallocate(m_nSackSize * 2);
+				}
 
-		void CMatrixStack::Scale(FLOAT fScale, const D2D1_POINT_2F& ptOrigin)
-		{
-			const D2D1_SIZE_F vScale = D2D1::SizeF(fScale, fScale);
-			const D2D1::Matrix3x2F mMatrix = D2D1::Matrix3x2F::Scale(vScale, ptOrigin);
-			MultiplyMatrix(mMatrix);
-		}
+				m_pStack[m_nCurrent] = m_pStack[m_nCurrent - 1];
+			}
 
-		void CMatrixStack::Translate(const D2D1_SIZE_F& szTranslation)
-		{
-			const D2D1::Matrix3x2F mMatrix = D2D1::Matrix3x2F::Translation(szTranslation);
-			MultiplyMatrix(mMatrix);
-		}
+			void CMatrixStack::LoadIdentity()
+			{
+				m_pStack[m_nCurrent] = D2D1::Matrix3x2F::Identity();
+			}
+
+			void CMatrixStack::LoadMatrix(const D2D1::Matrix3x2F& mMatrix)
+			{
+				m_pStack[m_nCurrent] = mMatrix;
+			}
+
+			void CMatrixStack::MultiplyMatrix(const D2D1::Matrix3x2F& mMatrix)
+			{
+				m_pStack[m_nCurrent] = m_pStack[m_nCurrent] * mMatrix;
+			}
+
+			void CMatrixStack::Rotate(FLOAT fAngle, const D2D1_POINT_2F& ptOrigin)
+			{
+				const D2D1::Matrix3x2F mMatrix = D2D1::Matrix3x2F::Rotation(fAngle, ptOrigin);
+				MultiplyMatrix(mMatrix);
+			}
+
+			void CMatrixStack::Scale(FLOAT fScale, const D2D1_POINT_2F& ptOrigin)
+			{
+				const D2D1_SIZE_F vScale = D2D1::SizeF(fScale, fScale);
+				const D2D1::Matrix3x2F mMatrix = D2D1::Matrix3x2F::Scale(vScale, ptOrigin);
+				MultiplyMatrix(mMatrix);
+			}
+
+			void CMatrixStack::Translate(const D2D1_SIZE_F& szTranslation)
+			{
+				const D2D1::Matrix3x2F mMatrix = D2D1::Matrix3x2F::Translation(szTranslation);
+				MultiplyMatrix(mMatrix);
+			}
 
 #pragma endregion
 #pragma region Overridables
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 
-		void CMatrixStack::AssertValid() const
-		{
-			CObject::AssertValid();
+			void CMatrixStack::AssertValid() const
+			{
+				CObject::AssertValid();
 
-			ASSERT(m_nSackSize >= START_SIZE);
-			ASSERT((m_nSackSize & (m_nSackSize - 1)) == 0); // vérifier qu'il s'agit bien d'une puissance de 2
-			ASSERT(m_nCurrent >= 0);
-			ASSERT_POINTER(m_pStack, D2D1::Matrix3x2F);
-		}
+				ASSERT(m_nSackSize >= START_SIZE);
+				ASSERT((m_nSackSize & (m_nSackSize - 1)) == 0); // vérifier qu'il s'agit bien d'une puissance de 2
+				ASSERT(m_nCurrent >= 0);
+				ASSERT_POINTER(m_pStack, D2D1::Matrix3x2F);
+			}
 
-		void CMatrixStack::Dump(CDumpContext& dc) const
-		{
-			CObject::Dump(dc);
-			
-			dc << _T("Stack Size: ") << m_nSackSize << _T("\n");
-			dc << _T("Current : ") << m_nCurrent << _T("\n");
-		}
+			void CMatrixStack::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+
+				dc << _T("Stack Size: ") << m_nSackSize << _T("\n");
+				dc << _T("Current : ") << m_nCurrent << _T("\n");
+			}
 
 #endif
 
 #pragma endregion
 #pragma region Implementations
 
-		void CMatrixStack::Allocate(INT_PTR nNewSize)
-		{
-			ASSERT(nNewSize > 0);
-
-			LPVOID pBuffer = _aligned_malloc(nNewSize + sizeof(D2D1::Matrix3x2F), START_SIZE);
-			if (!pBuffer)
+			void CMatrixStack::Allocate()
 			{
-				return;
+				ASSERT_NULL_OR_POINTER(m_pStack, D2D1::Matrix3x2F);
+				ASSERT(0 == m_nSackSize);
+
+				LPVOID pBuffer = _aligned_malloc(START_SIZE * sizeof(D2D1::Matrix3x2F), ALIGNMENT_SIZE);
+				if (!pBuffer)
+				{
+					return;
+				}
+
+				m_pStack = reinterpret_cast<D2D1::Matrix3x2F*>(pBuffer);
+				m_nSackSize = START_SIZE;
 			}
 
-			if (m_pStack)
+			void CMatrixStack::Reallocate(INT_PTR nNewSize)
 			{
+				ASSERT_POINTER(m_pStack, D2D1::Matrix3x2F);
+				ASSERT(0 < nNewSize);
 				ASSERT(nNewSize >= m_nSackSize);
-				CopyMemory(pBuffer, m_pStack, sizeof(D2D1::Matrix3x2F) * m_nSackSize);
+
+				LPVOID pBuffer = _aligned_realloc(m_pStack, nNewSize * sizeof(D2D1::Matrix3x2F), ALIGNMENT_SIZE);
+				if (!pBuffer)
+				{
+					return;
+				}
+
+				m_pStack = reinterpret_cast<D2D1::Matrix3x2F*>(pBuffer);
+				m_nSackSize = nNewSize;
 			}
 
-			m_pStack = reinterpret_cast<D2D1::Matrix3x2F*>(pBuffer);
-			m_nSackSize = nNewSize;
-		}
+			void CMatrixStack::Free()
+			{
+				if (m_pStack)
+				{
+					_aligned_free(m_pStack);
+					m_pStack = NULL;
+				}
+			}
 
 #pragma endregion
 
+		}
 	}
 }

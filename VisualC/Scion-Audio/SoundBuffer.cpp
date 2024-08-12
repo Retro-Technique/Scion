@@ -37,73 +37,66 @@
  *
  */
 
-#pragma once
+#include "pch.h"
+#include "SoundBufferImpl.h"
 
 namespace scion
 {
-	namespace gfx
+	namespace engine
 	{
-
-		class CMatrixStack : public CObject
+		namespace sfx
 		{
+
 #pragma region Constructors
 
-			DECLARE_DYNAMIC(CMatrixStack);
+			IMPLEMENT_DYNAMIC(CSoundBuffer, CObject)
 
-		public:
+			CSoundBuffer::CSoundBuffer()
+				: m_pImpl(new priv::CSoundBufferImpl)
+			{
+			
+			}
 
-			CMatrixStack();
-			virtual ~CMatrixStack();
-
-#pragma endregion
-#pragma region Attributes
-
-		private:
-
-			static constexpr const INT_PTR START_SIZE = 16;
-
-		private:
-
-			INT_PTR				m_nSackSize;
-			INT_PTR				m_nCurrent;
-			D2D1::Matrix3x2F*	m_pStack;
+			CSoundBuffer::~CSoundBuffer()
+			{
+				delete m_pImpl;
+			}
 
 #pragma endregion
 #pragma region Operations
 
-		public:
+			HRESULT CSoundBuffer::LoadFromFile(LPCTSTR pszFileName)
+			{
+				return m_pImpl->LoadFromFile(pszFileName);
+			}
 
-			const D2D1::Matrix3x2F Top() const;
-			const D2D1::Matrix3x2F* GetTop() const;
-			INT_PTR GetSize() const;
-			void Pop();
-			void Push();
-			void LoadIdentity();
-			void LoadMatrix(const D2D1::Matrix3x2F& mMatrix);
-			void MultiplyMatrix(const D2D1::Matrix3x2F& mMatrix);
-			void Rotate(FLOAT fAngle, const D2D1_POINT_2F& ptOrigin);
-			void Scale(FLOAT fScale, const D2D1_POINT_2F& ptOrigin);
-			void Translate(const D2D1_SIZE_F& szTranslation);
+			void CSoundBuffer::Unload()
+			{
+				m_pImpl->Unload();
+			}
 
 #pragma endregion
 #pragma region Overridables
 
-		public:
-
 #if defined(_DEBUG) || defined(_AFXDLL)
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
+
+			void CSoundBuffer::AssertValid() const
+			{
+				CObject::AssertValid();
+
+				ASSERT_VALID(m_pImpl);
+			}
+
+			void CSoundBuffer::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+
+				AFXDUMP(m_pImpl);
+			}
+
 #endif
 
 #pragma endregion
-#pragma region Implementations
-
-		private:
-
-			void Allocate(INT_PTR nNewSize);
-
-#pragma endregion
-		};
-
+		}
 	}
 }

@@ -52,11 +52,11 @@ namespace scion
 			namespace priv
 			{
 
-				struct TMMIOFile;
+				class CMMIOFileImpl;
 
 			}
 
-			class AFX_EXT_CLASS CMMIOFile : public CObject
+			class AFX_EXT_API CMMIOFile : public CObject
 			{
 #pragma region Constructors
 
@@ -72,15 +72,7 @@ namespace scion
 
 			private:
 
-				priv::TMMIOFile* m_pImpl;
-
-			private:
-
-				LPBYTE m_pData;
-
-			public:
-
-				inline LPBYTE GetData() const { return m_pData; }
+				priv::CMMIOFileImpl* m_pImpl;
 
 #pragma endregion
 #pragma region Operations
@@ -88,6 +80,8 @@ namespace scion
 			public:
 
 				HRESULT LoadFromFile(LPCTSTR pszFileName);
+				LPVOID GetWaveFormat() const;
+				LPBYTE GetData() const;
 				void Unload();
 
 #pragma endregion
@@ -99,16 +93,6 @@ namespace scion
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-			private:
-
-				HRESULT Open(LPCTSTR pszFileName);
-				HRESULT StartRead();
-				HRESULT Read(DWORD uRead, LPBYTE pData);
-				void Close();
 
 #pragma endregion
 			};

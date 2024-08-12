@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Views">
+      <UniqueIdentifier>{ed152242-8c4f-4b32-8141-5092d3b4ff10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Documents">
+      <UniqueIdentifier>{60dbf4e2-d9b3-4742-9b42-aedb44898038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Frames">
+      <UniqueIdentifier>{5a9cf8f9-e548-4ba6-a715-0bc863b8aadb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Utils">
+      <UniqueIdentifier>{f849bd77-d3f6-48ec-b8eb-aa3a3bbfceaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Documents">
+      <UniqueIdentifier>{0d90c9d0-0ccb-4740-83ed-e519e91f68c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Frames">
+      <UniqueIdentifier>{1744f523-889a-4e36-bd27-dc4bfa7c7519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Views">
+      <UniqueIdentifier>{a59475c8-9d13-4688-9dad-6e1acb750f8e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="MainApp.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="MainView.h">
+      <Filter>Fichiers d%27en-tête\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="MainDocument.h">
+      <Filter>Fichiers d%27en-tête\Documents</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Fichiers d%27en-tête\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.h">
+      <Filter>Fichiers d%27en-tête\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Messages.h">
+      <Filter>Fichiers d%27en-tête\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>Fichiers d%27en-tête\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="MainApp.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="MainDocument.cpp">
+      <Filter>Fichiers sources\Documents</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Fichiers sources\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="MainView.cpp">
+      <Filter>Fichiers sources\Views</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Application.rc">
+      <Filter>Fichiers de ressources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\userimages.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\ApplicationDoc.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\Application.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\Toolbar256.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Application.rc2">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+  </ItemGroup>
+</Project>

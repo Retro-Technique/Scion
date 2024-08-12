@@ -38,6 +38,7 @@
  */
 
 #include "pch.h"
+#include "AudioManagerImpl.h"
 
 namespace scion
 {
@@ -45,217 +46,57 @@ namespace scion
 	{
 		namespace sfx
 		{
-			namespace priv
-			{
-
-				struct TAudioDevice
-				{
-					IDirectSound* _pDSDevice;
-					IDirectSoundBuffer* _pDSPrimaryBuffer;					
-				};
-
-			}
 
 #pragma region Constructors
 
-			IMPLEMENT_DYNCREATE(CAudioManager, CWinThread)
+				IMPLEMENT_DYNAMIC(CAudioManager, CObject)
 
-			CAudioManager::CAudioManager()
-				: m_pImpl(NULL)
-			{
-				m_pImpl = new priv::TAudioDevice{ 0 };
-			}
+				CAudioManager::CAudioManager()
+				{
+				
+				}
 
-			CAudioManager::~CAudioManager()
-			{
-				delete m_pImpl;
-			}
+				CAudioManager::~CAudioManager()
+				{
+					
+				}
 
 #pragma endregion
 #pragma region Operations
 
-			HRESULT CAudioManager::Initialize(HWND hWnd)
-			{
-				if (!hWnd)
+				HRESULT CAudioManager::Initialize(CWnd* pWnd)
 				{
-					return E_INVALIDARG;
+					return AudioManager.Initialize(pWnd);
 				}
 
-				HRESULT hr = S_OK;
-
-				do
+				void CAudioManager::Quit()
 				{
-					hr = CreateDevice(hWnd);
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-					hr = CreatePrimaryBuffer();
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-					hr = StartThread();
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-				} while (FALSE);
-
-				if (FAILED(hr))
-				{
-					Quit();
+					AudioManager.Quit();
 				}
-
-				return hr;
-			}
-
-			void CAudioManager::Quit()
-			{
-				StopThread();
-				DestroyPrimaryBuffer();
-				DestroyDevice();
-			}
 
 #pragma endregion
 #pragma region Overridables
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 
-			void CAudioManager::AssertValid() const
-			{
-				CWinThread::AssertValid();
+				void CAudioManager::AssertValid() const
+				{
+					CObject::AssertValid();
 
-				ASSERT_POINTER(m_pImpl, priv::TAudioDevice);
-			}
+					ASSERT_VALID(&AudioManager);
+				}
 
-			void CAudioManager::Dump(CDumpContext& dc) const
-			{
-				CWinThread::Dump(dc);
-			}
+				void CAudioManager::Dump(CDumpContext& dc) const
+				{
+					CObject::Dump(dc);
+
+					AFXDUMP(&AudioManager);
+				}
 
 #endif
 
 #pragma endregion
-#pragma region Implementations
 
-			HRESULT CAudioManager::CreateDevice(HWND hWnd)
-			{
-				ASSERT(hWnd);
-
-				HRESULT hr = S_OK;
-
-				do
-				{
-					hr = DirectSoundCreate(NULL, &m_pImpl->_pDSDevice, NULL);
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-					hr = m_pImpl->_pDSDevice->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-				} while (FALSE);
-
-				return hr;
-			}
-
-			HRESULT CAudioManager::CreatePrimaryBuffer()
-			{
-				HRESULT hr = S_OK;
-
-				do
-				{
-					DSBUFFERDESC DSBufferDesc = { 0 };
-					DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
-					DSBufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
-
-					hr = m_pImpl->_pDSDevice->CreateSoundBuffer(&DSBufferDesc, &m_pImpl->_pDSPrimaryBuffer, NULL);
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-					WAVEFORMATEX DSWaveFormat = { 0 };
-					DSWaveFormat.wFormatTag = WAVE_FORMAT_PCM;
-					DSWaveFormat.nChannels = DEFAULT_CHANNEL_COUNT;
-					DSWaveFormat.nSamplesPerSec = DEFAULT_FREQUENCY;
-					DSWaveFormat.wBitsPerSample = DEFAULT_FORMAT;
-					DSWaveFormat.nBlockAlign = DSWaveFormat.nChannels * DSWaveFormat.wBitsPerSample;
-					DSWaveFormat.nAvgBytesPerSec = DSWaveFormat.nSamplesPerSec * DSWaveFormat.nBlockAlign;
-
-					hr = m_pImpl->_pDSPrimaryBuffer->SetFormat(&DSWaveFormat);
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-					hr = m_pImpl->_pDSPrimaryBuffer->Play(0, 0, DSBPLAY_LOOPING);
-					if (FAILED(hr))
-					{
-						break;
-					}
-
-				} while (FALSE);
-		
-				return hr;
-			}
-
-			HRESULT CAudioManager::StartThread()
-			{
-				BOOL bSucceeded = CreateThread();
-				if (!bSucceeded)
-				{
-					return E_FAIL;
-				}
-				
-				return S_OK;
-			}
-
-			void CAudioManager::StopThread()
-			{
-				PostThreadMessage(WM_QUIT, 0, 0);
-			}
-
-			void CAudioManager::DestroyPrimaryBuffer()
-			{
-				if (m_pImpl->_pDSPrimaryBuffer)
-				{
-					m_pImpl->_pDSPrimaryBuffer->Release();
-					m_pImpl->_pDSPrimaryBuffer = NULL;
-				}
-			}
-
-			void CAudioManager::DestroyDevice()
-			{
-				if (m_pImpl->_pDSDevice)
-				{
-					m_pImpl->_pDSDevice->Release();
-					m_pImpl->_pDSDevice = NULL;
-				}
-			}
-
-#pragma endregion
-#pragma region Messages
-
-			BEGIN_MESSAGE_MAP(CAudioManager, CWinThread)
-				ON_THREAD_MESSAGE(WM_SOUND_HANDLING, OnSoundHandling)
-			END_MESSAGE_MAP()
-
-			void CAudioManager::OnSoundHandling(WPARAM wParam, LPARAM lParam)
-			{
-				UNREFERENCED_PARAMETER(wParam);
-				UNREFERENCED_PARAMETER(lParam);
-			}
-
-#pragma endregion
 		}
 	}
 }

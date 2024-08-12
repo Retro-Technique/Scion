@@ -10,10 +10,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ErrorCode.h">
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\include\Scion\Common\ErrorCode.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\include\Scion\Common\CommonIncludes.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ErrorCode.mc" />

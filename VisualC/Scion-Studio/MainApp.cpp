@@ -28,116 +28,6 @@ CMainApp::CMainApp() noexcept
 CMainApp theApp;
 
 #pragma endregion
-#pragma region Operations
-
-CString CMainApp::GetVersion() const
-{
-	CString strVersion;
-
-	TCHAR szFullPath[1024];
-
-	GetModuleFileName(NULL, szFullPath, ARRAYSIZE(szFullPath));
-
-	DWORD       uVerHnd = 0;
-	const DWORD dwVerInfoSize = GetFileVersionInfoSize(szFullPath, &uVerHnd);
-	if (dwVerInfoSize)
-	{
-		if (uVerHnd != 0)
-		{
-			return strVersion;
-		}
-
-		HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, dwVerInfoSize);
-		if (!hMem)
-		{
-			return strVersion;
-		}
-
-		LPSTR pszVffInfo = reinterpret_cast <CHAR*>(GlobalLock(hMem));
-		if (!pszVffInfo)
-		{
-			GlobalFree(hMem);
-			return strVersion;
-		}
-
-		GetFileVersionInfo(szFullPath, uVerHnd, dwVerInfoSize, pszVffInfo);
-
-		struct LANGANDCODEPAGE
-		{
-			WORD uLanguage;
-			WORD uCodePage;
-
-		}* pTranslate = NULL;
-
-		UINT uTranslate = 0;
-
-		BOOL bRet = VerQueryValue(pszVffInfo,
-			_T("\\VarFileInfo\\Translation"),
-			reinterpret_cast <LPVOID*>(&pTranslate),
-			&uTranslate);
-		if (!bRet)
-		{
-			uTranslate = 0;
-		}
-
-		struct
-		{
-			LPCTSTR pszSubBlock;
-			LPCTSTR pszBuffer;
-			UINT    nBufferLen;
-		} Queries[] =
-		{
-			{ _T("ProductVersion"), NULL, 0 },
-			{ _T("ProductName"),    NULL, 0 }
-		};
-		constexpr const UINT uQueryCount = ARRAYSIZE(Queries);
-
-		for (UINT i = 0; i < uQueryCount; i++)
-		{
-			for (UINT j = 0; j < (uTranslate / sizeof(LANGANDCODEPAGE)); j++)
-			{
-				CString strSubBlock;
-				strSubBlock.Format(_T("\\StringFileInfo\\%04x%04x\\%s"),
-					pTranslate[j].uLanguage,
-					pTranslate[j].uCodePage,
-					Queries[i].pszSubBlock);
-
-				bRet = VerQueryValue(reinterpret_cast <LPVOID>(pszVffInfo),
-					strSubBlock.GetString(),
-					(LPVOID*)&Queries[i].pszBuffer,
-					&Queries[i].nBufferLen);
-				if (bRet)
-				{
-					break;
-				}
-			}
-
-			if (!bRet)
-			{
-				Queries[i].pszBuffer = _T("???");
-			}
-		}
-
-		strVersion.Format(_T("%s v%s"), Queries[1].pszBuffer, Queries[0].pszBuffer);
-
-		GlobalUnlock(hMem);
-		GlobalFree(hMem);
-	}
-
-#ifdef _WIN64
-	strVersion += _T(" x64");
-#else
-	strVersion += _T(" x86");
-#endif
-
-#ifdef _DEBUG
-	strVersion += _T(" DEBUG");
-#endif
-
-	return strVersion;
-}
-
-#pragma endregion
 #pragma region Overridables
 
 BOOL CMainApp::InitInstance()
@@ -148,6 +38,8 @@ BOOL CMainApp::InitInstance()
 
 	SetRegistryKey(_T("Retro Technique"));
 	LoadStdProfileSettings(4);
+
+	InitAppInfo();
 
 	InitContextMenuManager();
 
@@ -191,12 +83,28 @@ BOOL CMainApp::InitInstance()
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
+#ifdef APP_MODE_MDI
 	if (cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew)
 	{
 		cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 	}
-	
+#endif
+
+	if (!EnableD2DSupport())
+	{
+		return FALSE;
+	}
+
 	if (!ProcessShellCommand(cmdInfo))
+	{
+		return FALSE;
+	}
+
+	_AFX_D2D_STATE* pD2DState = AfxGetD2DState();
+	CWnd* pMainWnd = AfxGetMainWnd();
+
+	HRESULT hr = m_GameEngine.Initialize(pMainWnd, pD2DState);
+	if (FAILED(hr))
 	{
 		return FALSE;
 	}
@@ -208,12 +116,14 @@ BOOL CMainApp::InitInstance()
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
 #endif
-
+	
 	return TRUE;
 }
 
 int CMainApp::ExitInstance()
 {
+	m_GameEngine.Quit();
+
 	return CWinAppEx::ExitInstance();
 }
 
@@ -234,6 +144,105 @@ void CMainApp::LoadCustomState()
 void CMainApp::SaveCustomState()
 {
 
+}
+
+#pragma endregion
+#pragma region Implementations
+
+void CMainApp::InitAppInfo()
+{
+	TCHAR szFullPath[1024];
+
+	GetModuleFileName(NULL, szFullPath, ARRAYSIZE(szFullPath));
+
+	DWORD       uVerHnd = 0;
+	const DWORD dwVerInfoSize = GetFileVersionInfoSize(szFullPath, &uVerHnd);
+	if (dwVerInfoSize)
+	{
+		if (uVerHnd != 0)
+		{
+			return;
+		}
+
+		HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, dwVerInfoSize);
+		if (!hMem)
+		{
+			return;
+		}
+
+		LPSTR pszVffInfo = reinterpret_cast <CHAR*>(GlobalLock(hMem));
+		if (!pszVffInfo)
+		{
+			GlobalFree(hMem);
+			return;
+		}
+
+		GetFileVersionInfo(szFullPath, uVerHnd, dwVerInfoSize, pszVffInfo);
+
+		struct LANGANDCODEPAGE
+		{
+			WORD uLanguage;
+			WORD uCodePage;
+
+		}*pTranslate = NULL;
+
+		UINT uTranslate = 0;
+
+		BOOL bRet = VerQueryValue(pszVffInfo,
+			_T("\\VarFileInfo\\Translation"),
+			reinterpret_cast <LPVOID*>(&pTranslate),
+			&uTranslate);
+		if (!bRet)
+		{
+			uTranslate = 0;
+		}
+
+		struct
+		{
+			LPCTSTR pszSubBlock;
+			LPCTSTR pszBuffer;
+			UINT    nBufferLen;
+		} Queries[] =
+		{
+			{ _T("ProductVersion"), NULL, 0 },
+			{ _T("ProductName"),    NULL, 0 },
+			{ _T("LegalCopyright"), NULL, 0 }
+		};
+		constexpr const UINT uQueryCount = ARRAYSIZE(Queries);
+
+		for (UINT i = 0; i < uQueryCount; i++)
+		{
+			for (UINT j = 0; j < (uTranslate / sizeof(LANGANDCODEPAGE)); j++)
+			{
+				CString strSubBlock;
+				strSubBlock.Format(_T("\\StringFileInfo\\%04x%04x\\%s"),
+					pTranslate[j].uLanguage,
+					pTranslate[j].uCodePage,
+					Queries[i].pszSubBlock);
+
+				bRet = VerQueryValue(reinterpret_cast <LPVOID>(pszVffInfo),
+					strSubBlock.GetString(),
+					(LPVOID*)&Queries[i].pszBuffer,
+					&Queries[i].nBufferLen);
+				if (bRet)
+				{
+					break;
+				}
+			}
+
+			if (!bRet)
+			{
+				Queries[i].pszBuffer = _T("???");
+			}
+		}
+
+		m_strProductVersion = Queries[0].pszBuffer;
+		m_strProductName = Queries[1].pszBuffer;
+		m_strLegalCopyright = Queries[2].pszBuffer;
+
+		GlobalUnlock(hMem);
+		GlobalFree(hMem);
+	}
 }
 
 #pragma endregion

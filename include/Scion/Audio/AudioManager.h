@@ -49,18 +49,12 @@ namespace scion
 	{
 		namespace sfx
 		{
-			namespace priv
-			{
 
-				struct TAudioDevice;
-
-			}
-
-			class AFX_EXT_CLASS CAudioManager : public CWinThread
+			class AFX_EXT_CLASS CAudioManager : public CObject
 			{
 #pragma region Constructors
 
-				DECLARE_DYNCREATE(CAudioManager)
+				DECLARE_DYNAMIC(CAudioManager)
 
 			public:
 
@@ -68,24 +62,11 @@ namespace scion
 				virtual ~CAudioManager();
 
 #pragma endregion
-#pragma region Attributes
-
-			private:
-
-				static constexpr const WORD DEFAULT_CHANNEL_COUNT = 2;
-				static constexpr const WORD DEFAULT_FREQUENCY = 44100;
-				static constexpr const WORD DEFAULT_FORMAT = 16;
-
-			private:
-
-				priv::TAudioDevice* m_pImpl;
-
-#pragma endregion
 #pragma region Operations
 
 			public:
 
-				HRESULT Initialize(HWND hWnd);
+				HRESULT Initialize(CWnd* pWnd);
 				void Quit();
 
 #pragma endregion
@@ -97,27 +78,6 @@ namespace scion
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-			private:
-
-				HRESULT CreateDevice(HWND hWnd);
-				HRESULT CreatePrimaryBuffer();
-				HRESULT StartThread();
-				void StopThread();
-				void DestroyPrimaryBuffer();
-				void DestroyDevice();
-
-#pragma endregion
-#pragma region Messages
-
-			private:
-
-				DECLARE_MESSAGE_MAP()
-
-				afx_msg void OnSoundHandling(WPARAM wParam, LPARAM lParam);
 
 #pragma endregion
 			};

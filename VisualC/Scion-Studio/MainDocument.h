@@ -12,6 +12,21 @@ protected:
 	virtual ~CMainDocument();
 
 #pragma endregion
+#pragma region Attributes
+
+private:
+
+
+#pragma endregion
+#pragma region Operations
+
+public:
+
+	void InitialUpdateScene();
+	void UpdateScene();
+	void DrawScene();
+
+#pragma endregion
 #pragma region Overridables
 
 public:
