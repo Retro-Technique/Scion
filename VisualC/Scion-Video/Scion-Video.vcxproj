@@ -242,6 +242,12 @@
   <ItemGroup>
     <ResourceCompile Include="Scion-Video.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Scion-Common\Scion-Common.vcxproj">
+      <Project>{a03167f6-097a-406e-b924-71ca4930db16}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
