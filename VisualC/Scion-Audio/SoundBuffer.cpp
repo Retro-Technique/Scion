@@ -85,6 +85,21 @@ namespace scion
 				return m_pImpl->GetSampleRate();
 			}
 
+			const LPBYTE CSoundBuffer::GetData() const
+			{
+				return m_pImpl->GetData();
+			}
+
+			DWORD CSoundBuffer::GetSize() const
+			{
+				return m_pImpl->GetSize();
+			}
+
+			LPCVOID CSoundBuffer::GetWaveFormat() const
+			{
+				return m_pImpl->GetWaveFormat();
+			}
+
 			void CSoundBuffer::Unload()
 			{
 				m_pImpl->Unload();

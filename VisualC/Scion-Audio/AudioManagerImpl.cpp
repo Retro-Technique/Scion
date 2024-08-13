@@ -96,6 +96,12 @@ namespace scion
 							break;
 						}
 
+						hr = CreateListener();
+						if (FAILED(hr))
+						{
+							break;
+						}
+
 						hr = StartThread();
 						if (FAILED(hr))
 						{
@@ -114,6 +120,9 @@ namespace scion
 
 				HRESULT CAudioManagerImpl::CreateSecondaryBuffer(LPCDSBUFFERDESC pBufferDesc, LPDIRECTSOUNDBUFFER* ppBuffer)
 				{
+					ASSERT_POINTER(pBufferDesc, DSBUFFERDESC);
+					ASSERT_NULL_OR_POINTER(*ppBuffer, IDirectSoundBuffer);
+
 					if (m_pDevice)
 					{
 						return m_pDevice->CreateSoundBuffer(pBufferDesc, ppBuffer, NULL);
@@ -122,9 +131,23 @@ namespace scion
 					return E_FAIL;
 				}
 
+				HRESULT CAudioManagerImpl::DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer)
+				{
+					ASSERT_POINTER(pOriginalBuffer, IDirectSoundBuffer);
+					ASSERT_NULL_OR_POINTER(*ppDuplicateBuffer, IDirectSoundBuffer);
+
+					if (m_pDevice)
+					{
+						return m_pDevice->DuplicateSoundBuffer(pOriginalBuffer, ppDuplicateBuffer);
+					}
+
+					return E_FAIL;
+				}
+
 				void CAudioManagerImpl::Quit()
 				{
 					StopThread();
+					DestroyListener();
 					DestroyPrimaryBuffer();
 					DestroyDevice();
 				}
@@ -156,7 +179,7 @@ namespace scion
 
 					do
 					{
-						hr = DirectSoundCreate(NULL, &m_pDevice, NULL);
+						hr = DirectSoundCreate8(NULL, &m_pDevice, NULL);
 						if (FAILED(hr))
 						{
 							break;
@@ -181,7 +204,7 @@ namespace scion
 					{
 						DSBUFFERDESC DSBufferDesc = { 0 };
 						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
-						DSBufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
+						DSBufferDesc.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
 
 						hr = m_pDevice->CreateSoundBuffer(&DSBufferDesc, &m_pPrimaryBuffer, NULL);
 						if (FAILED(hr))
@@ -214,6 +237,47 @@ namespace scion
 					return hr;
 				}
 
+				HRESULT CAudioManagerImpl::CreateListener()
+				{
+					HRESULT hr = S_OK;
+
+					do
+					{
+						hr = m_pPrimaryBuffer->QueryInterface(IID_IDirectSound3DListener8, reinterpret_cast<void**>(&m_pListener));
+						if (FAILED(hr))
+						{
+							break;
+						}
+
+						DS3DLISTENER ds3dListener = { 0 };
+						ds3dListener.dwSize = sizeof(DS3DLISTENER);
+						ds3dListener.vPosition.x = 0.0f;
+						ds3dListener.vPosition.y = 0.0f;
+						ds3dListener.vPosition.z = 0.0f;
+						ds3dListener.vVelocity.x = 0.0f;
+						ds3dListener.vVelocity.y = 0.0f;
+						ds3dListener.vVelocity.z = 0.0f;
+						ds3dListener.vOrientFront.x = 0.0f;
+						ds3dListener.vOrientFront.y = 0.0f;
+						ds3dListener.vOrientFront.z = 1.0f;
+						ds3dListener.vOrientTop.x = 0.0f;
+						ds3dListener.vOrientTop.y = 1.0f;
+						ds3dListener.vOrientTop.z = 0.0f;
+						ds3dListener.flDistanceFactor = 1.0f;
+						ds3dListener.flRolloffFactor = 0.0f;
+						ds3dListener.flDopplerFactor = 0.0f;
+
+						hr = m_pListener->SetAllParameters(&ds3dListener, DS3D_IMMEDIATE);
+						if (FAILED(hr))
+						{
+							break;
+						}
+
+					} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+					return hr;
+				}
+
 				HRESULT CAudioManagerImpl::StartThread()
 				{
 					m_evAudioLoopExit.ResetEvent();
@@ -230,6 +294,15 @@ namespace scion
 				void CAudioManagerImpl::StopThread()
 				{
 					m_evAudioLoopExit.SetEvent();
+				}
+
+				void CAudioManagerImpl::DestroyListener()
+				{
+					if (m_pListener)
+					{
+						m_pListener->Release();
+						m_pListener = NULL;
+					}
 				}
 
 				void CAudioManagerImpl::DestroyPrimaryBuffer()

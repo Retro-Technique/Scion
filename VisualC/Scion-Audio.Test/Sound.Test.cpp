@@ -5,7 +5,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ScionAudioTest
 {
-	TEST_CLASS(SoundBufferTest)
+	TEST_CLASS(SoundTest)
 	{
 	private:
 
@@ -13,7 +13,7 @@ namespace ScionAudioTest
 
 	public:
 
-		SoundBufferTest()
+		SoundTest()
 		{			
 			SetCurrentDirectory(_T("..\\..\\Scion-Audio.Test"));
 
@@ -23,7 +23,7 @@ namespace ScionAudioTest
 			m_AudioManager.Initialize(pWnd);
 		}
 
-		~SoundBufferTest()
+		~SoundTest()
 		{
 			m_AudioManager.Quit();
 		}
@@ -109,8 +109,11 @@ namespace ScionAudioTest
 
 			{
 				scion::engine::sfx::CSoundBuffer SoundBuffer;
+				scion::engine::sfx::CSound Sound;
 
 				hr = SoundBuffer.LoadFromFile(pszFileName);
+
+				hr = Sound.SetBuffer(SoundBuffer);
 
 				durSound = SoundBuffer.GetDuration();
 

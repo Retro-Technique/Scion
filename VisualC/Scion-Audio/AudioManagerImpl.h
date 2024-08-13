@@ -72,9 +72,10 @@ namespace scion
 
 				private:
 
-					LPDIRECTSOUND		m_pDevice;
-					LPDIRECTSOUNDBUFFER m_pPrimaryBuffer;
-					CEvent				m_evAudioLoopExit;
+					LPDIRECTSOUND8				m_pDevice;
+					LPDIRECTSOUNDBUFFER			m_pPrimaryBuffer;
+					LPDIRECTSOUND3DLISTENER8	m_pListener;
+					CEvent						m_evAudioLoopExit;
 
 				public:
 
@@ -91,6 +92,7 @@ namespace scion
 
 					HRESULT Initialize(CWnd* pWnd);
 					HRESULT CreateSecondaryBuffer(LPCDSBUFFERDESC pBufferDesc, LPDIRECTSOUNDBUFFER* ppBuffer);
+					HRESULT DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer);
 					void Quit();
 
 #pragma endregion
@@ -110,8 +112,10 @@ namespace scion
 
 					HRESULT CreateDevice(CWnd* pWnd);
 					HRESULT CreatePrimaryBuffer();
+					HRESULT CreateListener();
 					HRESULT StartThread();
 					void StopThread();
+					void DestroyListener();
 					void DestroyPrimaryBuffer();
 					void DestroyDevice();
 					void OnAudioLoop();

@@ -79,7 +79,7 @@ namespace scion
 
 			public:
 
-				void SetBuffer(const CSoundBuffer& SoundBuffer);
+				HRESULT SetBuffer(const CSoundBuffer& SoundBuffer);
 				const CSoundBuffer* GetBuffer() const;
 
 #pragma endregion

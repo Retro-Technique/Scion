@@ -227,8 +227,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Scion-Audio.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundBuffer.cpp" />
     <ClCompile Include="SoundBufferImpl.cpp" />
+    <ClCompile Include="SoundImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Scion-Audio.rc2" />
@@ -236,6 +238,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Scion\Audio\AudioManager.h" />
+    <ClInclude Include="..\..\include\Scion\Audio\Sound.h" />
     <ClInclude Include="..\..\include\Scion\Audio\SoundBuffer.h" />
     <ClInclude Include="AudioManagerImpl.h" />
     <ClInclude Include="framework.h" />
@@ -243,6 +246,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SoundBufferImpl.h" />
+    <ClInclude Include="SoundImpl.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

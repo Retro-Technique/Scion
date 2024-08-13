@@ -39,6 +39,8 @@
 
 #include "pch.h"
 #include "SoundImpl.h"
+#include "AudioManagerImpl.h"
+#include "SoundBufferImpl.h"
 
 namespace scion
 {
@@ -48,32 +50,80 @@ namespace scion
 		{
 			namespace priv
 			{
+
 #pragma region Constructors
 
 				IMPLEMENT_DYNAMIC(CSoundImpl, CObject)
 
 				CSoundImpl::CSoundImpl()
-					: m_pSoundBuffer(NULL)
+					: m_pSecondaryBuffer(NULL)
 				{
 
 				}
 
 				CSoundImpl::~CSoundImpl()
 				{
-
+					
 				}
 
 #pragma endregion
 #pragma region Operations
 
-				void CSoundImpl::SetBuffer(const CSoundBuffer& SoundBuffer)
+				HRESULT CSoundImpl::SetBuffer(const CSoundBuffer& SoundBuffer)
 				{
-					m_pSoundBuffer = &SoundBuffer;
+					HRESULT hr = S_OK;
+
+					const LPBYTE pBufferPtr = SoundBuffer.GetData();
+					const UINT uBufferSize = SoundBuffer.GetSize();
+					LPCWAVEFORMATEX pWaveFormat = static_cast<LPCWAVEFORMATEX>(SoundBuffer.GetWaveFormat());
+
+					do
+					{
+						DSBUFFERDESC DSBufferDesc = { 0 };
+						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
+						DSBufferDesc.dwFlags = 0ul;
+						DSBufferDesc.dwFlags |= DSBCAPS_STATIC;
+						DSBufferDesc.dwFlags |= DSBCAPS_CTRLDEFAULT | DSBCAPS_GETCURRENTPOSITION2;
+						DSBufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
+						DSBufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
+						DSBufferDesc.dwBufferBytes = uBufferSize;
+						DSBufferDesc.lpwfxFormat = const_cast<LPWAVEFORMATEX>(pWaveFormat);
+
+						hr = AudioManager.CreateSecondaryBuffer(&DSBufferDesc, &m_pSecondaryBuffer);
+						if (FAILED(hr))
+						{
+							break;
+						}
+
+						LPBYTE pDstData = NULL;
+						DWORD uLength = 0ul;
+
+						hr = m_pSecondaryBuffer->Lock(0ul, DSBufferDesc.dwBufferBytes
+							, reinterpret_cast<void**>(&pDstData), &uLength
+							, NULL, NULL
+							, 0ul); 
+						if (FAILED(hr))
+						{
+							break;
+						}
+
+						//pDstData = pBufferPtr;
+						CopyMemory(pDstData, pBufferPtr, uLength);
+					
+						hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL);
+						if (FAILED(hr))
+						{
+							break;
+						}
+
+					} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+					return hr;
 				}
 
 				const CSoundBuffer* CSoundImpl::GetBuffer() const
 				{
-					return m_pSoundBuffer;
+					return NULL;
 				}
 
 #pragma endregion
@@ -91,6 +141,7 @@ namespace scion
 				{
 					CObject::Dump(dc);
 
+					
 				}
 
 #endif

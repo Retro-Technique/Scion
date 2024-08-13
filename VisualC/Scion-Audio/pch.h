@@ -16,6 +16,7 @@
 #include <dsound.h>
 
 #pragma comment(lib, "Dsound.lib")
+#pragma comment(lib, "Dxguid.lib")
 #pragma comment(lib, "Winmm.lib")
 
 #define WM_SOUND_HANDLING WM_USER + 666

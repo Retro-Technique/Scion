@@ -63,9 +63,16 @@ namespace scion
 #pragma region Attributes
 
 				private:
+					
+					LPWAVEFORMATEX	m_pWaveFormat;					
+					LPBYTE			m_pData;
+					UINT			m_uDataSize;
 
-					LPDIRECTSOUNDBUFFER m_pSecondaryBuffer;
-					CTimeSpan			m_durSound;
+				public:
+
+					inline const LPWAVEFORMATEX GetWaveFormat() const { return m_pWaveFormat; }
+					inline const LPBYTE GetData() const { return m_pData; }
+					inline UINT GetSize() const { return m_uDataSize; }
 
 #pragma endregion
 #pragma region Operations
@@ -73,7 +80,7 @@ namespace scion
 				public:
 
 					HRESULT LoadFromFile(LPCTSTR pszFileName);
-					const CTimeSpan& GetDuration() const;
+					CTimeSpan GetDuration() const;
 					WORD GetChannelCount() const;
 					DWORD GetSampleRate() const;
 					void Unload();
@@ -87,6 +94,18 @@ namespace scion
 					void AssertValid() const override;
 					void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+#pragma region Implementations
+
+				private:
+
+					HRESULT Open(LPCTSTR pszFileName, HMMIO& hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF);
+					HRESULT StartRead(HMMIO hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF);
+					HRESULT Allocate(const MMCKINFO& mmckInfo);
+					HRESULT Read(HMMIO hMMIO, DWORD uRead, LPBYTE pData);
+					void Close(HMMIO hMMIO);
+					HRESULT MMRESULTToHRESULT(MMRESULT mmRes);
 
 #pragma endregion
 				};

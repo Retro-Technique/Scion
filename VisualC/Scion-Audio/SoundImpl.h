@@ -64,14 +64,14 @@ namespace scion
 
 				private:
 
-					const CSoundBuffer* m_pSoundBuffer;
+					LPDIRECTSOUNDBUFFER m_pSecondaryBuffer;
 
 #pragma endregion
 #pragma region Operations
 
 				public:
 
-					void SetBuffer(const CSoundBuffer& SoundBuffer);
+					HRESULT SetBuffer(const CSoundBuffer& SoundBuffer);
 					const CSoundBuffer* GetBuffer() const;
 
 #pragma endregion

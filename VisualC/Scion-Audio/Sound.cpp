@@ -46,57 +46,58 @@ namespace scion
 	{
 		namespace sfx
 		{
-
+	
 #pragma region Constructors
 
-			IMPLEMENT_DYNAMIC(CSound, CObject)
+				IMPLEMENT_DYNAMIC(CSound, CObject)
 
-			CSound::CSound()
-				: m_pImpl(new priv::CSoundImpl)
-			{
+				CSound::CSound()
+					: m_pImpl(new priv::CSoundImpl)
+				{
 
-			}
+				}
 
-			CSound::~CSound()
-			{
-				delete m_pImpl;
-			}
+				CSound::~CSound()
+				{
+					delete m_pImpl;
+				}
 
 #pragma endregion
 #pragma region Operations
 
-			void CSound::SetBuffer(const CSoundBuffer& SoundBuffer)
-			{
-				m_pImpl->SetBuffer(SoundBuffer);
-			}
+				HRESULT CSound::SetBuffer(const CSoundBuffer& SoundBuffer)
+				{
+					return m_pImpl->SetBuffer(SoundBuffer);
+				}
 
-			const CSoundBuffer* CSound::GetBuffer() const
-			{
-				return m_pImpl->GetBuffer();
-			}
+				const CSoundBuffer* CSound::GetBuffer() const
+				{
+					return m_pImpl->GetBuffer();
+				}
 
 #pragma endregion
 #pragma region Overridables
 
 #if defined(_DEBUG) || defined(_AFXDLL)
 
-			void CSound::AssertValid() const
-			{
-				CObject::AssertValid();
+				void CSound::AssertValid() const
+				{
+					CObject::AssertValid();
 
-				ASSERT_VALID(m_pImpl);
-			}
+					ASSERT_VALID(m_pImpl);
+				}
 
-			void CSound::Dump(CDumpContext& dc) const
-			{
-				CObject::Dump(dc);
+				void CSound::Dump(CDumpContext& dc) const
+				{
+					CObject::Dump(dc);
 
-				AFXDUMP(m_pImpl);
-			}
+					AFXDUMP(m_pImpl);
+				}
 
 #endif
 
 #pragma endregion
+
 		}
 	}
 }
