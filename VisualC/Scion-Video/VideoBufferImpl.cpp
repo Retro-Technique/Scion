@@ -56,7 +56,6 @@ namespace scion
 				CVideoBufferImpl::CVideoBufferImpl()
 					: m_pAviFile(NULL)
 					, m_pAviStream(NULL)
-					, m_aviStreamInfo { 0 }
 				{
 
 				}
@@ -89,13 +88,7 @@ namespace scion
 						if (FAILED(hr))
 						{
 							break;
-						}
-
-						hr = AVIStreamInfo(m_pAviStream, &m_aviStreamInfo, sizeof(AVISTREAMINFO));
-						if (FAILED(hr))
-						{
-							break;
-						}
+						}						
 
 						PGETFRAME pGetFrame = AVIStreamGetFrameOpen(m_pAviStream, NULL);
 						if (!pGetFrame)
@@ -123,28 +116,36 @@ namespace scion
 
 				FLOAT CVideoBufferImpl::GetFrameRate() const
 				{
-					if (!IsLoaded())
+					if (!m_pAviFile)
 					{
 						return 0.f;
 					}
 
-					if (m_aviStreamInfo.dwScale == 0)
+					AVISTREAMINFO aviStreamInfo = { 0 };
+					HRESULT hr = AVIStreamInfo(m_pAviStream, &aviStreamInfo, sizeof(AVISTREAMINFO));
+					if (FAILED(hr))
 					{
 						return 0.f;
 					}
 
-					return static_cast<FLOAT>(m_aviStreamInfo.dwRate) / m_aviStreamInfo.dwScale;
+					return static_cast<FLOAT>(aviStreamInfo.dwRate) / aviStreamInfo.dwScale;
 				}
 
 				CTimeSpan CVideoBufferImpl::GetDuration() const
 				{
-					const FLOAT fFramePerSecond = GetFrameRate();
-					if (fFramePerSecond == 0.f)
+					if (!m_pAviFile)
 					{
 						return CTimeSpan();
 					}
 
-					const FLOAT fSeconds = static_cast<FLOAT>(m_aviStreamInfo.dwLength) / GetFrameRate();
+					AVISTREAMINFO aviStreamInfo = { 0 };
+					HRESULT hr = AVIStreamInfo(m_pAviStream, &aviStreamInfo, sizeof(AVISTREAMINFO));
+					if (FAILED(hr))
+					{
+						return CTimeSpan();
+					}
+
+					const FLOAT fSeconds = static_cast<FLOAT>(aviStreamInfo.dwLength) / GetFrameRate();
 					const INT nSeconds = static_cast<INT>(fSeconds);
 
 					return CTimeSpan(0, 0, 0, nSeconds);
@@ -152,8 +153,6 @@ namespace scion
 
 				void CVideoBufferImpl::Unload()
 				{
-					ZeroMemory(&m_aviStreamInfo, sizeof(AVISTREAMINFO));
-
 					if (m_pAviStream)
 					{
 						AVIStreamRelease(m_pAviStream);

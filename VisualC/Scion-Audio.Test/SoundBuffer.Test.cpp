@@ -31,51 +31,61 @@ namespace ScionAudioTest
 		TEST_METHOD(TestLoadBOURB1M1)
 		{			
 			BOOL bIsDifferent = TRUE;
+			CTimeSpan durSound;
 
-			HRESULT hr = LoadWav(FILENAMES[0], bIsDifferent);
+			HRESULT hr = LoadWav(FILENAMES[0], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
 			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::AreEqual(17l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadGRPLAFF1)
 		{
 			BOOL bIsDifferent = TRUE;
+			CTimeSpan durSound;
 
-			HRESULT hr = LoadWav(FILENAMES[1], bIsDifferent);
+			HRESULT hr = LoadWav(FILENAMES[1], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
 			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::AreEqual(2l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadHELLO)
 		{
 			BOOL bIsDifferent = TRUE;
+			CTimeSpan durSound;
 
-			HRESULT hr = LoadWav(FILENAMES[2], bIsDifferent);
+			HRESULT hr = LoadWav(FILENAMES[2], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
 			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::AreEqual(5l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadSIREN1)
 		{
 			BOOL bIsDifferent = TRUE;
+			CTimeSpan durSound;
 
-			HRESULT hr = LoadWav(FILENAMES[3], bIsDifferent);
+			HRESULT hr = LoadWav(FILENAMES[3], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
 			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::AreEqual(3l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadEQUITATION)
 		{
 			BOOL bIsDifferent = TRUE;
+			CTimeSpan durSound;
 
-			HRESULT hr = LoadWav(FILENAMES[4], bIsDifferent);
+			HRESULT hr = LoadWav(FILENAMES[4], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
 			Assert::IsFalse(SUCCEEDED(hr));
+			Assert::AreEqual(0l, durSound.GetSeconds());
 		}
 
 	private:
@@ -85,7 +95,7 @@ namespace ScionAudioTest
 
 	private:
 
-		HRESULT LoadWav(LPCTSTR pszFileName, BOOL& bIsMemDifferent)
+		HRESULT LoadWav(LPCTSTR pszFileName, CTimeSpan& durSound, BOOL& bIsMemDifferent)
 		{
 #ifdef _DEBUG
 			_CrtMemState State1;
@@ -96,11 +106,14 @@ namespace ScionAudioTest
 #endif
 
 			HRESULT hr = S_OK;
+			
 
 			{
 				scion::engine::sfx::CSoundBuffer SoundBuffer;
 
 				hr = SoundBuffer.LoadFromFile(pszFileName);
+
+				durSound = SoundBuffer.GetDuration();
 
 				SoundBuffer.Unload();
 			}

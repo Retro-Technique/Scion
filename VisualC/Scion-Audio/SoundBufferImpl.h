@@ -65,6 +65,7 @@ namespace scion
 				private:
 
 					LPDIRECTSOUNDBUFFER m_pSecondaryBuffer;
+					CTimeSpan			m_durSound;
 
 #pragma endregion
 #pragma region Operations
@@ -72,6 +73,9 @@ namespace scion
 				public:
 
 					HRESULT LoadFromFile(LPCTSTR pszFileName);
+					const CTimeSpan& GetDuration() const;
+					WORD GetChannelCount() const;
+					DWORD GetSampleRate() const;
 					void Unload();
 
 #pragma endregion

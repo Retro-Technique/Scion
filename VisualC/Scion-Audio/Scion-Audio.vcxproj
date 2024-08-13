@@ -220,7 +220,6 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MMIOFile.cpp" />
-    <ClCompile Include="MMIOFileImpl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -237,11 +236,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Scion\Audio\AudioManager.h" />
-    <ClInclude Include="..\..\include\Scion\Audio\MMIOFile.h" />
     <ClInclude Include="..\..\include\Scion\Audio\SoundBuffer.h" />
     <ClInclude Include="AudioManagerImpl.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MMIOFileImpl.h" />
+    <ClInclude Include="MMIOFile.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SoundBufferImpl.h" />

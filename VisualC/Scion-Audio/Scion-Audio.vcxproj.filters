@@ -24,7 +24,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="MMIOFileImpl.cpp">
+    <ClCompile Include="MMIOFile.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="AudioManagerImpl.cpp">
@@ -34,9 +34,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="AudioManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="MMIOFile.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="SoundBufferImpl.cpp">
@@ -73,11 +70,8 @@
     <ClInclude Include="..\..\include\Scion\Audio\AudioManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="MMIOFileImpl.h">
+    <ClInclude Include="MMIOFile.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Audio\MMIOFile.h">
-      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="SoundBufferImpl.h">
       <Filter>src</Filter>

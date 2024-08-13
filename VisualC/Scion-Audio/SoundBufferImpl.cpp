@@ -40,6 +40,7 @@
 #include "pch.h"
 #include "SoundBufferImpl.h"
 #include "AudioManagerImpl.h"
+#include "MMIOFile.h"
 
 namespace scion
 {
@@ -57,7 +58,7 @@ namespace scion
 				CSoundBufferImpl::CSoundBufferImpl()
 					: m_pSecondaryBuffer(NULL)
 				{
-					
+
 				}
 
 				CSoundBufferImpl::~CSoundBufferImpl()
@@ -85,50 +86,97 @@ namespace scion
 							break;
 						}
 
-						LPBYTE pSrcData = MMIOFile.GetData();
-						LPWAVEFORMATEX pWaveFormat = static_cast<LPWAVEFORMATEX>(MMIOFile.GetWaveFormat());
+						const LPBYTE pSrcData = MMIOFile.GetData();
+						const UINT uDataSize = MMIOFile.GetSize();
+						const LPWAVEFORMATEX pWaveFormat = MMIOFile.GetWaveFormat();
 
 						DSBUFFERDESC DSBufferDesc = { 0 };
 						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
-						DSBufferDesc.dwFlags = 0;
+						DSBufferDesc.dwFlags = 0ul;
 						DSBufferDesc.dwFlags |= DSBCAPS_STATIC;
 						DSBufferDesc.dwFlags |= DSBCAPS_CTRLDEFAULT | DSBCAPS_GETCURRENTPOSITION2;
 						DSBufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
 						DSBufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
-						DSBufferDesc.dwBufferBytes = pWaveFormat->cbSize;
+						DSBufferDesc.dwBufferBytes = uDataSize;
 						DSBufferDesc.lpwfxFormat = pWaveFormat;
-
+						
 						hr = AudioManager.CreateSecondaryBuffer(&DSBufferDesc, &m_pSecondaryBuffer);
 						if (FAILED(hr))
 						{
 							break;
 						}
+						
+						LPBYTE pDstData = NULL;
+						DWORD uLength = 0ul;
 
-						LPBYTE pDstData1 = NULL, pDstData2 = NULL;
-						DWORD uLength1 = 0, uLength2 = 0;
-
-						hr = m_pSecondaryBuffer->Lock(0, DSBufferDesc.dwBufferBytes
-							, reinterpret_cast<void**>(&pDstData1), &uLength1
-							, reinterpret_cast<void**>(&pDstData2), &uLength2
-							, 0L);
+						hr = m_pSecondaryBuffer->Lock(0ul, DSBufferDesc.dwBufferBytes
+							, reinterpret_cast<void**>(&pDstData), &uLength
+							, NULL, NULL
+							, 0ul);
 						if (FAILED(hr))
 						{
 							break;
 						}
 
-						CopyMemory(pDstData1, pSrcData, DSBufferDesc.dwBufferBytes);
+						ASSERT(uLength == DSBufferDesc.dwBufferBytes);
 
-						hr = m_pSecondaryBuffer->Unlock(pDstData1, uLength1, pDstData2, uLength2);
+						CopyMemory(pDstData, pSrcData, DSBufferDesc.dwBufferBytes);
+
+						hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL);
 						if (FAILED(hr))
 						{
 							break;
 						}
+
+						const FLOAT fSeconds = static_cast<FLOAT>(DSBufferDesc.dwBufferBytes) / (pWaveFormat->nAvgBytesPerSec * pWaveFormat->nBlockAlign);
+						const INT nSeconds = static_cast<INT>(fSeconds);
+
+						m_durSound = CTimeSpan(0, 0, 0, nSeconds);
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 					MMIOFile.Unload();
 
 					return hr;
+				}
+
+				const CTimeSpan& CSoundBufferImpl::GetDuration() const
+				{
+					return m_durSound;
+				}
+
+				WORD CSoundBufferImpl::GetChannelCount() const
+				{
+					if (!m_pSecondaryBuffer)
+					{
+						return 0;
+					}
+
+					WAVEFORMATEX WaveFormat = { 0 };
+					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
+					if (FAILED(hr))
+					{
+						return 0;
+					}
+
+					return WaveFormat.nChannels;
+				}
+
+				DWORD CSoundBufferImpl::GetSampleRate() const
+				{
+					if (!m_pSecondaryBuffer)
+					{
+						return 0;
+					}
+
+					WAVEFORMATEX WaveFormat = { 0 };
+					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
+					if (FAILED(hr))
+					{
+						return 0;
+					}
+
+					return WaveFormat.nSamplesPerSec;
 				}
 
 				void CSoundBufferImpl::Unload()
@@ -138,6 +186,8 @@ namespace scion
 						m_pSecondaryBuffer->Release();
 						m_pSecondaryBuffer = NULL;
 					}
+
+					m_durSound = CTimeSpan();
 				}
 
 #pragma endregion
@@ -154,6 +204,10 @@ namespace scion
 				void CSoundBufferImpl::Dump(CDumpContext& dc) const
 				{
 					CObject::Dump(dc);
+
+					dc << _T("Duration: ") << GetDuration() << _T("\n");
+					dc << _T("ChannelCount: ") << GetChannelCount() << _T("\n");
+					dc << _T("SampleRate: ") << GetSampleRate() << _T("\n");
 				}
 
 #endif

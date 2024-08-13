@@ -37,10 +37,6 @@
  *
  */
 
-#ifndef __SCION_AUDIO_H_INCLUDED__
-#error Do not include MMIOFile.h directly, include the Audio.h file
-#endif
-
 #pragma once
 
 namespace scion
@@ -52,51 +48,66 @@ namespace scion
 			namespace priv
 			{
 
-				class CMMIOFileImpl;
-
-			}
-
-			class AFX_EXT_API CMMIOFile : public CObject
-			{
+				class CMMIOFile : public CObject
+				{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CMMIOFile)
+					DECLARE_DYNAMIC(CMMIOFile)
 
-			public:
+				public:
 
-				CMMIOFile();
-				virtual ~CMMIOFile();
+					CMMIOFile();
+					virtual ~CMMIOFile();
 
 #pragma endregion
 #pragma region Attributes
 
-			private:
+				private:
+					
+					LPWAVEFORMATEX	m_pWaveFormat;					
+					LPBYTE			m_pData;
+					UINT			m_uDataSize;
 
-				priv::CMMIOFileImpl* m_pImpl;
+				public:
+
+					inline LPWAVEFORMATEX GetWaveFormat() const { return m_pWaveFormat; }
+					inline LPBYTE GetData() const { return m_pData; }
+					inline UINT GetSize() const { return m_uDataSize; }
 
 #pragma endregion
 #pragma region Operations
 
-			public:
+				public:
 
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				LPVOID GetWaveFormat() const;
-				LPBYTE GetData() const;
-				void Unload();
+					HRESULT LoadFromFile(LPCTSTR pszFileName);
+					void Unload();
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+				public:
 
 #if defined(_DEBUG) || defined(_AFXDLL)
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+					void AssertValid() const override;
+					void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
-			};
+#pragma region Implementations
 
+				private:
+
+					HRESULT Open(LPCTSTR pszFileName, HMMIO& hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF);
+					HRESULT StartRead(HMMIO hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF);
+					HRESULT Allocate(const MMCKINFO& mmckInfo);
+					HRESULT Read(HMMIO hMMIO, DWORD uRead, LPBYTE pData);
+					void Close(HMMIO hMMIO);
+					HRESULT MMRESULTToHRESULT(MMRESULT mmRes);
+
+#pragma endregion
+				};
+
+			}
 		}
 	}
 }

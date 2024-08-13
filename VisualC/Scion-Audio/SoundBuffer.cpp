@@ -70,6 +70,21 @@ namespace scion
 				return m_pImpl->LoadFromFile(pszFileName);
 			}
 
+			CTimeSpan CSoundBuffer::GetDuration() const
+			{
+				return m_pImpl->GetDuration();
+			}
+
+			WORD CSoundBuffer::GetChannelCount() const
+			{
+				return m_pImpl->GetChannelCount();
+			}
+
+			DWORD CSoundBuffer::GetSampleRate() const
+			{
+				return m_pImpl->GetSampleRate();
+			}
+
 			void CSoundBuffer::Unload()
 			{
 				m_pImpl->Unload();

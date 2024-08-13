@@ -66,7 +66,6 @@ namespace scion
 
 					PAVIFILE		m_pAviFile;
 					PAVISTREAM		m_pAviStream;
-					AVISTREAMINFO	m_aviStreamInfo;
 
 #pragma endregion
 #pragma region Operations
