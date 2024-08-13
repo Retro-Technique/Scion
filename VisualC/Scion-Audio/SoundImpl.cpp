@@ -37,15 +37,66 @@
  *
  */
 
-#pragma once
+#include "pch.h"
+#include "SoundImpl.h"
 
-#include <Scion/Common.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace sfx
+		{
+			namespace priv
+			{
+#pragma region Constructors
 
-#ifndef __SCION_AUDIO_H_INCLUDED__
-#define __SCION_AUDIO_H_INCLUDED__
+				IMPLEMENT_DYNAMIC(CSoundImpl, CObject)
 
-#include <Scion/Audio/SoundBuffer.h>
-#include <Scion/Audio/Sound.h>
-#include <Scion/Audio/AudioManager.h>
+				CSoundImpl::CSoundImpl()
+					: m_pSoundBuffer(NULL)
+				{
+
+				}
+
+				CSoundImpl::~CSoundImpl()
+				{
+
+				}
+
+#pragma endregion
+#pragma region Operations
+
+				void CSoundImpl::SetBuffer(const CSoundBuffer& SoundBuffer)
+				{
+					m_pSoundBuffer = &SoundBuffer;
+				}
+
+				const CSoundBuffer* CSoundImpl::GetBuffer() const
+				{
+					return m_pSoundBuffer;
+				}
+
+#pragma endregion
+#pragma region Overridables
+
+#if defined(_DEBUG) || defined(_AFXDLL)
+
+				void CSoundImpl::AssertValid() const
+				{
+					CObject::AssertValid();
+
+				}
+
+				void CSoundImpl::Dump(CDumpContext& dc) const
+				{
+					CObject::Dump(dc);
+
+				}
 
 #endif
+
+#pragma endregion
+			}
+		}
+	}
+}
