@@ -37,6 +37,10 @@
  *
  */
 
+#ifndef __SCION_AUDIO_H_INCLUDED__
+#error Do not include Listener.h directly, include the Audio.h file
+#endif
+
 #pragma once
 
 namespace scion
@@ -45,92 +49,38 @@ namespace scion
 	{
 		namespace sfx
 		{
-			namespace priv
-			{
 
-				class CAudioManagerImpl : public CObject
-				{
+			class AFX_EXT_CLASS CListener : public CObject
+			{
 #pragma region Constructors
 
-					DECLARE_DYNAMIC(CAudioManagerImpl)
+				DECLARE_DYNAMIC(CListener)
 
-				private:
+			public:
 
-					CAudioManagerImpl();
-					virtual ~CAudioManagerImpl();
-
-#pragma endregion
-#pragma region Attributes
-
-				private:
-
-					static constexpr const WORD DEFAULT_CHANNEL_COUNT = 2;
-					static constexpr const WORD DEFAULT_FREQUENCY = 44100;
-					static constexpr const WORD DEFAULT_FORMAT = 16;
-
-					static CAudioManagerImpl ms_Instance;
-
-				private:
-
-					LPDIRECTSOUND8				m_pDevice;
-					LPDIRECTSOUNDBUFFER			m_pPrimaryBuffer;
-					LPDIRECTSOUND3DLISTENER8	m_pListener;
-					CEvent						m_evAudioLoopExit;
-
-				public:
-
-					inline const CEvent& GetExitEvent() const { return m_evAudioLoopExit; }
+				CListener();
+				virtual ~CListener();
 
 #pragma endregion
 #pragma region Operations
 
-				public:
+			public:
 
-					static CAudioManagerImpl& GetInstance();
-
-				public:
-
-					HRESULT Initialize(CWnd* pWnd);
-					HRESULT CreateSecondaryBuffer(LPCDSBUFFERDESC pBufferDesc, LPDIRECTSOUNDBUFFER* ppBuffer);
-					HRESULT DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer);
-					HRESULT SetListenerPosition(FLOAT x, FLOAT y, FLOAT z);
-					void Quit();
+				HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z);
 
 #pragma endregion
 #pragma region Overridables
 
-				public:
+			public:
 
 #if defined(_DEBUG) || defined(_AFXDLL)
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
-#pragma region Implementations
+			};
 
-				private:
-
-					HRESULT CreateDevice(CWnd* pWnd);
-					HRESULT CreatePrimaryBuffer();
-					HRESULT CreateListener();
-					HRESULT StartThread();
-					void StopThread();
-					void DestroyListener();
-					void DestroyPrimaryBuffer();
-					void DestroyDevice();
-					void OnAudioLoop();
-
-				private:
-
-					static UINT AudioThreadProc(LPVOID pData);
-
-#pragma endregion
-				};
-
-			}
 		}
 	}
 }
-
-#define AudioManager scion::engine::sfx::priv::CAudioManagerImpl::GetInstance()

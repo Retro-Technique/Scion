@@ -144,6 +144,16 @@ namespace scion
 					return E_FAIL;
 				}
 
+				HRESULT CAudioManagerImpl::SetListenerPosition(FLOAT x, FLOAT y, FLOAT z)
+				{
+					if (m_pListener)
+					{
+						return E_FAIL;
+					}
+
+					return m_pListener->SetPosition(x, y, z, DS3D_IMMEDIATE);
+				}
+
 				void CAudioManagerImpl::Quit()
 				{
 					StopThread();

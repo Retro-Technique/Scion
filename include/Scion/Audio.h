@@ -46,6 +46,7 @@
 
 #include <Scion/Audio/SoundBuffer.h>
 #include <Scion/Audio/Sound.h>
+#include <Scion/Audio/Listener.h>
 #include <Scion/Audio/AudioManager.h>
 
 #endif

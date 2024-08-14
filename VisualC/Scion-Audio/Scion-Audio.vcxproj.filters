@@ -45,6 +45,9 @@
     <ClCompile Include="MMIOFile.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Listener.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Scion-Audio.def">
@@ -87,6 +90,9 @@
     </ClInclude>
     <ClInclude Include="MMIOFile.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Audio\Listener.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
