@@ -83,9 +83,8 @@ namespace scion
 				CTimeSpan GetDuration() const;
 				WORD GetChannelCount() const;
 				DWORD GetSampleRate() const;
-				const LPBYTE GetData() const;
-				DWORD GetSize() const;
-				LPCVOID GetWaveFormat() const;
+				LPCVOID GetBuffer() const;
+				DWORD GetSize() const;				
 				void Unload();
 
 #pragma endregion

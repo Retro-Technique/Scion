@@ -39,6 +39,8 @@
 
 #include "pch.h"
 #include "SoundBufferImpl.h"
+#include "MMIOFile.h"
+#include "AudioManagerImpl.h"
 
 namespace scion
 {
@@ -54,8 +56,7 @@ namespace scion
 				IMPLEMENT_DYNAMIC(CSoundBufferImpl, CObject)
 
 				CSoundBufferImpl::CSoundBufferImpl()
-					: m_pWaveFormat(NULL)
-					, m_pData(NULL)
+					: m_pSecondaryBuffer(NULL)
 					, m_uDataSize(0)
 				{
 				
@@ -79,47 +80,84 @@ namespace scion
 					}
 
 					HRESULT hr = S_OK;
-					HMMIO hMMIO = NULL;
-					MMCKINFO mmckInfo = { 0 };
-					MMCKINFO mmckInfoRIFF = { 0 };
 
 					do
 					{
-						hr = Open(pszFileName, hMMIO, mmckInfo, mmckInfoRIFF);
+						CMMIOFile MMIOFile;
+
+						hr = MMIOFile.LoadFromFile(pszFileName);
 						if (FAILED(hr))
 						{
 							break;
 						}
 
-						hr = StartRead(hMMIO, mmckInfo, mmckInfoRIFF);
+						const LPBYTE pBufferPtr = MMIOFile.GetData();
+						const UINT uBufferSize = MMIOFile.GetSize();
+						LPCWAVEFORMATEX pWaveFormat = MMIOFile.GetWaveFormat();
+
+						DSBUFFERDESC DSBufferDesc = { 0 };
+						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
+						DSBufferDesc.dwFlags = 0ul;
+						DSBufferDesc.dwFlags |= DSBCAPS_STATIC;
+						DSBufferDesc.dwFlags |= DSBCAPS_CTRLDEFAULT | DSBCAPS_GETCURRENTPOSITION2;
+						DSBufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
+						DSBufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
+						DSBufferDesc.dwBufferBytes = uBufferSize;
+						DSBufferDesc.lpwfxFormat = const_cast<LPWAVEFORMATEX>(pWaveFormat);
+
+						hr = AudioManager.CreateSecondaryBuffer(&DSBufferDesc, &m_pSecondaryBuffer);
 						if (FAILED(hr))
 						{
 							break;
 						}
 
-						hr = Allocate(mmckInfo);
+						LPBYTE pDstData = NULL;
+						DWORD uLength = 0ul;
+
+						hr = m_pSecondaryBuffer->Lock(0ul, DSBufferDesc.dwBufferBytes
+							, reinterpret_cast<void**>(&pDstData), &uLength
+							, NULL, NULL
+							, 0ul);
 						if (FAILED(hr))
 						{
 							break;
 						}
 
-						hr = Read(hMMIO, m_uDataSize, m_pData);
+						CopyMemory(pDstData, pBufferPtr, uLength);
+
+						hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL);
+						if (FAILED(hr))
+						{
+							break;
+						}
+
+						MMIOFile.Unload();
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
-					Close(hMMIO);
+					if (FAILED(hr))
+					{
+						Unload();
+					}
 
 					return hr;
 				}
 
 				CTimeSpan CSoundBufferImpl::GetDuration() const
 				{
-					if (!m_pWaveFormat)
+					if (!m_pSecondaryBuffer)
 					{
 						return CTimeSpan();
 					}
 
-					const FLOAT fSeconds = static_cast<FLOAT>(m_uDataSize) / (m_pWaveFormat->nAvgBytesPerSec * m_pWaveFormat->nBlockAlign);
+					WAVEFORMATEX WaveFormat;
+					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
+					if (FAILED(hr))
+					{
+						return CTimeSpan();
+					}
+
+					const FLOAT fSeconds = static_cast<FLOAT>(m_uDataSize) / (WaveFormat.nAvgBytesPerSec * WaveFormat.nBlockAlign);
 					const INT nSeconds = static_cast<INT>(fSeconds);
 
 					return CTimeSpan(0, 0, 0, nSeconds);
@@ -127,38 +165,46 @@ namespace scion
 
 				WORD CSoundBufferImpl::GetChannelCount() const
 				{
-					if (!m_pWaveFormat)
+					if (!m_pSecondaryBuffer)
 					{
-						return 0;
+						return 0u;
 					}
 
-					return m_pWaveFormat->nChannels;
+					WAVEFORMATEX WaveFormat;
+					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
+					if (FAILED(hr))
+					{
+						return 0u;
+					}
+
+					return WaveFormat.nChannels;
 				}
 
 				DWORD CSoundBufferImpl::GetSampleRate() const
 				{
-					if (!m_pWaveFormat)
+					if (!m_pSecondaryBuffer)
 					{
-						return 0;
+						return 0ul;
 					}
 
-					return m_pWaveFormat->nSamplesPerSec;
+					WAVEFORMATEX WaveFormat;
+					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
+					if (FAILED(hr))
+					{
+						return 0ul;
+					}
+
+					return WaveFormat.nSamplesPerSec;
 				}
 
 				void CSoundBufferImpl::Unload()
 				{
-					if (m_pWaveFormat)
+					if (m_pSecondaryBuffer)
 					{
-						VirtualFree(m_pWaveFormat, m_pWaveFormat->cbSize + sizeof(WAVEFORMATEX), MEM_DECOMMIT);
-						m_pWaveFormat = NULL;
+						m_pSecondaryBuffer->Release();
+						m_pSecondaryBuffer = NULL;
 					}
 
-					if (m_pData)
-					{
-						VirtualFree(m_pData, m_uDataSize, MEM_DECOMMIT);
-						m_pData = NULL;
-					}
-					
 					m_uDataSize = 0;
 				}
 
@@ -183,207 +229,6 @@ namespace scion
 				}
 
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-				HRESULT CSoundBufferImpl::Open(LPCTSTR pszFileName, HMMIO& hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF)
-				{
-					ASSERT_VALID(this);
-					ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
-
-					HRESULT hr = S_OK;
-
-					do
-					{
-						MMIOINFO mmioInfo = { 0 };
-						hMMIO = mmioOpen(const_cast<LPTSTR>(pszFileName), &mmioInfo, MMIO_ALLOCBUF | MMIO_READWRITE);
-						if (!hMMIO)
-						{
-							hr = MMRESULTToHRESULT(mmioInfo.wErrorRet);
-							break;
-						}
-
-						MMRESULT mmRes = mmioDescend(hMMIO, &mmckInfoRIFF, NULL, 0);
-						if (MMSYSERR_NOERROR != mmRes)
-						{
-							hr = MMRESULTToHRESULT(mmRes);
-							break;
-						}
-
-						if ((FOURCC_RIFF != mmckInfoRIFF.ckid) || mmioFOURCC('W', 'A', 'V', 'E') != mmckInfoRIFF.fccType)
-						{
-							hr = E_MMIOERR_NOTWAVEFILE;
-							break;
-						}
-
-						mmckInfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
-						mmRes = mmioDescend(hMMIO, &mmckInfo, &mmckInfoRIFF, MMIO_FINDCHUNK);
-						if (MMSYSERR_NOERROR != mmRes)
-						{
-							hr = MMRESULTToHRESULT(mmRes);
-							break;
-						}
-
-						if (sizeof(PCMWAVEFORMAT) > mmckInfo.cksize)
-						{
-							hr = E_MMIOERR_NOTWAVEFILE;
-							break;
-						}
-
-						PCMWAVEFORMAT pcmWaveFormat;
-						mmRes = mmioRead(hMMIO, reinterpret_cast<HPSTR>(&pcmWaveFormat), sizeof(PCMWAVEFORMAT));
-						if (sizeof(PCMWAVEFORMAT) != mmRes)
-						{
-							hr = E_MMIOERR_CANNOTREAD;
-							break;
-						}
-
-						WORD uExtraAlloc = 0;
-						if (pcmWaveFormat.wf.wFormatTag != WAVE_FORMAT_PCM)
-						{
-							mmRes = mmioRead(hMMIO, reinterpret_cast<HPSTR>(&uExtraAlloc), sizeof(WORD));
-							if (sizeof(WORD) != mmRes)
-							{
-								hr = E_MMIOERR_CANNOTREAD;
-								break;
-							}
-						}
-
-						m_pWaveFormat = reinterpret_cast<WAVEFORMATEX*>(VirtualAlloc(NULL, uExtraAlloc + sizeof(WAVEFORMATEX), MEM_COMMIT, PAGE_READWRITE));
-						if (!m_pWaveFormat)
-						{
-							hr = E_OUTOFMEMORY;
-							break;
-						}
-
-						CopyMemory(m_pWaveFormat, &pcmWaveFormat, sizeof(PCMWAVEFORMAT));
-						if (0 != uExtraAlloc)
-						{
-							mmRes = mmioRead(hMMIO, reinterpret_cast<HPSTR>(&m_pWaveFormat->cbSize) + sizeof(WORD), uExtraAlloc);
-							if (uExtraAlloc != mmRes)
-							{
-								hr = E_MMIOERR_NOTWAVEFILE;
-								break;
-							}
-						}
-
-						mmRes = mmioAscend(hMMIO, &mmckInfo, 0);
-						if (MMSYSERR_NOERROR != mmRes)
-						{
-							hr = MMRESULTToHRESULT(mmRes);
-							break;
-						}
-
-					} while (SCION_NULL_WHILE_LOOP_CONDITION);
-
-					return hr;
-				}
-
-				HRESULT CSoundBufferImpl::StartRead(HMMIO hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF)
-				{
-					ASSERT_VALID(this);
-
-					LONG nRet = mmioSeek(hMMIO, mmckInfoRIFF.dwDataOffset + sizeof(FOURCC), SEEK_SET);
-					if (-1 == nRet)
-					{
-						return E_MMIOERR_CANNOTSEEK;
-					}
-
-					mmckInfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
-					MMRESULT mmRes = mmioDescend(hMMIO, &mmckInfo, &mmckInfoRIFF, MMIO_FINDCHUNK);
-					if (MMSYSERR_NOERROR != mmRes)
-					{
-						return MMRESULTToHRESULT(mmRes);
-					}
-
-					return S_OK;
-				}
-
-				HRESULT CSoundBufferImpl::Allocate(const MMCKINFO& mmckInfo)
-				{					
-					m_pData = reinterpret_cast<LPBYTE>(VirtualAlloc(NULL, mmckInfo.cksize, MEM_COMMIT, PAGE_READWRITE));
-					if (!m_pData)
-					{
-						return E_OUTOFMEMORY;
-					}
-
-					m_uDataSize = mmckInfo.cksize;
-
-					return S_OK;
-				}
-
-				HRESULT CSoundBufferImpl::Read(HMMIO hMMIO, DWORD uRead, LPBYTE pData)
-				{
-					ASSERT_VALID(this);
-
-					MMIOINFO mmioInfoIn = { 0 };
-					MMRESULT mmRes = mmioGetInfo(hMMIO, &mmioInfoIn, 0);
-					if (MMSYSERR_NOERROR != mmRes)
-					{
-						return E_FAIL;
-					}
-
-					for (UINT i = 0; i < m_uDataSize; i++)
-					{
-						if (mmioInfoIn.pchNext == mmioInfoIn.pchEndRead)
-						{
-							mmRes = mmioAdvance(hMMIO, &mmioInfoIn, MMIO_READ);
-							if (MMSYSERR_NOERROR != mmRes)
-							{
-								return MMRESULTToHRESULT(mmRes);
-							}
-
-							if (mmioInfoIn.pchNext == mmioInfoIn.pchEndRead)
-							{
-								return E_MMIOERR_CORRUPTWAVEFILE;
-							}
-						}
-
-						*((LPBYTE)pData + i) = *((LPBYTE)mmioInfoIn.pchNext);
-						(LPBYTE)mmioInfoIn.pchNext++;
-					}
-
-					mmRes = mmioSetInfo(hMMIO, &mmioInfoIn, 0);
-					if (MMSYSERR_NOERROR != mmRes)
-					{
-						return E_FAIL;
-					}
-
-					return S_OK;
-				}
-
-				void CSoundBufferImpl::Close(HMMIO hMMIO)
-				{
-					ASSERT_VALID(this);
-					
-					if (hMMIO)
-					{
-						mmioClose(hMMIO, 0);
-						hMMIO = NULL;
-					}
-				}
-
-				HRESULT CSoundBufferImpl::MMRESULTToHRESULT(MMRESULT mmRes)
-				{
-					switch (mmRes)
-					{
-					case MMIOERR_ACCESSDENIED: return E_MMIOERR_ACCESSDENIED;
-					case MMIOERR_INVALIDFILE: return E_MMIOERR_INVALIDFILE;
-					case MMIOERR_NETWORKERROR: return E_MMIOERR_NETWORKERROR;
-					case MMIOERR_PATHNOTFOUND: return E_MMIOERR_PATHNOTFOUND;
-					case MMIOERR_SHARINGVIOLATION: return E_MMIOERR_SHARINGVIOLATION;
-					case MMIOERR_TOOMANYOPENFILES: return E_MMIOERR_TOOMANYOPENFILES;
-					case MMIOERR_CHUNKNOTFOUND: return E_MMIOERR_CHUNKNOTFOUND;
-					case MMIOERR_CANNOTSEEK: return E_MMIOERR_CANNOTSEEK;
-					case MMIOERR_CANNOTWRITE: return E_MMIOERR_CANNOTWRITE;
-					case MMIOERR_CANNOTEXPAND: return E_MMIOERR_CANNOTEXPAND;
-					case MMIOERR_CANNOTREAD: return E_MMIOERR_CANNOTREAD;
-					case MMIOERR_OUTOFMEMORY: return E_MMIOERR_OUTOFMEMORY;
-					case MMIOERR_UNBUFFERED: return E_MMIOERR_UNBUFFERED;
-					default: return E_FAIL;
-					}
-				}
 
 #pragma endregion
 

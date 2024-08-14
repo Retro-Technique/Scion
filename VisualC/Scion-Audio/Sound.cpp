@@ -65,14 +65,64 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
-				HRESULT CSound::SetBuffer(const CSoundBuffer& SoundBuffer)
+				LONG CSound::GetMaxVolume()
 				{
-					return m_pImpl->SetBuffer(SoundBuffer);
+					return DSBVOLUME_MAX;
 				}
 
-				const CSoundBuffer* CSound::GetBuffer() const
+				LONG CSound::GetMinVolume()
 				{
-					return m_pImpl->GetBuffer();
+					return DSBVOLUME_MIN;
+				}
+
+				HRESULT CSound::LoadFromBuffer(const CSoundBuffer& SoundBuffer)
+				{
+					return m_pImpl->LoadFromBuffer(SoundBuffer);
+				}
+
+				HRESULT CSound::Play(BOOL bLooping)
+				{
+					return m_pImpl->Play(bLooping);
+				}
+
+				HRESULT CSound::Stop()
+				{
+					return m_pImpl->Stop();
+				}
+
+				HRESULT CSound::SetVolume(LONG nVolume)
+				{
+					if (nVolume > GetMaxVolume())
+					{
+						return E_FAIL;
+					}
+
+					if (nVolume < GetMinVolume())
+					{
+						return E_FAIL;
+					}
+
+					return m_pImpl->SetVolume(nVolume);
+				}
+
+				HRESULT CSound::GetVolume(LPLONG pVolume) const
+				{
+					return m_pImpl->GetVolume(pVolume);
+				}
+
+				BOOL CSound::IsPlaying() const
+				{
+					return m_pImpl->IsPlaying();
+				}
+
+				BOOL CSound::IsLooping() const
+				{
+					return m_pImpl->IsLooping();
+				}
+
+				void CSound::Unload()
+				{
+					return m_pImpl->Unload();
 				}
 
 #pragma endregion

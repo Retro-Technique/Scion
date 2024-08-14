@@ -71,8 +71,14 @@ namespace scion
 
 				public:
 
-					HRESULT SetBuffer(const CSoundBuffer& SoundBuffer);
-					const CSoundBuffer* GetBuffer() const;
+					HRESULT LoadFromBuffer(const CSoundBuffer& SoundBuffer);
+					HRESULT Play(BOOL bLooping);
+					HRESULT Stop();
+					HRESULT SetVolume(LONG nVolume);
+					HRESULT GetVolume(LPLONG pVolume) const;
+					BOOL IsPlaying() const;
+					BOOL IsLooping() const;
+					void Unload();
 
 #pragma endregion
 #pragma region Overridables

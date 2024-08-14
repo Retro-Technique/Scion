@@ -63,54 +63,22 @@ namespace scion
 
 				CSoundImpl::~CSoundImpl()
 				{
-					
+					Unload();
 				}
 
 #pragma endregion
 #pragma region Operations
 
-				HRESULT CSoundImpl::SetBuffer(const CSoundBuffer& SoundBuffer)
+				HRESULT CSoundImpl::LoadFromBuffer(const CSoundBuffer& SoundBuffer)
 				{
 					HRESULT hr = S_OK;
 
-					const LPBYTE pBufferPtr = SoundBuffer.GetData();
-					const UINT uBufferSize = SoundBuffer.GetSize();
-					LPCWAVEFORMATEX pWaveFormat = static_cast<LPCWAVEFORMATEX>(SoundBuffer.GetWaveFormat());
+					LPVOID pBuffer = const_cast<LPVOID>(SoundBuffer.GetBuffer());
+					LPDIRECTSOUNDBUFFER pOriginalBuffer = static_cast<LPDIRECTSOUNDBUFFER>(pBuffer);
 
 					do
 					{
-						DSBUFFERDESC DSBufferDesc = { 0 };
-						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
-						DSBufferDesc.dwFlags = 0ul;
-						DSBufferDesc.dwFlags |= DSBCAPS_STATIC;
-						DSBufferDesc.dwFlags |= DSBCAPS_CTRLDEFAULT | DSBCAPS_GETCURRENTPOSITION2;
-						DSBufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
-						DSBufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
-						DSBufferDesc.dwBufferBytes = uBufferSize;
-						DSBufferDesc.lpwfxFormat = const_cast<LPWAVEFORMATEX>(pWaveFormat);
-
-						hr = AudioManager.CreateSecondaryBuffer(&DSBufferDesc, &m_pSecondaryBuffer);
-						if (FAILED(hr))
-						{
-							break;
-						}
-
-						LPBYTE pDstData = NULL;
-						DWORD uLength = 0ul;
-
-						hr = m_pSecondaryBuffer->Lock(0ul, DSBufferDesc.dwBufferBytes
-							, reinterpret_cast<void**>(&pDstData), &uLength
-							, NULL, NULL
-							, 0ul); 
-						if (FAILED(hr))
-						{
-							break;
-						}
-
-						//pDstData = pBufferPtr;
-						CopyMemory(pDstData, pBufferPtr, uLength);
-					
-						hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL);
+						hr = AudioManager.DuplicateSecondaryBuffer(pOriginalBuffer, &m_pSecondaryBuffer);
 						if (FAILED(hr))
 						{
 							break;
@@ -121,9 +89,94 @@ namespace scion
 					return hr;
 				}
 
-				const CSoundBuffer* CSoundImpl::GetBuffer() const
+				HRESULT CSoundImpl::Play(BOOL bLooping)
 				{
-					return NULL;
+					if (!m_pSecondaryBuffer)
+					{
+						return E_FAIL;
+					}
+
+					const DWORD uFlags = bLooping ? DSBPLAY_LOOPING : 0;
+
+					return m_pSecondaryBuffer->Play(0, 0, uFlags);
+				}
+
+				HRESULT CSoundImpl::Stop()
+				{
+					if (!m_pSecondaryBuffer)
+					{
+						return E_FAIL;
+					}
+
+					return m_pSecondaryBuffer->Stop();
+				}
+
+				HRESULT CSoundImpl::SetVolume(LONG nVolume)
+				{					
+					ASSERT(nVolume >= DSBVOLUME_MIN);
+					ASSERT(nVolume <= DSBVOLUME_MAX);
+
+					if (!m_pSecondaryBuffer)
+					{
+						return E_FAIL;
+					}
+
+					return m_pSecondaryBuffer->SetVolume(nVolume);
+				}
+
+				HRESULT CSoundImpl::GetVolume(LPLONG pVolume) const
+				{
+					ASSERT_POINTER(pVolume, LONG);
+
+					if (!m_pSecondaryBuffer)
+					{
+						return E_FAIL;
+					}
+
+					return m_pSecondaryBuffer->GetVolume(pVolume);
+				}
+
+				BOOL CSoundImpl::IsPlaying() const
+				{
+					if (!m_pSecondaryBuffer)
+					{
+						return FALSE;
+					}
+
+					DWORD uStatus = 0;
+					HRESULT hr = m_pSecondaryBuffer->GetStatus(&uStatus);
+					if (FAILED(hr))
+					{
+						return FALSE;
+					}
+
+					return (uStatus & DSBSTATUS_PLAYING);
+				}
+
+				BOOL CSoundImpl::IsLooping() const
+				{
+					if (!m_pSecondaryBuffer)
+					{
+						return FALSE;
+					}
+
+					DWORD uStatus = 0;
+					HRESULT hr = m_pSecondaryBuffer->GetStatus(&uStatus);
+					if (FAILED(hr))
+					{
+						return FALSE;
+					}
+
+					return (uStatus & DSBSTATUS_LOOPING);
+				}
+
+				void CSoundImpl::Unload()
+				{
+					if (m_pSecondaryBuffer)
+					{
+						m_pSecondaryBuffer->Release();
+						m_pSecondaryBuffer = NULL;
+					}
 				}
 
 #pragma endregion
@@ -141,7 +194,12 @@ namespace scion
 				{
 					CObject::Dump(dc);
 
-					
+					LONG nVolume = 0;
+					GetVolume(&nVolume);
+
+					dc << _T("Volume: ") << nVolume << _T("\n");
+					dc << _T("Playing? ") << IsPlaying() << _T("\n");
+					dc << _T("Looping? ") << IsLooping() << _T("\n");
 				}
 
 #endif
