@@ -20,12 +20,15 @@ jobs:
         configuration: ['Debug', 'Release']
 
     steps:
-  
+
+      - name: Start Windows Audio engine
+        run: net start audiosrv
+
+      - name: Install Sound Device
+        uses: LABSN/sound-ci-helpers@v1.0.3
+            
       - name: Checkout code
         uses: actions/checkout@v3
-        
-      - name: sound-ci-helper
-        uses: LABSN/sound-ci-helpers@v1.0.3
             
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
