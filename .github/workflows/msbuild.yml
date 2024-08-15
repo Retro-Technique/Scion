@@ -1,0 +1,48 @@
+name: MSBuild
+
+on:
+
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+  
+jobs:
+
+  build:
+  
+    name: ${{ matrix.os }} ${{ matrix.platform }} ${{ matrix.configuration }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+        platform: [x86, x64]
+        configuration: ['Debug', 'Release']
+
+    steps:
+  
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Run MSBuild
+        run: msbuild VisualC/Scion.sln -property:Configuration=${{ matrix.configuration }} -property:Platform=${{ matrix.platform }}  
+
+      - name: Run Tests
+        uses: rusty-bender/vstest-action@main
+        with:
+          testAssembly: |
+            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/Scion-Audio.Test.dll     
+            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/Scion-Graphics.Test.dll     
+            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/Scion-Video.Test.dll     
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: binaries-artifact
+          path: |
+            include  
+            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/*.dll
+            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/*.lib
+            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/*.pdb
