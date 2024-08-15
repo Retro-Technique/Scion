@@ -24,7 +24,7 @@ jobs:
       - name: Start Windows Audio engine
         run: net start audiosrv
 
-      - name: sound-ci-helper
+      - name: Install Sound Device
         uses: LABSN/sound-ci-helpers@v1.0.3
             
       - name: Checkout code
