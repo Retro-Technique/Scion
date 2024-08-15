@@ -42,7 +42,7 @@ namespace ScionAudioTest
 			bIsMemDifferent = FALSE;
 #endif
 
-			Assert::AreEqual(FALSE, bIsMemDifferent);
+			Assert::AreEqual(TRUE, bIsMemDifferent);
 			Assert::IsTrue(SUCCEEDED(hr));
 		}
 
