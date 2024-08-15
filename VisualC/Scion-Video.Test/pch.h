@@ -10,4 +10,6 @@
 // ajouter les en-têtes à précompiler ici
 #include <Scion/Video.h>
 
+#include <comdef.h>
+
 #endif //PCH_H

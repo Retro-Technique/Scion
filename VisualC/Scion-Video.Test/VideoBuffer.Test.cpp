@@ -59,10 +59,10 @@ namespace ScionVideoTest
 			bIsMemDifferent = FALSE;
 #endif
 
-			Assert::AreEqual(FALSE, bIsMemDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
-			Assert::AreEqual(30.f, fFrameRate, 0.1f);
-			Assert::AreEqual(30l, durVideo.GetSeconds());
+			Assert::AreEqual(FALSE, bIsMemDifferent, _T("Memory lead"));
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
+			Assert::AreEqual(30.f, fFrameRate, 0.1f, _T("Invalid framerate"));
+			Assert::AreEqual(30l, durVideo.GetSeconds(), _T("Invalid duration"));
 		}
 
 	};

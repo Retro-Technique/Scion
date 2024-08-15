@@ -26,7 +26,7 @@ namespace ScionGraphicsTest
 			HRESULT hr = Allocate(24, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory lead"));
-			Assert::IsTrue(SUCCEEDED(hr)), _com_error(hr).ErrorMessage();
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 		}
 
 	private:
