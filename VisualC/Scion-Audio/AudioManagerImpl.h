@@ -103,7 +103,7 @@ namespace scion
 
 				public:
 
-#if defined(_DEBUG) || defined(_AFXDLL)
+#ifdef _DEBUG
 					void AssertValid() const override;
 					void Dump(CDumpContext& dc) const override;
 #endif

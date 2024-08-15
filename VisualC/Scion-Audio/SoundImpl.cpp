@@ -267,7 +267,7 @@ namespace scion
 #pragma endregion
 #pragma region Overridables
 
-#if defined(_DEBUG) || defined(_AFXDLL)
+#ifdef _DEBUG
 
 				void CSoundImpl::AssertValid() const
 				{
