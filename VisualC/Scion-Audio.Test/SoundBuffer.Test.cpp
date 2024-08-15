@@ -21,9 +21,9 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[0], durSound, bIsDifferent);
 
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(17l, durSound.GetSeconds());
+			Assert::AreEqual(17l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadGRPLAFF1)
@@ -33,9 +33,9 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[1], durSound, bIsDifferent);
 
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(2l, durSound.GetSeconds());
+			Assert::AreEqual(2l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadHELLO)
@@ -45,9 +45,9 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[2], durSound, bIsDifferent);
 
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(5l, durSound.GetSeconds());
+			Assert::AreEqual(5l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadSIREN1)
@@ -57,9 +57,9 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[3], durSound, bIsDifferent);
 
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(3l, durSound.GetSeconds());
+			Assert::AreEqual(3l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadEQUITATION)
@@ -69,9 +69,9 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[4], durSound, bIsDifferent);
 
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsFalse(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(0l, durSound.GetSeconds());
+			Assert::AreEqual(0l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 	private:

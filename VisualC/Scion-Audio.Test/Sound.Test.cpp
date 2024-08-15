@@ -23,11 +23,11 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[0], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
-			Assert::AreEqual(FALSE, bIsPlayingBefore);
-			Assert::AreEqual(TRUE, bIsPlayingAfter);
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsPlayingBefore, _T("Must not play"));
+			Assert::AreEqual(TRUE, bIsPlayingAfter, _T("Must play"));
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(17l, durSound.GetSeconds());
+			Assert::AreEqual(17l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadGRPLAFF1)
@@ -39,11 +39,11 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[1], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
-			Assert::AreEqual(FALSE, bIsPlayingBefore);
-			Assert::AreEqual(TRUE, bIsPlayingAfter);
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsPlayingBefore, _T("Must not play"));
+			Assert::AreEqual(TRUE, bIsPlayingAfter, _T("Must play"));
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(2l, durSound.GetSeconds());
+			Assert::AreEqual(2l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadHELLO)
@@ -55,11 +55,11 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[2], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
-			Assert::AreEqual(FALSE, bIsPlayingBefore);
-			Assert::AreEqual(TRUE, bIsPlayingAfter);
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsPlayingBefore, _T("Must not play"));
+			Assert::AreEqual(TRUE, bIsPlayingAfter, _T("Must play"));
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(5l, durSound.GetSeconds());
+			Assert::AreEqual(5l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 		TEST_METHOD(TestLoadSIREN1)
@@ -71,11 +71,11 @@ namespace ScionAudioTest
 
 			HRESULT hr = LoadWav(FILENAMES[3], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
-			Assert::AreEqual(FALSE, bIsPlayingBefore);
-			Assert::AreEqual(TRUE, bIsPlayingAfter);
-			Assert::AreEqual(FALSE, bIsDifferent);
+			Assert::AreEqual(FALSE, bIsPlayingBefore, _T("Must not play"));
+			Assert::AreEqual(TRUE, bIsPlayingAfter, _T("Must play"));
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
-			Assert::AreEqual(3l, durSound.GetSeconds());
+			Assert::AreEqual(3l, durSound.GetSeconds(), _T("Invalid duration"));
 		}
 
 	private:

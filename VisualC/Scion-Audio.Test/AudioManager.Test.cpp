@@ -42,7 +42,7 @@ namespace ScionAudioTest
 			bIsMemDifferent = FALSE;
 #endif
 
-			Assert::AreEqual(FALSE, bIsMemDifferent);
+			Assert::AreEqual(FALSE, bIsMemDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 		}
 
