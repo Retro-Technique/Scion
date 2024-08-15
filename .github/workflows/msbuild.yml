@@ -23,7 +23,10 @@ jobs:
   
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
+      - name: sound-ci-helper
+        uses: LABSN/sound-ci-helpers@v1.0.3
+            
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
 
