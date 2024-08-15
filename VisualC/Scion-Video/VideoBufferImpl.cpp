@@ -90,14 +90,14 @@ namespace scion
 							break;
 						}						
 
-						PGETFRAME pGetFrame = AVIStreamGetFrameOpen(m_pAviStream, NULL);
+						/*PGETFRAME pGetFrame = AVIStreamGetFrameOpen(m_pAviStream, NULL);
 						if (!pGetFrame)
 						{
-							hr = E_FAIL;
+							hr = E_AVI_CANNOTFINDDECOMPRESSOR;
 							break;
 						}
 
-						AVIStreamGetFrameClose(pGetFrame);
+						AVIStreamGetFrameClose(pGetFrame);*/
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 

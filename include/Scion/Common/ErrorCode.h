@@ -178,3 +178,12 @@
 //
 #define E_MMIOERR_CORRUPTWAVEFILE        0xE000100EL
 
+//
+// MessageId: E_AVI_CANNOTFINDDECOMPRESSOR
+//
+// MessageText:
+//
+// Le système ne trouve pas de décompresseur capable de décompresser l'AVI au format donné
+//
+#define E_AVI_CANNOTFINDDECOMPRESSOR     0xE000100FL
+

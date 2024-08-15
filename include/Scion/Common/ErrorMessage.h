@@ -37,13 +37,51 @@
  *
  */
 
+#ifndef __SCION_COMMON_H_INCLUDED__
+#error Do not include ErrorMessage.h directly, include the Common.h file
+#endif
+
 #pragma once
 
-#ifndef __SCION_COMMON_H_INCLUDED__
-#define __SCION_COMMON_H_INCLUDED__
+namespace scion
+{
+	namespace common
+	{
 
-#include <Scion/Common/CommonIncludes.h>
-#include <Scion/Common/ErrorCode.h>
-#include <Scion/Common/ErrorMessage.h>
+		/*CString ErrorMessage(HRESULT hr)
+		{
+			static constexpr const DWORD MESSAGE_MAX_LEN = 256;
 
-#endif
+			CString strErrorMessage;
+			LPTSTR pszBuffer = strErrorMessage.GetBufferSetLength(MESSAGE_MAX_LEN);
+
+			DWORD uStrLen = FormatMessage(
+				FORMAT_MESSAGE_FROM_SYSTEM |
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				hr,
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				pszBuffer,
+				MESSAGE_MAX_LEN,
+				NULL);
+
+			strErrorMessage.ReleaseBuffer(uStrLen);
+
+			if (0 < uStrLen)
+			{
+				return strErrorMessage;
+			}
+
+			uStrLen = FormatMessage(
+				FORMAT_MESSAGE_FROM_HMODULE |
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				hr,
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				pszBuffer,
+				MESSAGE_MAX_LEN,
+				NULL);
+		}*/
+
+	}
+}

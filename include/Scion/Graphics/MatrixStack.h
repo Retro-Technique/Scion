@@ -73,7 +73,7 @@ namespace scion
 
 				INT_PTR				m_nSackSize;
 				INT_PTR				m_nCurrent;
-				D2D1::Matrix3x2F* m_pStack;
+				D2D1::Matrix3x2F*	m_pStack;
 
 #pragma endregion
 #pragma region Operations

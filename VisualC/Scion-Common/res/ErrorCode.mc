@@ -144,3 +144,12 @@ Le fichier .wave est corrompu
 Language=English
 The .wave file is corrupted
 .
+
+MessageId=+1
+SymbolicName=E_AVI_CANNOTFINDDECOMPRESSOR
+Language=French
+Le système ne trouve pas de décompresseur capable de décompresser l'AVI au format donné
+.
+Language=English
+The system cannot find a decompressor that can decompress the AVI to the given format
+.
