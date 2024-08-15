@@ -105,9 +105,29 @@ namespace scion
 					return m_pImpl->SetVolume(nVolume);
 				}
 
-				HRESULT CSound::GetVolume(LPLONG pVolume) const
+				HRESULT CSound::SetPosition(FLOAT x, FLOAT y, FLOAT z)
 				{
-					return m_pImpl->GetVolume(pVolume);
+					return m_pImpl->SetPosition(x, y, z);
+				}
+
+				HRESULT CSound::SetMinDistance(FLOAT fDistance)
+				{
+					return m_pImpl->SetMinDistance(fDistance);
+				}
+
+				HRESULT CSound::GetVolume(LONG& nVolume) const
+				{
+					return m_pImpl->GetVolume(nVolume);
+				}
+
+				HRESULT CSound::GetPosition(FLOAT& x, FLOAT& y, FLOAT& z)
+				{
+					return m_pImpl->GetPosition(x, y, z);
+				}
+
+				HRESULT CSound::GetMinDistance(FLOAT& fDistance)
+				{
+					return m_pImpl->GetMinDistance(fDistance);
 				}
 
 				BOOL CSound::IsPlaying() const

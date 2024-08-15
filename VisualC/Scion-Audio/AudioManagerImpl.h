@@ -94,6 +94,7 @@ namespace scion
 					HRESULT CreateSecondaryBuffer(LPCDSBUFFERDESC pBufferDesc, LPDIRECTSOUNDBUFFER* ppBuffer);
 					HRESULT DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer);
 					HRESULT SetListenerPosition(FLOAT x, FLOAT y, FLOAT z);
+					HRESULT GetListenerPosition(FLOAT& x, FLOAT& y, FLOAT& z);
 					void Quit();
 
 #pragma endregion

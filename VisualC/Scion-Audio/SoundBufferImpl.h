@@ -64,12 +64,12 @@ namespace scion
 
 				private:
 					
-					LPDIRECTSOUNDBUFFER	m_pSecondaryBuffer;
+					LPDIRECTSOUNDBUFFER8	m_pSecondaryBuffer;
 					UINT m_uDataSize;
 
 				public:
 
-					inline const LPDIRECTSOUNDBUFFER GetBuffer() const { return m_pSecondaryBuffer; }
+					inline const LPDIRECTSOUNDBUFFER8 GetBuffer() const { return m_pSecondaryBuffer; }
 					inline UINT GetSize() const { return m_uDataSize; }
 
 #pragma endregion

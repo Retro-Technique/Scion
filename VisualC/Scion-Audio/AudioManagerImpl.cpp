@@ -58,6 +58,7 @@ namespace scion
 				CAudioManagerImpl::CAudioManagerImpl()
 					: m_pDevice(NULL)
 					, m_pPrimaryBuffer(NULL)
+					, m_pListener(NULL)
 				{
 				
 				}
@@ -84,26 +85,22 @@ namespace scion
 
 					do
 					{
-						hr = CreateDevice(pWnd);
-						if (FAILED(hr))
+						if (hr = CreateDevice(pWnd); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = CreatePrimaryBuffer();
-						if (FAILED(hr))
+						if (hr = CreatePrimaryBuffer(); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = CreateListener();
-						if (FAILED(hr))
+						if (hr = CreateListener(); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = StartThread();
-						if (FAILED(hr))
+						if (hr = StartThread(); FAILED(hr))
 						{
 							break;
 						}
@@ -123,12 +120,12 @@ namespace scion
 					ASSERT_POINTER(pBufferDesc, DSBUFFERDESC);
 					ASSERT_NULL_OR_POINTER(*ppBuffer, IDirectSoundBuffer);
 
-					if (m_pDevice)
+					if (!m_pDevice)
 					{
-						return m_pDevice->CreateSoundBuffer(pBufferDesc, ppBuffer, NULL);
+						return E_FAIL;
 					}
 
-					return E_FAIL;
+					return m_pDevice->CreateSoundBuffer(pBufferDesc, ppBuffer, NULL);
 				}
 
 				HRESULT CAudioManagerImpl::DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer)
@@ -136,22 +133,42 @@ namespace scion
 					ASSERT_POINTER(pOriginalBuffer, IDirectSoundBuffer);
 					ASSERT_NULL_OR_POINTER(*ppDuplicateBuffer, IDirectSoundBuffer);
 
-					if (m_pDevice)
+					if (!m_pDevice)
 					{
-						return m_pDevice->DuplicateSoundBuffer(pOriginalBuffer, ppDuplicateBuffer);
+						return E_FAIL;
 					}
 
-					return E_FAIL;
+					return m_pDevice->DuplicateSoundBuffer(pOriginalBuffer, ppDuplicateBuffer);
 				}
 
 				HRESULT CAudioManagerImpl::SetListenerPosition(FLOAT x, FLOAT y, FLOAT z)
 				{
-					if (m_pListener)
+					if (!m_pListener)
 					{
 						return E_FAIL;
 					}
 
 					return m_pListener->SetPosition(x, y, z, DS3D_IMMEDIATE);
+				}
+
+				HRESULT CAudioManagerImpl::GetListenerPosition(FLOAT& x, FLOAT& y, FLOAT& z)
+				{
+					if (!m_pListener)
+					{
+						return E_FAIL;
+					}
+
+					D3DVECTOR vPosition = { 0 };
+					if (const HRESULT hr = m_pListener->GetPosition(&vPosition); FAILED(hr))
+					{
+						return hr;
+					}
+
+					x = vPosition.x;
+					y = vPosition.y;
+					z = vPosition.z;
+
+					return S_OK;
 				}
 
 				void CAudioManagerImpl::Quit()
@@ -189,14 +206,12 @@ namespace scion
 
 					do
 					{
-						hr = DirectSoundCreate8(NULL, &m_pDevice, NULL);
-						if (FAILED(hr))
+						if (hr = DirectSoundCreate8(NULL, &m_pDevice, NULL); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = m_pDevice->SetCooperativeLevel(pWnd->GetSafeHwnd(), DSSCL_PRIORITY);
-						if (FAILED(hr))
+						if (hr = m_pDevice->SetCooperativeLevel(pWnd->GetSafeHwnd(), DSSCL_PRIORITY); FAILED(hr))						
 						{
 							break;
 						}
@@ -212,32 +227,29 @@ namespace scion
 
 					do
 					{
-						DSBUFFERDESC DSBufferDesc = { 0 };
-						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
-						DSBufferDesc.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
+						DSBUFFERDESC BufferDesc = { 0 };
+						BufferDesc.dwSize = sizeof(DSBUFFERDESC);
+						BufferDesc.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
 
-						hr = m_pDevice->CreateSoundBuffer(&DSBufferDesc, &m_pPrimaryBuffer, NULL);
-						if (FAILED(hr))
+						if (hr = m_pDevice->CreateSoundBuffer(&BufferDesc, &m_pPrimaryBuffer, NULL); FAILED(hr))
 						{
 							break;
 						}
 
-						WAVEFORMATEX DSWaveFormat = { 0 };
-						DSWaveFormat.wFormatTag = WAVE_FORMAT_PCM;
-						DSWaveFormat.nChannels = DEFAULT_CHANNEL_COUNT;
-						DSWaveFormat.nSamplesPerSec = DEFAULT_FREQUENCY;
-						DSWaveFormat.wBitsPerSample = DEFAULT_FORMAT;
-						DSWaveFormat.nBlockAlign = (DSWaveFormat.nChannels * DSWaveFormat.wBitsPerSample) / 8; // divisé par 8 pour passer de bits à bytes
-						DSWaveFormat.nAvgBytesPerSec = DSWaveFormat.nSamplesPerSec * DSWaveFormat.nBlockAlign;
+						WAVEFORMATEX WaveFormat = { 0 };
+						WaveFormat.wFormatTag = WAVE_FORMAT_PCM;
+						WaveFormat.nChannels = DEFAULT_CHANNEL_COUNT;
+						WaveFormat.nSamplesPerSec = DEFAULT_FREQUENCY;
+						WaveFormat.wBitsPerSample = DEFAULT_FORMAT;
+						WaveFormat.nBlockAlign = (WaveFormat.nChannels * WaveFormat.wBitsPerSample) / 8; // divisé par 8 pour passer de bits à bytes
+						WaveFormat.nAvgBytesPerSec = WaveFormat.nSamplesPerSec * WaveFormat.nBlockAlign;
 
-						hr = m_pPrimaryBuffer->SetFormat(&DSWaveFormat);
-						if (FAILED(hr))
+						if (hr = m_pPrimaryBuffer->SetFormat(&WaveFormat); FAILED(hr))						
 						{
 							break;
 						}
 
-						hr = m_pPrimaryBuffer->Play(0, 0, DSBPLAY_LOOPING);
-						if (FAILED(hr))
+						if (hr = m_pPrimaryBuffer->Play(0, 0, DSBPLAY_LOOPING); FAILED(hr))						
 						{
 							break;
 						}
@@ -253,8 +265,7 @@ namespace scion
 
 					do
 					{
-						hr = m_pPrimaryBuffer->QueryInterface(IID_IDirectSound3DListener8, reinterpret_cast<void**>(&m_pListener));
-						if (FAILED(hr))
+						if (hr = m_pPrimaryBuffer->QueryInterface(IID_IDirectSound3DListener8, reinterpret_cast<void**>(&m_pListener)); FAILED(hr))						
 						{
 							break;
 						}
@@ -277,8 +288,7 @@ namespace scion
 						ds3dListener.flRolloffFactor = 0.0f;
 						ds3dListener.flDopplerFactor = 0.0f;
 
-						hr = m_pListener->SetAllParameters(&ds3dListener, DS3D_IMMEDIATE);
-						if (FAILED(hr))
+						if (hr = m_pListener->SetAllParameters(&ds3dListener, DS3D_IMMEDIATE); FAILED(hr))					
 						{
 							break;
 						}
@@ -292,8 +302,7 @@ namespace scion
 				{
 					m_evAudioLoopExit.ResetEvent();
 
-					LPCVOID pThread = AfxBeginThread(AudioThreadProc, this);
-					if (!pThread)
+					if (LPCVOID pThread = AfxBeginThread(AudioThreadProc, this); !pThread)		
 					{
 						return E_FAIL;
 					}

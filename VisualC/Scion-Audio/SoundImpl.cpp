@@ -57,6 +57,7 @@ namespace scion
 
 				CSoundImpl::CSoundImpl()
 					: m_pSecondaryBuffer(NULL)
+					, m_p3DBuffer(NULL)
 				{
 
 				}
@@ -74,15 +75,47 @@ namespace scion
 					HRESULT hr = S_OK;
 
 					LPVOID pBuffer = const_cast<LPVOID>(SoundBuffer.GetBuffer());
-					LPDIRECTSOUNDBUFFER pOriginalBuffer = static_cast<LPDIRECTSOUNDBUFFER>(pBuffer);
+					LPDIRECTSOUNDBUFFER8 pOriginalBuffer = static_cast<LPDIRECTSOUNDBUFFER8>(pBuffer);
 
 					do
 					{
-						hr = AudioManager.DuplicateSecondaryBuffer(pOriginalBuffer, &m_pSecondaryBuffer);
-						if (FAILED(hr))
+						LPDIRECTSOUNDBUFFER pDuplicateBuffer = NULL;
+						if (hr = AudioManager.DuplicateSecondaryBuffer(pOriginalBuffer, &pDuplicateBuffer); FAILED(hr))
 						{
 							break;
 						}
+
+						if (hr = pDuplicateBuffer->QueryInterface(IID_IDirectSoundBuffer8, reinterpret_cast<void**>(&m_pSecondaryBuffer)); FAILED(hr))
+						{
+							break;
+						}
+
+						pDuplicateBuffer->Release();
+
+						if (hr = m_pSecondaryBuffer->QueryInterface(IID_IDirectSound3DBuffer, reinterpret_cast<void**>(&m_p3DBuffer)); FAILED(hr))
+						{
+							break;
+						}
+
+						/*DS3DBUFFER ds3dBuffer = { 0 };
+						ds3dBuffer.dwSize = sizeof(DS3DBUFFER);
+						ds3dBuffer.dwMode = DS3DMODE_NORMAL;
+						ds3dBuffer.vPosition.x = 0.0f;
+						ds3dBuffer.vPosition.y = 0.0f;
+						ds3dBuffer.vPosition.z = 0.0f;
+						ds3dBuffer.vVelocity.x = 0.0f;
+						ds3dBuffer.vVelocity.y = 0.0f;
+						ds3dBuffer.vVelocity.z = 0.0f;
+						ds3dBuffer.dwInsideConeAngle = 360;
+						ds3dBuffer.dwOutsideConeAngle = 0;
+						ds3dBuffer.lConeOutsideVolume = DS3D_DEFAULTCONEOUTSIDEVOLUME;
+						ds3dBuffer.flMinDistance = DS3D_DEFAULTMINDISTANCE;
+						ds3dBuffer.flMaxDistance = DS3D_DEFAULTMAXDISTANCE;
+						
+						if (hr = m_p3DBuffer->SetAllParameters(&ds3dBuffer, DS3D_IMMEDIATE); FAILED(hr))
+						{
+							break;
+						}*/
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
@@ -124,16 +157,64 @@ namespace scion
 					return m_pSecondaryBuffer->SetVolume(nVolume);
 				}
 
-				HRESULT CSoundImpl::GetVolume(LPLONG pVolume) const
+				HRESULT CSoundImpl::SetPosition(FLOAT x, FLOAT y, FLOAT z)
 				{
-					ASSERT_POINTER(pVolume, LONG);
+					if (!m_p3DBuffer)
+					{
+						return E_FAIL;
+					}
 
+					return m_p3DBuffer->SetPosition(x, y, z, DS3D_IMMEDIATE);
+				}
+
+				HRESULT CSoundImpl::SetMinDistance(FLOAT fDistance)
+				{
+					if (!m_p3DBuffer)
+					{
+						return E_FAIL;
+					}
+
+					return m_p3DBuffer->SetMinDistance(fDistance, DS3D_IMMEDIATE);
+				}
+
+				HRESULT CSoundImpl::GetVolume(LONG& nVolume) const
+				{
 					if (!m_pSecondaryBuffer)
 					{
 						return E_FAIL;
 					}
 
-					return m_pSecondaryBuffer->GetVolume(pVolume);
+					return m_pSecondaryBuffer->GetVolume(&nVolume);
+				}
+
+				HRESULT CSoundImpl::GetPosition(FLOAT& x, FLOAT& y, FLOAT& z)
+				{
+					if (!m_p3DBuffer)
+					{
+						return E_FAIL;
+					}
+
+					D3DVECTOR vPosition = { 0.f };
+					if (const HRESULT hr = m_p3DBuffer->GetPosition(&vPosition); FAILED(hr))
+					{
+						return hr;
+					}
+
+					x = vPosition.x;
+					y = vPosition.y;
+					z = vPosition.z;
+
+					return S_OK;
+				}
+
+				HRESULT CSoundImpl::GetMinDistance(FLOAT& fDistance)
+				{
+					if (!m_p3DBuffer)
+					{
+						return E_FAIL;
+					}
+
+					return m_p3DBuffer->GetMinDistance(&fDistance);
 				}
 
 				BOOL CSoundImpl::IsPlaying() const
@@ -144,8 +225,7 @@ namespace scion
 					}
 
 					DWORD uStatus = 0;
-					HRESULT hr = m_pSecondaryBuffer->GetStatus(&uStatus);
-					if (FAILED(hr))
+					if (const HRESULT hr = m_pSecondaryBuffer->GetStatus(&uStatus); FAILED(hr))				
 					{
 						return FALSE;
 					}
@@ -161,8 +241,7 @@ namespace scion
 					}
 
 					DWORD uStatus = 0;
-					HRESULT hr = m_pSecondaryBuffer->GetStatus(&uStatus);
-					if (FAILED(hr))
+					if (const HRESULT hr = m_pSecondaryBuffer->GetStatus(&uStatus); FAILED(hr))			
 					{
 						return FALSE;
 					}
@@ -172,6 +251,12 @@ namespace scion
 
 				void CSoundImpl::Unload()
 				{
+					if (m_p3DBuffer)
+					{
+						m_p3DBuffer->Release();
+						m_p3DBuffer = NULL;
+					}
+
 					if (m_pSecondaryBuffer)
 					{
 						m_pSecondaryBuffer->Release();
@@ -195,7 +280,7 @@ namespace scion
 					CObject::Dump(dc);
 
 					LONG nVolume = 0;
-					GetVolume(&nVolume);
+					GetVolume(nVolume);
 
 					dc << _T("Volume: ") << nVolume << _T("\n");
 					dc << _T("Playing? ") << IsPlaying() << _T("\n");

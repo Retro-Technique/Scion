@@ -64,7 +64,8 @@ namespace scion
 
 				private:
 
-					LPDIRECTSOUNDBUFFER m_pSecondaryBuffer;
+					LPDIRECTSOUNDBUFFER8	m_pSecondaryBuffer;
+					LPDIRECTSOUND3DBUFFER8	m_p3DBuffer;
 
 #pragma endregion
 #pragma region Operations
@@ -75,7 +76,11 @@ namespace scion
 					HRESULT Play(BOOL bLooping);
 					HRESULT Stop();
 					HRESULT SetVolume(LONG nVolume);
-					HRESULT GetVolume(LPLONG pVolume) const;
+					HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z);
+					HRESULT SetMinDistance(FLOAT fDistance);
+					HRESULT GetVolume(LONG& nVolume) const;
+					HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z);
+					HRESULT GetMinDistance(FLOAT& fDistance);
 					BOOL IsPlaying() const;
 					BOOL IsLooping() const;
 					void Unload();

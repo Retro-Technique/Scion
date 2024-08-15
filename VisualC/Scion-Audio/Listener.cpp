@@ -69,6 +69,11 @@ namespace scion
 					return AudioManager.SetListenerPosition(x, y, z);
 				}
 
+				HRESULT CListener::GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const
+				{
+					return AudioManager.GetListenerPosition(x, y, z);
+				}
+
 #pragma endregion
 #pragma region Overridables
 

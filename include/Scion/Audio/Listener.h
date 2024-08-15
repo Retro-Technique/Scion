@@ -67,6 +67,7 @@ namespace scion
 			public:
 
 				HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z);
+				HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const;
 
 #pragma endregion
 #pragma region Overridables

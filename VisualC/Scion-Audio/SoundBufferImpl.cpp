@@ -85,51 +85,59 @@ namespace scion
 					{
 						CMMIOFile MMIOFile;
 
-						hr = MMIOFile.LoadFromFile(pszFileName);
-						if (FAILED(hr))
+						if (hr = MMIOFile.LoadFromFile(pszFileName); FAILED(hr))
 						{
 							break;
 						}
 
-						const LPBYTE pBufferPtr = MMIOFile.GetData();
+						/*const LPBYTE pBufferPtr = MMIOFile.GetData();
 						const UINT uBufferSize = MMIOFile.GetSize();
 						LPCWAVEFORMATEX pWaveFormat = MMIOFile.GetWaveFormat();
 
-						DSBUFFERDESC DSBufferDesc = { 0 };
-						DSBufferDesc.dwSize = sizeof(DSBUFFERDESC);
-						DSBufferDesc.dwFlags = 0ul;
-						DSBufferDesc.dwFlags |= DSBCAPS_STATIC;
-						DSBufferDesc.dwFlags |= DSBCAPS_CTRLDEFAULT | DSBCAPS_GETCURRENTPOSITION2;
-						DSBufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
-						DSBufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
-						DSBufferDesc.dwBufferBytes = uBufferSize;
-						DSBufferDesc.lpwfxFormat = const_cast<LPWAVEFORMATEX>(pWaveFormat);
+						DSBUFFERDESC BufferDesc = { 0 };
+						BufferDesc.dwSize = sizeof(DSBUFFERDESC);
+						BufferDesc.dwFlags = 0ul;
+						BufferDesc.dwFlags |= DSBCAPS_STATIC;
+						BufferDesc.dwFlags |= DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2;
+						BufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
+						BufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
+						BufferDesc.dwFlags |= DSBCAPS_CTRL3D;
+						BufferDesc.dwBufferBytes = uBufferSize;
+						BufferDesc.lpwfxFormat = const_cast<LPWAVEFORMATEX>(pWaveFormat);
+						BufferDesc.guid3DAlgorithm = DS3DALG_DEFAULT;
 
-						hr = AudioManager.CreateSecondaryBuffer(&DSBufferDesc, &m_pSecondaryBuffer);
-						if (FAILED(hr))
+						LPDIRECTSOUNDBUFFER pSecondaryBuffer = NULL;
+						if (hr = AudioManager.CreateSecondaryBuffer(&BufferDesc, &pSecondaryBuffer); FAILED(hr))
 						{
 							break;
 						}
+
+						if (hr = pSecondaryBuffer->QueryInterface(IID_IDirectSoundBuffer8, reinterpret_cast<void**>(&m_pSecondaryBuffer)); FAILED(hr))
+						{
+							break;
+						}
+
+						pSecondaryBuffer->Release();
 
 						LPBYTE pDstData = NULL;
 						DWORD uLength = 0ul;
 
-						hr = m_pSecondaryBuffer->Lock(0ul, DSBufferDesc.dwBufferBytes
+						if (hr = m_pSecondaryBuffer->Lock(0ul, BufferDesc.dwBufferBytes
 							, reinterpret_cast<void**>(&pDstData), &uLength
 							, NULL, NULL
-							, 0ul);
-						if (FAILED(hr))
+							, 0ul); FAILED(hr))	
 						{
 							break;
 						}
 
 						CopyMemory(pDstData, pBufferPtr, uLength);
 
-						hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL);
-						if (FAILED(hr))
+						if (hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL); FAILED(hr))
 						{
 							break;
 						}
+
+						m_uDataSize = uBufferSize;*/
 
 						MMIOFile.Unload();
 
@@ -150,9 +158,8 @@ namespace scion
 						return CTimeSpan();
 					}
 
-					WAVEFORMATEX WaveFormat;
-					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
-					if (FAILED(hr))
+					WAVEFORMATEX WaveFormat = { 0 };
+					if (const HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL); FAILED(hr))
 					{
 						return CTimeSpan();
 					}
@@ -170,9 +177,8 @@ namespace scion
 						return 0u;
 					}
 
-					WAVEFORMATEX WaveFormat;
-					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
-					if (FAILED(hr))
+					WAVEFORMATEX WaveFormat = { 0 };
+					if (const HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL); FAILED(hr))
 					{
 						return 0u;
 					}
@@ -187,9 +193,8 @@ namespace scion
 						return 0ul;
 					}
 
-					WAVEFORMATEX WaveFormat;
-					HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL);
-					if (FAILED(hr))
+					WAVEFORMATEX WaveFormat = { 0 };
+					if (const HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL); FAILED(hr))
 					{
 						return 0ul;
 					}
