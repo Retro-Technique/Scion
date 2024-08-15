@@ -35,7 +35,7 @@ namespace ScionVideoTest
 			_CrtMemCheckpoint(&State1);
 #endif
 
-			BOOL bIsMemDifferent = FALSE;
+			BOOL bIsMemDifferent = TRUE;
 			FLOAT fFrameRate = 0.f;
 			CTimeSpan durVideo;
 			HRESULT hr = S_OK;
@@ -55,6 +55,8 @@ namespace ScionVideoTest
 			_CrtMemCheckpoint(&State2);
 
 			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
+#else
+			bIsMemDifferent = FALSE;
 #endif
 
 			Assert::AreEqual(FALSE, bIsMemDifferent);

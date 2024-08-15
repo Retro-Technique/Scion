@@ -115,6 +115,8 @@ namespace ScionAudioTest
 			_CrtMemCheckpoint(&State2);
 
 			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
+#else
+			bIsMemDifferent = FALSE;
 #endif
 
 			return hr;
