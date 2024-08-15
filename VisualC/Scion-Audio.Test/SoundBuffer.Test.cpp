@@ -22,8 +22,8 @@ namespace ScionAudioTest
 			HRESULT hr = LoadWav(FILENAMES[0], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
-			//Assert::AreEqual(17l, durSound.GetSeconds());
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
+			Assert::AreEqual(17l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadGRPLAFF1)
@@ -34,8 +34,8 @@ namespace ScionAudioTest
 			HRESULT hr = LoadWav(FILENAMES[1], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
-			//Assert::AreEqual(2l, durSound.GetSeconds());
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
+			Assert::AreEqual(2l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadHELLO)
@@ -46,8 +46,8 @@ namespace ScionAudioTest
 			HRESULT hr = LoadWav(FILENAMES[2], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
-			//Assert::AreEqual(5l, durSound.GetSeconds());
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
+			Assert::AreEqual(5l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadSIREN1)
@@ -58,8 +58,8 @@ namespace ScionAudioTest
 			HRESULT hr = LoadWav(FILENAMES[3], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
-			//Assert::AreEqual(3l, durSound.GetSeconds());
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
+			Assert::AreEqual(3l, durSound.GetSeconds());
 		}
 
 		TEST_METHOD(TestLoadEQUITATION)
@@ -70,7 +70,7 @@ namespace ScionAudioTest
 			HRESULT hr = LoadWav(FILENAMES[4], durSound, bIsDifferent);
 
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsFalse(SUCCEEDED(hr));
+			Assert::IsFalse(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 			Assert::AreEqual(0l, durSound.GetSeconds());
 		}
 

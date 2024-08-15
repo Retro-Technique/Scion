@@ -10,4 +10,8 @@
 // ajouter les en-têtes à précompiler ici
 #include <Scion/Audio.h>
 
+#include <comdef.h>
+
+
+
 #endif //PCH_H

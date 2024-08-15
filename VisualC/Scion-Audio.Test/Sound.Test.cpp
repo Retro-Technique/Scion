@@ -26,7 +26,7 @@ namespace ScionAudioTest
 			Assert::AreEqual(FALSE, bIsPlayingBefore);
 			Assert::AreEqual(TRUE, bIsPlayingAfter);
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 			Assert::AreEqual(17l, durSound.GetSeconds());
 		}
 
@@ -42,7 +42,7 @@ namespace ScionAudioTest
 			Assert::AreEqual(FALSE, bIsPlayingBefore);
 			Assert::AreEqual(TRUE, bIsPlayingAfter);
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 			Assert::AreEqual(2l, durSound.GetSeconds());
 		}
 
@@ -58,7 +58,7 @@ namespace ScionAudioTest
 			Assert::AreEqual(FALSE, bIsPlayingBefore);
 			Assert::AreEqual(TRUE, bIsPlayingAfter);
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 			Assert::AreEqual(5l, durSound.GetSeconds());
 		}
 
@@ -74,7 +74,7 @@ namespace ScionAudioTest
 			Assert::AreEqual(FALSE, bIsPlayingBefore);
 			Assert::AreEqual(TRUE, bIsPlayingAfter);
 			Assert::AreEqual(FALSE, bIsDifferent);
-			Assert::IsTrue(SUCCEEDED(hr));
+			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 			Assert::AreEqual(3l, durSound.GetSeconds());
 		}
 
