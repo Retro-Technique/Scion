@@ -16,10 +16,10 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadBOURB1M1)
 		{			
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
-			BOOL bIsPlayingBefore = TRUE;
-			BOOL bIsPlayingAfter = FALSE;
+			BOOL bIsPlayingBefore = FALSE;
+			BOOL bIsPlayingAfter = TRUE;
 
 			HRESULT hr = LoadWav(FILENAMES[0], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
@@ -32,10 +32,10 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadGRPLAFF1)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
-			BOOL bIsPlayingBefore = TRUE;
-			BOOL bIsPlayingAfter = FALSE;
+			BOOL bIsPlayingBefore = FALSE;
+			BOOL bIsPlayingAfter = TRUE;
 
 			HRESULT hr = LoadWav(FILENAMES[1], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
@@ -48,10 +48,10 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadHELLO)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
-			BOOL bIsPlayingBefore = TRUE;
-			BOOL bIsPlayingAfter = FALSE;
+			BOOL bIsPlayingBefore = FALSE;
+			BOOL bIsPlayingAfter = TRUE;
 
 			HRESULT hr = LoadWav(FILENAMES[2], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 
@@ -64,10 +64,10 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadSIREN1)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
-			BOOL bIsPlayingBefore = TRUE;
-			BOOL bIsPlayingAfter = FALSE;
+			BOOL bIsPlayingBefore = FALSE;
+			BOOL bIsPlayingAfter = TRUE;
 
 			HRESULT hr = LoadWav(FILENAMES[3], durSound, bIsDifferent, bIsPlayingBefore, bIsPlayingAfter);
 

@@ -16,7 +16,7 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadBOURB1M1)
 		{			
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
 
 			HRESULT hr = LoadWav(FILENAMES[0], durSound, bIsDifferent);
@@ -28,7 +28,7 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadGRPLAFF1)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
 
 			HRESULT hr = LoadWav(FILENAMES[1], durSound, bIsDifferent);
@@ -40,7 +40,7 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadHELLO)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
 
 			HRESULT hr = LoadWav(FILENAMES[2], durSound, bIsDifferent);
@@ -52,7 +52,7 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadSIREN1)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
 
 			HRESULT hr = LoadWav(FILENAMES[3], durSound, bIsDifferent);
@@ -64,7 +64,7 @@ namespace ScionAudioTest
 
 		TEST_METHOD(TestLoadEQUITATION)
 		{
-			BOOL bIsDifferent = TRUE;
+			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
 
 			HRESULT hr = LoadWav(FILENAMES[4], durSound, bIsDifferent);
