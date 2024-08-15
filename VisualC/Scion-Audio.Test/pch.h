@@ -12,6 +12,4 @@
 
 #include <comdef.h>
 
-
-
 #endif //PCH_H
