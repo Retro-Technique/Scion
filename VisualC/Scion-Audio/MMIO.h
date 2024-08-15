@@ -39,6 +39,8 @@
 
 #pragma once
 
+#include "MMIOUtils.h"
+
 namespace scion
 {
 	namespace engine
@@ -47,56 +49,44 @@ namespace scion
 		{
 			namespace priv
 			{
-
-				class CAudioManagerImpl : public CObject
+				
+				class CMMIO : public CObject
 				{
 #pragma region Constructors
 
-					DECLARE_DYNAMIC(CAudioManagerImpl)
+					DECLARE_DYNAMIC(CMMIO)
 
-				private:
+				public:
 
-					CAudioManagerImpl();
-					virtual ~CAudioManagerImpl();
+					CMMIO();
+					virtual ~CMMIO();
 
 #pragma endregion
 #pragma region Attributes
 
 				private:
-					
-					static constexpr const DWORD DEFAULT_THREAD_LOOP_MS = 1000;
-					static constexpr const WORD DEFAULT_CHANNEL_COUNT = 2;
-					static constexpr const WORD DEFAULT_FREQUENCY = 44100;
-					static constexpr const WORD DEFAULT_FORMAT = 16;
 
-					static CAudioManagerImpl ms_Instance;
-
-				private:
-
-					LPDIRECTSOUND8				m_pDevice;
-					LPDIRECTSOUNDBUFFER			m_pPrimaryBuffer;
-					LPDIRECTSOUND3DLISTENER8	m_pListener;
-					CEvent						m_evAudioLoopExit;
-
-				public:
-
-					inline const CEvent& GetExitEvent() const { return m_evAudioLoopExit; }
+					HMMIO m_hMMIO;
 
 #pragma endregion
 #pragma region Operations
 
 				public:
 
-					static CAudioManagerImpl& GetInstance();
-
-				public:
-
-					HRESULT Initialize(CWnd* pWnd);
-					HRESULT CreateSecondaryBuffer(LPCDSBUFFERDESC pBufferDesc, LPDIRECTSOUNDBUFFER* ppBuffer);
-					HRESULT DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer);
-					HRESULT SetListenerPosition(FLOAT x, FLOAT y, FLOAT z);
-					HRESULT GetListenerPosition(FLOAT& x, FLOAT& y, FLOAT& z);
-					void Quit();
+					HRESULT OpenFromFile(LPCTSTR pszFileName, DWORD uFlags = MMIO_READ);
+					HRESULT OpenFromMemory(CMMMemoryIOInfo& mmioInfo);
+					void Close(UINT uFlags = 0u);
+					HRESULT Ascend(CMMChunk& mmckInfo, UINT uFlags = 0u);
+					HRESULT Descend(CMMChunk& mmckInfo, UINT uFlags = 0u);
+					HRESULT Descend(CMMChunk& mmckInfo, CMMChunk& mmckParent, UINT uFlags = 0u);
+					LONG Read(HPSTR pData, LONG nLen);
+					LONG Write(LPCSTR pData, LONG nLen);
+					LONG Seek(LONG nOffset, INT nOrigin);
+					LRESULT SendMessage(UINT uMsg, LPARAM lParam1, LPARAM lParam2);
+					HRESULT SetBuffer(LPSTR pBuffer, LONG nBuffer, UINT uFlags = 0u);
+					HRESULT GetInfo(CMMIOInfo& mmioInfo, UINT uFlags = 0u);
+					HRESULT SetInfo(const CMMIOInfo& mmioInfo, UINT uFlags = 0u);
+					HRESULT Advance(CMMIOInfo& mmioInfo, UINT uFlags = 0u);
 
 #pragma endregion
 #pragma region Overridables
@@ -113,19 +103,7 @@ namespace scion
 
 				private:
 
-					HRESULT CreateDevice(CWnd* pWnd);
-					HRESULT CreatePrimaryBuffer();
-					HRESULT CreateListener();
-					HRESULT StartThread();
-					void StopThread();
-					void DestroyListener();
-					void DestroyPrimaryBuffer();
-					void DestroyDevice();
-					void OnAudioLoop();
-
-				private:
-
-					static UINT AudioThreadProc(LPVOID pData);
+					HRESULT MMRESULTToHRESULT(MMRESULT mmRes);
 
 #pragma endregion
 				};
@@ -134,5 +112,3 @@ namespace scion
 		}
 	}
 }
-
-#define AudioManager scion::engine::sfx::priv::CAudioManagerImpl::GetInstance()

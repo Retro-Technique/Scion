@@ -39,8 +39,8 @@
 
 #include "pch.h"
 #include "SoundBufferImpl.h"
-#include "MMIOFile.h"
 #include "AudioManagerImpl.h"
+#include "WaveBuffer.h"
 
 namespace scion
 {
@@ -83,27 +83,32 @@ namespace scion
 
 					do
 					{
-						CMMIOFile MMIOFile;
+						CWaveBuffer WaveBuffer;
 
-						if (hr = MMIOFile.LoadFromFile(pszFileName); FAILED(hr))
+						if (hr = WaveBuffer.LoadFromFile(pszFileName); FAILED(hr))
 						{
 							break;
 						}
 
-						/*const LPBYTE pBufferPtr = MMIOFile.GetData();
-						const UINT uBufferSize = MMIOFile.GetSize();
-						LPCWAVEFORMATEX pWaveFormat = MMIOFile.GetWaveFormat();
+						DWORD uDataLen = WaveBuffer.GetDataLen();
+						WAVEFORMATEX wfFormat = { 0 };
+
+						if (hr = WaveBuffer.GetFormat(wfFormat); FAILED(hr))
+						{
+							break;
+						}
 
 						DSBUFFERDESC BufferDesc = { 0 };
 						BufferDesc.dwSize = sizeof(DSBUFFERDESC);
 						BufferDesc.dwFlags = 0ul;
 						BufferDesc.dwFlags |= DSBCAPS_STATIC;
-						BufferDesc.dwFlags |= DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2;
+						BufferDesc.dwFlags |= DSBCAPS_CTRLVOLUME;
+						BufferDesc.dwFlags |= DSBCAPS_GETCURRENTPOSITION2;
 						BufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
 						BufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
 						BufferDesc.dwFlags |= DSBCAPS_CTRL3D;
-						BufferDesc.dwBufferBytes = uBufferSize;
-						BufferDesc.lpwfxFormat = const_cast<LPWAVEFORMATEX>(pWaveFormat);
+						BufferDesc.dwBufferBytes = uDataLen;
+						BufferDesc.lpwfxFormat = &wfFormat;
 						BufferDesc.guid3DAlgorithm = DS3DALG_DEFAULT;
 
 						LPDIRECTSOUNDBUFFER pSecondaryBuffer = NULL;
@@ -119,27 +124,24 @@ namespace scion
 
 						pSecondaryBuffer->Release();
 
-						LPBYTE pDstData = NULL;
-						DWORD uLength = 0ul;
+						LPBYTE pData = NULL;
 
-						if (hr = m_pSecondaryBuffer->Lock(0ul, BufferDesc.dwBufferBytes
-							, reinterpret_cast<void**>(&pDstData), &uLength
-							, NULL, NULL
-							, 0ul); FAILED(hr))	
+						if (hr = m_pSecondaryBuffer->Lock(0ul, uDataLen, reinterpret_cast<void**>(&pData)
+							, &uDataLen, NULL, NULL, 0ul); FAILED(hr))
 						{
 							break;
 						}
 
-						CopyMemory(pDstData, pBufferPtr, uLength);
+						uDataLen = WaveBuffer.GetData(pData, uDataLen);
 
-						if (hr = m_pSecondaryBuffer->Unlock(pDstData, uLength, NULL, NULL); FAILED(hr))
+						if (hr = m_pSecondaryBuffer->Unlock(pData, uDataLen, NULL, NULL); FAILED(hr))
 						{
 							break;
 						}
 
-						m_uDataSize = uBufferSize;*/
+						m_uDataSize = uDataLen;
 
-						MMIOFile.Unload();
+						WaveBuffer.Unload();
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 

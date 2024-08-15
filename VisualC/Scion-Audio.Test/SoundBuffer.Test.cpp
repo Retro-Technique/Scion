@@ -7,25 +7,11 @@ namespace ScionAudioTest
 {
 	TEST_CLASS(SoundBufferTest)
 	{
-	private:
-
-		scion::engine::sfx::CAudioManager m_AudioManager;
-
 	public:
 
 		SoundBufferTest()
 		{			
 			SetCurrentDirectory(_T("..\\..\\Scion-Audio.Test"));
-
-			HWND hWnd = GetDesktopWindow();
-			CWnd* pWnd = CWnd::FromHandle(hWnd);
-
-			m_AudioManager.Initialize(pWnd);
-		}
-
-		~SoundBufferTest()
-		{
-			m_AudioManager.Quit();
 		}
 
 		TEST_METHOD(TestLoadBOURB1M1)
@@ -108,6 +94,12 @@ namespace ScionAudioTest
 			HRESULT hr = S_OK;
 
 			{
+				scion::engine::sfx::CAudioManager AudioManager;
+				HWND hWnd = GetDesktopWindow();
+				CWnd* pWnd = CWnd::FromHandle(hWnd);
+
+				AudioManager.Initialize(pWnd);
+
 				scion::engine::sfx::CSoundBuffer SoundBuffer;
 
 				hr = SoundBuffer.LoadFromFile(pszFileName);
@@ -115,16 +107,14 @@ namespace ScionAudioTest
 				durSound = SoundBuffer.GetDuration();
 
 				SoundBuffer.Unload();
+
+				AudioManager.Quit();
 			}
 
 #ifdef _DEBUG
 			_CrtMemCheckpoint(&State2);
 
 			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
-			if (bIsMemDifferent)
-			{
-				return hr;
-			}
 #endif
 
 			return hr;

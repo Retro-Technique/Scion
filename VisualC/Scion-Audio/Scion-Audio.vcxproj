@@ -220,7 +220,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Listener.cpp" />
-    <ClCompile Include="MMIOFile.cpp" />
+    <ClCompile Include="MMIO.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -232,6 +232,7 @@
     <ClCompile Include="SoundBuffer.cpp" />
     <ClCompile Include="SoundBufferImpl.cpp" />
     <ClCompile Include="SoundImpl.cpp" />
+    <ClCompile Include="WaveBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Scion-Audio.rc2" />
@@ -244,12 +245,14 @@
     <ClInclude Include="..\..\include\Scion\Audio\SoundBuffer.h" />
     <ClInclude Include="AudioManagerImpl.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MMIOFile.h" />
+    <ClInclude Include="MMIO.h" />
+    <ClInclude Include="MMIOUtils.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SoundBufferImpl.h" />
     <ClInclude Include="SoundImpl.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WaveBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Scion-Audio.rc" />

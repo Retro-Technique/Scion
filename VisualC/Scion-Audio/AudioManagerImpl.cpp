@@ -130,33 +130,23 @@ namespace scion
 
 				HRESULT CAudioManagerImpl::DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer)
 				{
+					ASSERT_POINTER(m_pDevice, IDirectSound);
 					ASSERT_POINTER(pOriginalBuffer, IDirectSoundBuffer);
 					ASSERT_NULL_OR_POINTER(*ppDuplicateBuffer, IDirectSoundBuffer);
-
-					if (!m_pDevice)
-					{
-						return E_FAIL;
-					}
 
 					return m_pDevice->DuplicateSoundBuffer(pOriginalBuffer, ppDuplicateBuffer);
 				}
 
 				HRESULT CAudioManagerImpl::SetListenerPosition(FLOAT x, FLOAT y, FLOAT z)
 				{
-					if (!m_pListener)
-					{
-						return E_FAIL;
-					}
+					ASSERT_POINTER(m_pListener, IDirectSound3DListener8);
 
-					return m_pListener->SetPosition(x, y, z, DS3D_IMMEDIATE);
+					return m_pListener->SetPosition(x, y, z, DS3D_DEFERRED);
 				}
 
 				HRESULT CAudioManagerImpl::GetListenerPosition(FLOAT& x, FLOAT& y, FLOAT& z)
 				{
-					if (!m_pListener)
-					{
-						return E_FAIL;
-					}
+					ASSERT_POINTER(m_pListener, IDirectSound3DListener8);
 
 					D3DVECTOR vPosition = { 0 };
 					if (const HRESULT hr = m_pListener->GetPosition(&vPosition); FAILED(hr))
@@ -270,7 +260,7 @@ namespace scion
 							break;
 						}
 
-						DS3DLISTENER ds3dListener = { 0 };
+						/*DS3DLISTENER ds3dListener = { 0 };
 						ds3dListener.dwSize = sizeof(DS3DLISTENER);
 						ds3dListener.vPosition.x = 0.0f;
 						ds3dListener.vPosition.y = 0.0f;
@@ -288,10 +278,10 @@ namespace scion
 						ds3dListener.flRolloffFactor = 0.0f;
 						ds3dListener.flDopplerFactor = 0.0f;
 
-						if (hr = m_pListener->SetAllParameters(&ds3dListener, DS3D_IMMEDIATE); FAILED(hr))					
+						if (hr = m_pListener->SetAllParameters(&ds3dListener, DS3D_DEFERRED); FAILED(hr))
 						{
 							break;
-						}
+						}*/
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
@@ -344,33 +334,19 @@ namespace scion
 
 				void CAudioManagerImpl::OnAudioLoop()
 				{
-					/*if (m_mapSoundBuffers.IsEmpty())
-					{
-						return;
-					}
+					ASSERT_POINTER(m_pListener, IDirectSound3DListener8);
 
-					POSITION pos = m_mapSoundBuffers.GetStartPosition();
-					while (pos)
-					{
-						CString strKey;
-						CSoundBuffer* pSoundBuffer = NULL;
-
-						m_mapSoundBuffers.GetNextAssoc(pos, strKey, pSoundBuffer);
-						if (pSoundBuffer)
-						{
-
-						}
-					}*/
+					m_pListener->CommitDeferredSettings();
 				}
 
 				UINT CAudioManagerImpl::AudioThreadProc(LPVOID pData)
 				{
-					/*CAudioManager* pAudioManager = reinterpret_cast<CAudioManager*>(pData);
+					CAudioManagerImpl* pAudioManager = reinterpret_cast<CAudioManagerImpl*>(pData);
 					BOOL bIsRunning = TRUE;
 
 					while (bIsRunning)
 					{
-						DWORD uResult = WaitForSingleObject(pAudioManager->GetExitEvent(), 1000);
+						DWORD uResult = WaitForSingleObject(pAudioManager->GetExitEvent(), DEFAULT_THREAD_LOOP_MS);
 
 						switch (uResult)
 						{
@@ -382,7 +358,7 @@ namespace scion
 							bIsRunning = FALSE;
 							break;
 						}
-					}*/
+					}
 
 					return 0;
 				}

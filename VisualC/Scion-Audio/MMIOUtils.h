@@ -48,63 +48,109 @@ namespace scion
 			namespace priv
 			{
 
-				class CMMIOFile : public CObject
+				class CMMChunk : public MMCKINFO
 				{
-#pragma region Constructors
+				protected:
 
-					DECLARE_DYNAMIC(CMMIOFile)
-
-				public:
-
-					CMMIOFile();
-					virtual ~CMMIOFile();
-
-#pragma endregion
-#pragma region Attributes
-
-				private:
+					CMMChunk() 
+					{ 
 					
-					LPWAVEFORMATEX	m_pWaveFormat;					
-					LPBYTE			m_pData;
-					UINT			m_uDataSize;
+					}
 
 				public:
 
-					inline LPWAVEFORMATEX GetWaveFormat() const { return m_pWaveFormat; }
-					inline LPBYTE GetData() const { return m_pData; }
-					inline UINT GetSize() const { return m_uDataSize; }
+					virtual ~CMMChunk() 
+					{
+					
+					}
 
-#pragma endregion
-#pragma region Operations
+				};
 
+				class CMMIdChunk : public CMMChunk
+				{
 				public:
 
-					HRESULT LoadFromFile(LPCTSTR pszFileName);
-					void Unload();
+					CMMIdChunk(CHAR c0, CHAR c1, CHAR c2, CHAR c3)
+					{
+						ckid = mmioFOURCC(c0, c1, c2, c3);
+					}
 
-#pragma endregion
-#pragma region Overridables
+					CMMIdChunk(LPCTSTR psz, UINT uFlags = 0u)
+					{
+						ckid = mmioStringToFOURCC(psz, uFlags);
+					}
 
+					virtual ~CMMIdChunk() 
+					{ 
+					
+					}
+
+				};
+
+				class CMMTypeChunk : public CMMChunk
+				{
 				public:
 
-#if defined(_DEBUG) || defined(_AFXDLL)
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
-#endif
+					CMMTypeChunk(CHAR c0, CHAR c1, CHAR c2, CHAR c3)
+					{
+						fccType = mmioFOURCC(c0, c1, c2, c3);
+					}
 
-#pragma endregion
-#pragma region Implementations
+					CMMTypeChunk(LPCTSTR psz, UINT uFlags = 0u)
+					{
+						fccType = mmioStringToFOURCC(psz, uFlags);
+					}
 
-				private:
+					virtual ~CMMTypeChunk() 
+					{
+					
+					}
 
-					HRESULT Open(LPCTSTR pszFileName, HMMIO& hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF);
-					HRESULT StartRead(HMMIO hMMIO, MMCKINFO& mmckInfo, MMCKINFO& mmckInfoRIFF);
-					HRESULT Allocate(const MMCKINFO& mmckInfo);
-					HRESULT Read(HMMIO hMMIO, DWORD uRead, LPBYTE pData);
-					void Close(HMMIO hMMIO);
-					HRESULT MMRESULTToHRESULT(MMRESULT mmRes);
+				};
 
-#pragma endregion
+				class CMMIOInfo : public MMIOINFO
+				{
+				public:
+
+					CMMIOInfo()
+					{
+						ZeroMemory(this, sizeof(MMIOINFO));
+					}
+
+					virtual ~CMMIOInfo() 
+					{ 
+					
+					}
+
+				};
+
+				class CMMMemoryIOInfo : public CMMIOInfo
+				{
+				public:
+
+					CMMMemoryIOInfo(LONG nBuffer, DWORD uMinExpansion = 0ul)
+					{
+						pIOProc = NULL;
+						fccIOProc = FOURCC_MEM;
+						pchBuffer = NULL;
+						cchBuffer = nBuffer;
+						adwInfo[0] = uMinExpansion;
+					}
+
+					CMMMemoryIOInfo(HPSTR pBuffer, LONG nBuffer, DWORD uMinExpansion = 0ul)
+					{
+						pIOProc = NULL;
+						fccIOProc = FOURCC_MEM;
+						pchBuffer = pBuffer;
+						cchBuffer = nBuffer;
+						adwInfo[0] = uMinExpansion;
+					}
+
+					virtual ~CMMMemoryIOInfo() 
+					{ 
+					
+					}
+
 				};
 
 			}

@@ -7,25 +7,11 @@ namespace ScionAudioTest
 {
 	TEST_CLASS(SoundTest)
 	{
-	private:
-
-		scion::engine::sfx::CAudioManager m_AudioManager;
-
 	public:
 
 		SoundTest()
 		{			
 			SetCurrentDirectory(_T("..\\..\\Scion-Audio.Test"));
-
-			HWND hWnd = GetDesktopWindow();
-			CWnd* pWnd = CWnd::FromHandle(hWnd);
-
-			m_AudioManager.Initialize(pWnd);
-		}
-
-		~SoundTest()
-		{
-			m_AudioManager.Quit();
 		}
 
 		TEST_METHOD(TestLoadBOURB1M1)
@@ -113,6 +99,12 @@ namespace ScionAudioTest
 
 			do
 			{
+				scion::engine::sfx::CAudioManager AudioManager;
+				HWND hWnd = GetDesktopWindow();
+				CWnd* pWnd = CWnd::FromHandle(hWnd);
+
+				AudioManager.Initialize(pWnd);
+
 				scion::engine::sfx::CSoundBuffer SoundBuffer;
 				scion::engine::sfx::CSound Sound;
 
@@ -139,10 +131,10 @@ namespace ScionAudioTest
 
 				bIsPlayingAfter = Sound.IsPlaying();
 
-				//Sleep(durSound.GetSeconds() * 1100);
-
 				Sound.Unload();
 				SoundBuffer.Unload();
+
+				AudioManager.Quit();
 
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
@@ -150,10 +142,6 @@ namespace ScionAudioTest
 			_CrtMemCheckpoint(&State2);
 
 			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
-			if (bIsMemDifferent && State3.lTotalCount == 2116)
-			{
-				bIsMemDifferent = FALSE;
-			}
 #endif
 
 			return hr;

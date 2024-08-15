@@ -112,7 +112,7 @@ namespace scion
 						ds3dBuffer.flMinDistance = DS3D_DEFAULTMINDISTANCE;
 						ds3dBuffer.flMaxDistance = DS3D_DEFAULTMAXDISTANCE;
 						
-						if (hr = m_p3DBuffer->SetAllParameters(&ds3dBuffer, DS3D_IMMEDIATE); FAILED(hr))
+						if (hr = m_p3DBuffer->SetAllParameters(&ds3dBuffer, DS3D_DEFERRED); FAILED(hr))
 						{
 							break;
 						}*/
@@ -164,7 +164,7 @@ namespace scion
 						return E_FAIL;
 					}
 
-					return m_p3DBuffer->SetPosition(x, y, z, DS3D_IMMEDIATE);
+					return m_p3DBuffer->SetPosition(x, y, z, DS3D_DEFERRED);
 				}
 
 				HRESULT CSoundImpl::SetMinDistance(FLOAT fDistance)
@@ -174,7 +174,7 @@ namespace scion
 						return E_FAIL;
 					}
 
-					return m_p3DBuffer->SetMinDistance(fDistance, DS3D_IMMEDIATE);
+					return m_p3DBuffer->SetMinDistance(fDistance, DS3D_DEFERRED);
 				}
 
 				HRESULT CSoundImpl::GetVolume(LONG& nVolume) const

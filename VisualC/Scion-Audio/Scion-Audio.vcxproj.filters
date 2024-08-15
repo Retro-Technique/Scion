@@ -42,10 +42,13 @@
     <ClCompile Include="Sound.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="MMIOFile.cpp">
+    <ClCompile Include="Listener.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Listener.cpp">
+    <ClCompile Include="MMIO.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveBuffer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -88,11 +91,17 @@
     <ClInclude Include="..\..\include\Scion\Audio\Sound.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="MMIOFile.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Scion\Audio\Listener.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="MMIO.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveBuffer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="MMIOUtils.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
