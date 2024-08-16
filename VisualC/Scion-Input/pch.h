@@ -10,13 +10,11 @@
 // ajouter les en-têtes à précompiler ici
 #include "framework.h"
 
-#include <Scion/Audio.h>
+#include <Scion/Input.h>
 
-#include <mmsystem.h>
-#include <dsound.h>
+#include <dinput.h>
 
-#pragma comment(lib, "Dsound.lib")
+#pragma comment(lib, "Dinput8.lib")
 #pragma comment(lib, "Dxguid.lib")
-#pragma comment(lib, "Winmm.lib")
 
 #endif //PCH_H

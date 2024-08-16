@@ -39,20 +39,73 @@
 
 #pragma once
 
-#include <Scion/Common.h>
-#include <Scion/Graphics.h>
-#include <Scion/Audio.h>
-#include <Scion/Video.h>
-#include <Scion/Input.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace gfx
+		{
+			namespace priv
+			{
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#define __SCION_ENGINE_H_INCLUDED__
+				class  CGraphicsManagerImpl : public CObject
+				{
+#pragma region Constructors
 
-#include <Scion/Engine/Manager.h>
-#include <Scion/Engine/ResourceManager.h>
-#include <Scion/Engine/SceneManager.h>
-#include <Scion/Engine/Node.h>
-#include <Scion/Engine/Resource.h>
-#include <Scion/Engine/GameEngine.h>
+					DECLARE_DYNAMIC(CGraphicsManagerImpl);
 
+				private:
+
+					CGraphicsManagerImpl();
+					virtual ~CGraphicsManagerImpl();
+
+#pragma endregion
+#pragma region Attributes
+
+				private:
+
+					static CGraphicsManagerImpl ms_Instance;
+
+				private:
+
+					ID2D1Factory8* m_pD2DFactory;
+					IDWriteFactory8* m_pDWriteFactory;
+					IWICImagingFactory2* m_pWICFactory;
+
+				public:
+
+					inline ID2D1Factory8* GetD2DFactory() const { return m_pD2DFactory; }
+					inline IDWriteFactory8* GetDWriteFactory() const { return m_pDWriteFactory; }
+					inline IWICImagingFactory2* GetWICFactory() const { return m_pWICFactory; }
+
+#pragma endregion
+#pragma region Operations
+
+				public:
+
+					static CGraphicsManagerImpl& GetInstance();
+
+				public:
+
+					HRESULT Initialize(_AFX_D2D_STATE* pD2DState);
+					void Quit();
+
+#pragma endregion
+#pragma region Overridables
+
+				public:
+
+#ifdef _DEBUG
+					void AssertValid() const override;
+					void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+				};
+
+			}
+		}
+	}
+}
+
+#define GraphicsManager scion::engine::gfx::priv::CGraphicsManagerImpl::GetInstance()

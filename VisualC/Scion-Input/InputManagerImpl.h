@@ -39,20 +39,65 @@
 
 #pragma once
 
-#include <Scion/Common.h>
-#include <Scion/Graphics.h>
-#include <Scion/Audio.h>
-#include <Scion/Video.h>
-#include <Scion/Input.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace ifx
+		{
+			namespace priv
+			{
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#define __SCION_ENGINE_H_INCLUDED__
+				class CInputManagerImpl : public CObject
+				{
+#pragma region Constructors
 
-#include <Scion/Engine/Manager.h>
-#include <Scion/Engine/ResourceManager.h>
-#include <Scion/Engine/SceneManager.h>
-#include <Scion/Engine/Node.h>
-#include <Scion/Engine/Resource.h>
-#include <Scion/Engine/GameEngine.h>
+					DECLARE_DYNAMIC(CInputManagerImpl)
 
+				private:
+
+					CInputManagerImpl();
+					virtual ~CInputManagerImpl();
+
+#pragma endregion
+#pragma region Attributes
+
+				private:
+
+					static CInputManagerImpl ms_Instance;
+
+				private:
+
+					LPDIRECTINPUT8 m_pDevice;
+
+#pragma endregion
+#pragma region Operations
+
+				public:
+
+					static CInputManagerImpl& GetInstance();
+
+				public:
+
+					HRESULT Initialize(HINSTANCE hInstance);
+					void Quit();
+
+#pragma endregion
+#pragma region Overridables
+
+				public:
+
+#ifdef _DEBUG
+					void AssertValid() const override;
+					void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+				};
+
+			}
+		}
+	}
+}
+
+#define InputManager scion::engine::ifx::priv::CInputManagerImpl::GetInstance()

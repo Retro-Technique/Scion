@@ -278,6 +278,9 @@
     <ProjectReference Include="..\Scion-Graphics\Scion-Graphics.vcxproj">
       <Project>{ecee681d-9c59-4e56-b020-808521570c38}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Scion-Input\Scion-Input.vcxproj">
+      <Project>{b2719700-3396-4855-8fac-8c3ab3f25ee4}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Scion-Video\Scion-Video.vcxproj">
       <Project>{44ae0905-b260-40f2-b9e2-666024fe39bc}</Project>
     </ProjectReference>

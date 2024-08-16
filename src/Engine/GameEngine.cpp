@@ -46,7 +46,7 @@ namespace scion
 
 #pragma region Constructors
 
-		IMPLEMENT_SERIAL(CGameEngine, CObject, 1);
+		IMPLEMENT_DYNAMIC(CGameEngine, CObject);
 
 		CGameEngine::CGameEngine()
 		{
@@ -61,26 +61,28 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CGameEngine::Initialize(CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
+		HRESULT CGameEngine::Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
 		{
 			HRESULT hr = S_OK;
 
 			do
 			{
-				hr = m_GraphicsManager.Initialize(pD2DState);
-				if (FAILED(hr))
+				if (hr = m_GraphicsManager.Initialize(pD2DState); FAILED(hr))
 				{
 					break;
 				}
 
-				hr = m_AudioManager.Initialize(pMainWnd);
-				if (FAILED(hr))
+				if (hr = m_AudioManager.Initialize(pMainWnd); FAILED(hr))
 				{
 					break;
 				}
 
-				hr = m_VideoManager.Initialize();
-				if (FAILED(hr))
+				if (hr = m_VideoManager.Initialize(); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = m_InputManager.Initialize(hInstance); FAILED(hr))
 				{
 					break;
 				}
@@ -92,42 +94,14 @@ namespace scion
 
 		void CGameEngine::Quit()
 		{
+			m_InputManager.Quit();
 			m_VideoManager.Quit();
 			m_AudioManager.Quit();
 			m_GraphicsManager.Quit();
 		}
 
-		void CGameEngine::InitialUpdate()
-		{
-
-		}
-
-		void CGameEngine::Update()
-		{
-//			const ULONGLONG uElapsedTime = m_GameTime.Restart();
-
-			
-		}
-
-		void CGameEngine::Draw()
-		{
-
-		}
-
-		void CGameEngine::Unload()
-		{
-			DestroyManagers();
-		}
-
 #pragma endregion
 #pragma region Overridables
-
-		void CGameEngine::Serialize(CArchive& ar)
-		{
-			CObject::Serialize(ar);
-
-			m_listManagers.Serialize(ar);
-		}
 
 #ifdef _DEBUG
 
@@ -135,63 +109,23 @@ namespace scion
 		{
 			CObject::AssertValid();
 
-			ASSERT_VALID(&m_listManagers);
+			ASSERT_VALID(&m_InputManager);
+			ASSERT_VALID(&m_VideoManager);
+			ASSERT_VALID(&m_AudioManager);
+			ASSERT_VALID(&m_GraphicsManager);
 		}
 
 		void CGameEngine::Dump(CDumpContext& dc) const
 		{
 			CObject::Dump(dc);
+
+			AFXDUMP(&m_InputManager);
+			AFXDUMP(&m_VideoManager);
+			AFXDUMP(&m_AudioManager);
+			AFXDUMP(&m_GraphicsManager);
 		}
 
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-		HRESULT CGameEngine::CreateManagers()
-		{
-			static constexpr LPCTSTR MANAGER_NAMES[] =
-			{
-				_T("CResourceManager"),
-				_T("CSceneManager")
-			};
-			static constexpr const SIZE_T MANAGER_NAME_COUNT = ARRAYSIZE(MANAGER_NAMES);
-
-			for (UINT i = 0; i < MANAGER_NAME_COUNT; i++)
-			{
-				CRuntimeClass* pRuntimeClass = CRuntimeClass::FromName(MANAGER_NAMES[i]);
-				if (!pRuntimeClass)
-				{
-					return E_ABORT;
-				}
-
- 				CObject* pObject = pRuntimeClass->CreateObject();
-				if (!pObject)
-				{
-					return E_OUTOFMEMORY;
-				}
-
-				m_listManagers.AddTail(pObject);
-			}
-
-			return S_OK;
-		}
-
-		void CGameEngine::DestroyManagers()
-		{
-			POSITION pos = m_listManagers.GetHeadPosition();
-			while (pos)
-			{
-				CObject* pObject = m_listManagers.GetNext(pos);
-				ASSERT_POINTER(pObject, CObject);
-				ASSERT_KINDOF(CManager, pObject);
-				ASSERT_VALID(pObject);
-				
-				delete pObject;
-			}
-
-			m_listManagers.RemoveAll();
-		}
 
 #pragma endregion
 	}

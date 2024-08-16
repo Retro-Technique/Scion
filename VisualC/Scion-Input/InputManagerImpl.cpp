@@ -38,86 +38,85 @@
  */
 
 #include "pch.h"
-#include "BrushResource.h"
+#include "InputManagerImpl.h"
 
 namespace scion
 {
-	namespace gfx
+	namespace engine
 	{
+		namespace ifx
+		{
+			namespace priv
+			{
 
 #pragma region Constructors
 
-		IMPLEMENT_SERIAL(CBrushResource, engine::CResource, 1);
+				CInputManagerImpl CInputManagerImpl::ms_Instance;
 
-		CBrushResource::CBrushResource()
-			: m_pBrush(NULL)
-			, m_propBrush { 0 }
-		{
+				IMPLEMENT_DYNAMIC(CInputManagerImpl, CObject)
 
-		}
+				CInputManagerImpl::CInputManagerImpl()
+					: m_pDevice(NULL)
+				{
 
-		CBrushResource::~CBrushResource()
-		{
-			
-		}
+				}
+
+				CInputManagerImpl::~CInputManagerImpl()
+				{
+
+				}
+
+#pragma endregion
+#pragma region Operations
+
+				CInputManagerImpl& CInputManagerImpl::GetInstance()
+				{
+					return ms_Instance;
+				}
+
+				HRESULT CInputManagerImpl::Initialize(HINSTANCE hInstance)
+				{
+					ASSERT_POINTER(hInstance, HINSTANCE);
+
+					HRESULT hr = DirectInput8Create(hInstance,
+						DIRECTINPUT_VERSION,
+						IID_IDirectInput8,
+						reinterpret_cast<void**>(&m_pDevice),
+						NULL);
+
+					return hr;
+				}
+
+				void CInputManagerImpl::Quit()
+				{
+					if (m_pDevice)
+					{
+						m_pDevice->Release();
+						m_pDevice = NULL;
+					}
+				}
 
 #pragma endregion
 #pragma region Overridables
 
-		void CBrushResource::SetProperty(INT nProperty, const COleVariant& varValue)
-		{
-			engine::CResource::SetProperty(nProperty, varValue);
-
-			switch (nProperty)
-			{
-			case EProperty_Opacity:
-				SetOpacity(varValue.fltVal);
-				break;
-			default:
-				break;
-			}
-		}
-
-		void CBrushResource::Unload()
-		{
-			if (m_pBrush)
-			{
-				m_pBrush->Release();
-				m_pBrush = NULL;
-			}
-		}
-
-		void CBrushResource::Serialize(CArchive& ar)
-		{
-			engine::CResource::Serialize(ar);
-
-			if (ar.IsStoring())
-			{
-				ar << m_propBrush.opacity;
-			}
-			else
-			{
-				ar >> m_propBrush.opacity;
-			}
-		}
-
 #ifdef _DEBUG
 
-		void CBrushResource::AssertValid() const
-		{
-			engine::CResource::AssertValid();
+				void CInputManagerImpl::AssertValid() const
+				{
+					CObject::AssertValid();
 
-		}
+				}
 
-		void CBrushResource::Dump(CDumpContext& dc) const
-		{
-			engine::CResource::Dump(dc);
-
-			dc << _T("Opacity: ") << m_propBrush.opacity << _T("\n");
-		}
+				void CInputManagerImpl::Dump(CDumpContext& dc) const
+				{
+					CObject::Dump(dc);
+				}
 
 #endif
 
 #pragma endregion
+
+			}
+		}
 	}
 }

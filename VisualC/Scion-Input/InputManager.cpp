@@ -37,22 +37,66 @@
  *
  */
 
-#pragma once
+#include "pch.h"
+#include "InputManagerImpl.h"
 
-#include <Scion/Common.h>
-#include <Scion/Graphics.h>
-#include <Scion/Audio.h>
-#include <Scion/Video.h>
-#include <Scion/Input.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace ifx
+		{
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#define __SCION_ENGINE_H_INCLUDED__
+#pragma region Constructors
 
-#include <Scion/Engine/Manager.h>
-#include <Scion/Engine/ResourceManager.h>
-#include <Scion/Engine/SceneManager.h>
-#include <Scion/Engine/Node.h>
-#include <Scion/Engine/Resource.h>
-#include <Scion/Engine/GameEngine.h>
+			IMPLEMENT_DYNAMIC(CInputManager, CObject)
+
+			CInputManager::CInputManager()
+			{
+
+			}
+
+			CInputManager::~CInputManager()
+			{
+
+			}
+
+#pragma endregion
+#pragma region Operations
+
+			HRESULT CInputManager::Initialize(HINSTANCE hInstance)
+			{
+				return InputManager.Initialize(hInstance);
+			}
+
+			void CInputManager::Quit()
+			{
+				InputManager.Quit();
+			}
+
+#pragma endregion
+#pragma region Overridables
+
+#ifdef _DEBUG
+
+			void CInputManager::AssertValid() const
+			{
+				CObject::AssertValid();
+
+				ASSERT_VALID(&InputManager);
+			}
+
+			void CInputManager::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+
+				AFXDUMP(&InputManager);
+			}
 
 #endif
+
+#pragma endregion
+
+		}
+	}
+}

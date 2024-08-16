@@ -49,13 +49,7 @@ namespace scion
 	{
 		namespace gfx
 		{
-			namespace priv
-			{
-
-				struct TDevice;
-
-			}
-
+			
 			class AFX_EXT_CLASS CGraphicsManager : public CObject
 			{
 #pragma region Constructors
@@ -66,13 +60,6 @@ namespace scion
 
 				CGraphicsManager();
 				virtual ~CGraphicsManager();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				priv::TDevice* m_pImpl;
 
 #pragma endregion
 #pragma region Operations

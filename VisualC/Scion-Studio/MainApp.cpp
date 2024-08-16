@@ -103,7 +103,7 @@ BOOL CMainApp::InitInstance()
 	_AFX_D2D_STATE* pD2DState = AfxGetD2DState();
 	CWnd* pMainWnd = AfxGetMainWnd();
 
-	HRESULT hr = m_GameEngine.Initialize(pMainWnd, pD2DState);
+	HRESULT hr = m_GameEngine.Initialize(m_hInstance, pMainWnd, pD2DState);
 	if (FAILED(hr))
 	{
 		return FALSE;

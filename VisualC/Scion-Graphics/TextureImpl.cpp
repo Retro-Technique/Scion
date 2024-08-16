@@ -37,67 +37,109 @@
  *
  */
 
-#ifndef __SCION_GRAPHICS_H_INCLUDED__
-#error Do not include BrushResource.h directly, include the Graphics.h file
-#endif
-
-#pragma once
+#include "pch.h"
+#include "TextureImpl.h"
+#include "GraphicsManagerImpl.h"
+#include "Image.h"
 
 namespace scion
 {
-	namespace gfx
+	namespace engine
 	{
-
-		class AFX_EXT_CLASS CBrushResource : public engine::CResource
+		namespace gfx
 		{
+			namespace priv
+			{
+
 #pragma region Constructors
 
-		public:
+				IMPLEMENT_DYNAMIC(CTextureImpl, CObject)
 
-			enum EProperty : INT
-			{
-				EProperty_Opacity = CResource::EProperty_COUNT,
+				CTextureImpl::CTextureImpl()
+					: m_pD2DBitmap(NULL)
+				{
 
-				EProperty_COUNT
-			};
+				}
 
-		public:
-
-			DECLARE_SERIAL(CBrushResource);
-
-		public:
-
-			CBrushResource();
-			virtual ~CBrushResource();
+				CTextureImpl::~CTextureImpl()
+				{
+					Unload();
+				}
 
 #pragma endregion
-#pragma region Attributes
+#pragma region Operations
 
-		protected:
+				HRESULT CTextureImpl::LoadFromFile(LPCTSTR pszFileName)
+				{
+					ASSERT_VALID(this);
 
-			ID2D1Brush*				m_pBrush;
-			D2D1_BRUSH_PROPERTIES	m_propBrush;
+					if (!AfxIsValidString(pszFileName, MAX_PATH))
+					{
+						return E_INVALIDARG;
+					}
 
-		public:
+					HRESULT hr = S_OK;
 
-			inline void SetOpacity(FLOAT fOpacity) { m_propBrush.opacity = fOpacity; m_bNeedUpdate = TRUE; }
-			inline FLOAT GetOpacity() const { return m_propBrush.opacity; }
+					do
+					{
+						CImage Image;
+
+						if (hr = Image.LoadFromFile(pszFileName); FAILED(hr))
+						{
+							break;
+						}
+
+						IWICBitmap* pWICBitmap = Image.GetWICBitmap();
+						
+						ID2D1DeviceContext7* pD2DDeviceContext = NULL;
+
+						if (hr = pD2DDeviceContext->CreateBitmapFromWicBitmap(pWICBitmap, &m_pD2DBitmap); FAILED(hr))
+						{
+							break;
+						}
+					
+						Image.Unload();
+
+					} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+					if (FAILED(hr))
+					{
+						Unload();
+					}
+
+					return hr;
+				}
+
+				void CTextureImpl::Unload()
+				{
+					if (m_pD2DBitmap)
+					{
+						m_pD2DBitmap->Release();
+						m_pD2DBitmap = NULL;
+					}
+				}
 
 #pragma endregion
 #pragma region Overridables
 
-		public:
-
-			void SetProperty(INT nProperty, const COleVariant& varValue) override;
-			void Unload() override;
-			void Serialize(CArchive& ar) override;
 #ifdef _DEBUG
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
+
+				void CTextureImpl::AssertValid() const
+				{
+					CObject::AssertValid();
+
+				}
+
+				void CTextureImpl::Dump(CDumpContext& dc) const
+				{
+					CObject::Dump(dc);
+				}
+
 #endif
 
 #pragma endregion
-		};
 
+			}
+		}
 	}
 }

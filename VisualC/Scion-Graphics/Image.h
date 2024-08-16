@@ -39,12 +39,63 @@
 
 #pragma once
 
-#include <RetroCode/Core.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace gfx
+		{
+			namespace priv
+			{
 
-#ifndef __SCION_H_INCLUDED__
-#define __SCION_H_INCLUDED__
+				class  CImage : public CObject
+				{
+#pragma region Constructors
 
-#include <Scion/Manager.h>
-#include <Scion/Node.h>
+					DECLARE_DYNAMIC(CImage);
 
+				public:
+
+					CImage();
+					virtual ~CImage();
+
+#pragma endregion
+#pragma region Attributes
+
+				private:
+
+					IWICBitmap* m_pWICBitmap;
+
+				public:
+
+					inline IWICBitmap* GetWICBitmap() const { return m_pWICBitmap; }
+
+#pragma endregion
+#pragma region Operations
+
+				public:
+
+					HRESULT LoadFromFile(LPCTSTR pszFileName);
+					HRESULT LoadFromMemory(LPCVOID pData, DWORD uSize);
+					HRESULT LoadFromResource(HMODULE hModule, LPCTSTR pszResourceName);
+					HRESULT LoadFromResource(LPCTSTR pszModule, LPCTSTR pszResourceName);
+					HRESULT SaveToFile(LPCTSTR pszFileName);
+					void Unload();
+
+#pragma endregion
+#pragma region Overridables
+
+				public:
+
+#ifdef _DEBUG
+					void AssertValid() const override;
+					void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+				};
+
+			}
+		}
+	}
+}

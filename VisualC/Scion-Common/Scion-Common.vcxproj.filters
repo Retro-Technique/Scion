@@ -17,6 +17,9 @@
     <ClInclude Include="..\..\include\Scion\Common\CommonIncludes.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Common\ErrorMessage.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ErrorCode.mc" />

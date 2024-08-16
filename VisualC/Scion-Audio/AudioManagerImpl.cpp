@@ -107,11 +107,6 @@ namespace scion
 
 					} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
-					if (FAILED(hr))
-					{
-						Quit();
-					}
-
 					return hr;
 				}
 

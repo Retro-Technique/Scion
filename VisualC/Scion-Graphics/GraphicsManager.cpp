@@ -38,6 +38,7 @@
  */
 
 #include "pch.h"
+#include "GraphicsManagerImpl.h"
 
 namespace scion
 {
@@ -45,31 +46,19 @@ namespace scion
 	{
 		namespace gfx
 		{
-			namespace priv
-			{
-
-				struct TDevice
-				{
-					ID2D1Factory8*			_pD2DFactory;
-					IDWriteFactory8*		_pDWriteFactory;
-					IWICImagingFactory2*	_pWICFactory;
-				};
-
-			}
 
 #pragma region Constructors
 
 			IMPLEMENT_DYNAMIC(CGraphicsManager, CObject)
 
 			CGraphicsManager::CGraphicsManager()
-				: m_pImpl(NULL)
 			{
-				m_pImpl = new priv::TDevice{ NULL };
+
 			}
 
 			CGraphicsManager::~CGraphicsManager()
 			{
-				delete m_pImpl;
+				
 			}
 
 #pragma endregion
@@ -77,57 +66,12 @@ namespace scion
 
 			HRESULT CGraphicsManager::Initialize(_AFX_D2D_STATE* pD2DState)
 			{
-				if (!pD2DState)
-				{
-					return E_INVALIDARG;
-				}
-
-				if (!pD2DState->IsD2DInitialized())
-				{
-					return E_FAIL;
-				}
-
-				ASSERT_NULL_OR_POINTER(m_pImpl->_pD2DFactory, ID2D1Factory8);
-				ASSERT_NULL_OR_POINTER(m_pImpl->_pDWriteFactory, IDWriteFactory8);
-				ASSERT_NULL_OR_POINTER(m_pImpl->_pWICFactory, IWICImagingFactory2);
-
-				ID2D1Factory* pD2DFactory = pD2DState->GetDirect2dFactory();
-				HRESULT hr = pD2DFactory->QueryInterface(__uuidof(ID2D1Factory8), reinterpret_cast<void**>(&m_pImpl->_pD2DFactory));
-				ASSERT(SUCCEEDED(hr));
-				ASSERT_POINTER(m_pImpl->_pD2DFactory, ID2D1Factory8);
-
-				IDWriteFactory* pDWFactory = pD2DState->GetWriteFactory();
-				hr = pDWFactory->QueryInterface(__uuidof(IDWriteFactory8), reinterpret_cast<void**>(&m_pImpl->_pDWriteFactory));
-				ASSERT(SUCCEEDED(hr));
-				ASSERT_POINTER(m_pImpl->_pDWriteFactory, IDWriteFactory8);
-
-				IWICImagingFactory* pWICFactory = pD2DState->GetWICFactory();
-				hr = pWICFactory->QueryInterface(__uuidof(IWICImagingFactory2), reinterpret_cast<void**>(&m_pImpl->_pWICFactory));
-				ASSERT(SUCCEEDED(hr));
-				ASSERT_POINTER(m_pImpl->_pWICFactory, IWICImagingFactory2);
-
-				return hr;
+				return GraphicsManager.Initialize(pD2DState);
 			}
 
 			void CGraphicsManager::Quit()
 			{
-				if (m_pImpl->_pWICFactory)
-				{
-					m_pImpl->_pWICFactory->Release();
-					m_pImpl->_pWICFactory = NULL;
-				}
-
-				if (m_pImpl->_pDWriteFactory)
-				{
-					m_pImpl->_pDWriteFactory->Release();
-					m_pImpl->_pDWriteFactory = NULL;
-				}
-
-				if (m_pImpl->_pD2DFactory)
-				{
-					m_pImpl->_pD2DFactory->Release();
-					m_pImpl->_pD2DFactory = NULL;
-				}
+				GraphicsManager.Quit();
 			}
 
 #pragma endregion
@@ -139,15 +83,14 @@ namespace scion
 			{
 				CObject::AssertValid();
 
-				ASSERT_POINTER(m_pImpl, priv::TDevice);
-				ASSERT_POINTER(m_pImpl->_pD2DFactory, ID2D1Factory8);
-				ASSERT_POINTER(m_pImpl->_pDWriteFactory, IDWriteFactory8);
-				ASSERT_POINTER(m_pImpl->_pWICFactory, IWICImagingFactory2);
+				ASSERT_VALID(&GraphicsManager);
 			}
 
 			void CGraphicsManager::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
+
+				AFXDUMP(&GraphicsManager);
 			}
 
 #endif

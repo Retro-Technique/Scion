@@ -37,22 +37,51 @@
  *
  */
 
+#ifndef __SCION_INPUT_H_INCLUDED__
+#error Do not include InputManager.h directly, include the Input.h file
+#endif
+
 #pragma once
 
-#include <Scion/Common.h>
-#include <Scion/Graphics.h>
-#include <Scion/Audio.h>
-#include <Scion/Video.h>
-#include <Scion/Input.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace ifx
+		{
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#define __SCION_ENGINE_H_INCLUDED__
+			class AFX_EXT_CLASS CInputManager : public CObject
+			{
+#pragma region Constructors
 
-#include <Scion/Engine/Manager.h>
-#include <Scion/Engine/ResourceManager.h>
-#include <Scion/Engine/SceneManager.h>
-#include <Scion/Engine/Node.h>
-#include <Scion/Engine/Resource.h>
-#include <Scion/Engine/GameEngine.h>
+				DECLARE_DYNAMIC(CInputManager)
 
+			public:
+
+				CInputManager();
+				virtual ~CInputManager();
+
+#pragma endregion
+#pragma region Operations
+
+			public:
+
+				HRESULT Initialize(HINSTANCE hInstance);
+				void Quit();
+
+#pragma endregion
+#pragma region Overridables
+
+			public:
+
+#ifdef _DEBUG
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+			};
+
+		}
+	}
+}

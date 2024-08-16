@@ -37,68 +37,13 @@
  *
  */
 
-#ifndef __SCION_GRAPHICS_H_INCLUDED__
-#error Do not include SolidColorBrushResource.h directly, include the Graphics.h file
-#endif
-
 #pragma once
 
-#include "BrushResource.h"
+#include <Scion/Common.h>
 
-namespace scion
-{
-	namespace gfx
-	{
+#ifndef __SCION_INPUT_H_INCLUDED__
+#define __SCION_INPUT_H_INCLUDED__
 
-		class AFX_EXT_CLASS CSolidColorBrushResource : public CBrushResource
-		{
-#pragma region Constructors
+#include <Scion/Input/InputManager.h>
 
-		public:
-
-			enum EProperty : INT
-			{
-				EProperty_Color = CBrushResource::EProperty_COUNT,
-
-				EProperty_COUNT
-			};
-
-		public:
-
-			DECLARE_SERIAL(CSolidColorBrushResource);
-
-		public:
-
-			CSolidColorBrushResource();
-			virtual ~CSolidColorBrushResource();
-
-#pragma endregion
-#pragma region Attributes
-
-		private:
-
-			D2D1::ColorF	m_clrBrush;
-
-		public:
-
-			inline void SetColor(const D2D1::ColorF& clrBrush) { m_clrBrush = clrBrush; m_bNeedUpdate = TRUE; }
-			inline const D2D1::ColorF& GetColor() const { return m_clrBrush; }
-
-#pragma endregion
-#pragma region Overridables
-
-		public:
-
-			void SetProperty(INT nProperty, const COleVariant& varValue) override;
-			HRESULT Load(ID2D1HwndRenderTarget* pRenderTarget) override;
-			void Serialize(CArchive& ar) override;
-#ifdef _DEBUG
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-		};
-
-	}
-}

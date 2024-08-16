@@ -39,20 +39,55 @@
 
 #pragma once
 
-#include <Scion/Common.h>
-#include <Scion/Graphics.h>
-#include <Scion/Audio.h>
-#include <Scion/Video.h>
-#include <Scion/Input.h>
+namespace scion
+{
+	namespace engine
+	{
+		namespace gfx
+		{
+			namespace priv
+			{
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#define __SCION_ENGINE_H_INCLUDED__
+				class  CTextureImpl : public CObject
+				{
+#pragma region Constructors
 
-#include <Scion/Engine/Manager.h>
-#include <Scion/Engine/ResourceManager.h>
-#include <Scion/Engine/SceneManager.h>
-#include <Scion/Engine/Node.h>
-#include <Scion/Engine/Resource.h>
-#include <Scion/Engine/GameEngine.h>
+					DECLARE_DYNAMIC(CTextureImpl);
 
+				public:
+
+					CTextureImpl();
+					virtual ~CTextureImpl();
+
+#pragma endregion
+#pragma region Attributes
+
+				private:
+
+					ID2D1Bitmap* m_pD2DBitmap;
+
+#pragma endregion
+#pragma region Operations
+
+				public:
+
+					HRESULT LoadFromFile(LPCTSTR pszFileName);
+					void Unload();
+
+#pragma endregion
+#pragma region Overridables
+
+				public:
+
+#ifdef _DEBUG
+					void AssertValid() const override;
+					void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+				};
+
+			}
+		}
+	}
+}

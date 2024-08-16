@@ -54,7 +54,7 @@ namespace scion
 
 		public:
 
-			DECLARE_SERIAL(CGameEngine);
+			DECLARE_DYNAMIC(CGameEngine);
 
 		public:
 
@@ -69,39 +69,25 @@ namespace scion
 			gfx::CGraphicsManager	m_GraphicsManager;
 			sfx::CAudioManager		m_AudioManager;
 			vfx::CVideoManager		m_VideoManager;
-			CObList m_listManagers;
-			//retro::core::CClock	m_GameTime;
+			ifx::CInputManager		m_InputManager;
 
 #pragma endregion
 #pragma region Operations
 
 		public:
 
-			HRESULT Initialize(CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState);
+			HRESULT Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState);
 			void Quit();
-			void InitialUpdate();
-			void Update();
-			void Draw();
-			void Unload();
 
 #pragma endregion
 #pragma region Overridables
 
 		public:
 
-			void Serialize(CArchive& ar) override;
 #ifdef _DEBUG
 			void AssertValid() const override;
 			void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-		private:
-
-			HRESULT CreateManagers();
-			void DestroyManagers();
 
 #pragma endregion
 		};

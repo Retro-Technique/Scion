@@ -6,79 +6,61 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="include">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Scion-Input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Scion-Graphics.cpp">
+    <ClCompile Include="InputManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="MatrixStack.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsManagerImpl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureImpl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
+    <ClCompile Include="InputManagerImpl.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Scion-Graphics.rc2">
+    <None Include="Scion-Input.def">
+      <Filter>src</Filter>
+    </None>
+    <None Include="res\Scion-Input.rc2">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="Scion-Graphics.def">
-      <Filter>src</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
+    <ClInclude Include="framework.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Graphics\GraphicsManager.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Graphics\MatrixStack.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsManagerImpl.h">
+    <ClInclude Include="Resource.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="TextureImpl.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\include\Scion\Input\InputManager.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
+    <ClInclude Include="InputManagerImpl.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Scion-Graphics.rc">
+    <ResourceCompile Include="Scion-Input.rc">
       <Filter>Fichiers de ressources</Filter>
     </ResourceCompile>
   </ItemGroup>

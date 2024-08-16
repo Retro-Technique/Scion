@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\Scion\Common\CommonIncludes.h" />
     <ClInclude Include="..\..\include\Scion\Common\ErrorCode.h" />
+    <ClInclude Include="..\..\include\Scion\Common\ErrorMessage.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
