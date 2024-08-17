@@ -219,12 +219,9 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Engine\GameApp.cpp" />
     <ClCompile Include="..\..\src\Engine\GameEngine.cpp" />
-    <ClCompile Include="..\..\src\Engine\Manager.cpp" />
-    <ClCompile Include="..\..\src\Engine\Node.cpp" />
-    <ClCompile Include="..\..\src\Engine\Resource.cpp" />
-    <ClCompile Include="..\..\src\Engine\ResourceManager.cpp" />
-    <ClCompile Include="..\..\src\Engine\SceneManager.cpp" />
+    <ClCompile Include="..\..\src\Engine\RenderView.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
@@ -253,12 +250,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Scion\Engine\GameEngine.h" />
-    <ClInclude Include="..\..\include\Scion\Engine\INode.h" />
-    <ClInclude Include="..\..\include\Scion\Engine\Manager.h" />
-    <ClInclude Include="..\..\include\Scion\Engine\Node.h" />
-    <ClInclude Include="..\..\include\Scion\Engine\Resource.h" />
-    <ClInclude Include="..\..\include\Scion\Engine\ResourceManager.h" />
-    <ClInclude Include="..\..\include\Scion\Engine\SceneManager.h" />
+    <ClInclude Include="..\..\include\Scion\Engine\GameApp.h" />
+    <ClInclude Include="..\..\include\Scion\Engine\RenderView.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />

@@ -12,11 +12,4 @@
 
 #include <Scion/Engine.h>
 
-#ifdef _DEBUG
-#define STATIC_DOWNCAST_CONST(class_name, object) \
-	(static_cast<const class_name*>(AfxStaticDownCast(RUNTIME_CLASS(class_name), object)))
-#else
-#define STATIC_DOWNCAST_CONST(class_name, object) (static_cast<const class_name*>(object))
-#endif
-
 #endif //PCH_H

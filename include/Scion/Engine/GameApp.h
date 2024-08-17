@@ -37,59 +37,42 @@
  *
  */
 
-#include "pch.h"
-#include "GraphicsManager.h"
+#ifndef __SCION_ENGINE_H_INCLUDED__
+#error Do not include GameApp.h directly, include the Engine.h file
+#endif
+
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace gfx
-		{
 
-			class CRenderWindow : public CObject, public IRenderWindow
-			{
+		class AFX_EXT_CLASS CGameApp : public CWinAppEx
+		{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CRenderWindow)
+		public:
 
-			public:
-
-				CRenderWindow(CGraphicsManager* pGraphicsManager);
-				virtual ~CRenderWindow();
+			CGameApp() noexcept;
 
 #pragma endregion
 #pragma region Attributes
 
-			private:
+		private:
 
-				mutable LONG m_nRef;
-
-				CGraphicsManager*		m_pGraphicsManager;
-				ID2D1DeviceContext7*	m_pD2DDeviceContext;
-
-			public:
-
-				inline ID2D1DeviceContext7* GetD2DDeviceContext() const { return m_pD2DDeviceContext; }
+			scion::engine::CGameEngine	m_GameEngine;
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+		public:
 
-				HRESULT Create(CWnd* pWnd) override;
-				void Destroy() override;
-				void SelfDestroy() override;
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
-				void AddRef() const override;
-				BOOL Release() const override;
+			BOOL InitInstance() override;
+			int ExitInstance() override;
 
 #pragma endregion
-			};
+		};
 
-		}
 	}
 }

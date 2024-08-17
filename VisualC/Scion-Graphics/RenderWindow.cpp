@@ -53,19 +53,22 @@ namespace scion
 
 			CRenderWindow::CRenderWindow(CGraphicsManager* pGraphicsManager)
 				: m_pGraphicsManager(pGraphicsManager)
+				, m_nRef(1)
 				, m_pD2DDeviceContext(NULL)
 			{
-
+				m_pGraphicsManager->AddRef();
 			}
 
 			CRenderWindow::~CRenderWindow()
 			{
 				Destroy();
+
+				if (m_pGraphicsManager)
+				{
+					m_pGraphicsManager->Release();
+					m_pGraphicsManager = NULL;
+				}
 			}
-
-#pragma endregion
-#pragma region Operations
-
 
 #pragma endregion
 #pragma region Overridables
@@ -124,6 +127,23 @@ namespace scion
 			}
 
 #endif
+
+			void CRenderWindow::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CRenderWindow::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
 
 #pragma endregion
 

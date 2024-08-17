@@ -84,7 +84,7 @@ namespace scion
 					IWICBitmapDecoder* pDecoder = NULL;
 					IWICBitmapFrameDecode* pFrame = NULL;
 					IWICFormatConverter* pConverterFrame = NULL;
-					IWICImagingFactory2* pFactory = GraphicsManager.GetWICFactory();
+					IWICImagingFactory2* pFactory = /*GraphicsManager.GetWICFactory()*/NULL; //TODO
 
 					do
 					{
@@ -178,7 +178,7 @@ namespace scion
 					IWICBitmapDecoder* pDecoder = NULL;
 					IWICBitmapFrameDecode* pFrame = NULL;
 					IWICFormatConverter* pConverterFrame = NULL;
-					IWICImagingFactory2* pFactory = GraphicsManager.GetWICFactory();
+					IWICImagingFactory2* pFactory = /*GraphicsManager.GetWICFactory()*/NULL; //TODO
 
 					do
 					{
@@ -353,7 +353,7 @@ namespace scion
 					IWICBitmapEncoder* pEncoder = NULL;
 					IWICBitmapFrameEncode* pFrame = NULL;
 					IPropertyBag2* pPropertyBag = NULL;
-					IWICImagingFactory2* pFactory = GraphicsManager.GetWICFactory();
+					IWICImagingFactory2* pFactory = /*GraphicsManager.GetWICFactory()*/NULL; //TODO
 
 					do
 					{

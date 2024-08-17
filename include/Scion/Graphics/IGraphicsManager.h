@@ -50,15 +50,8 @@ namespace scion
 		namespace gfx
 		{
 			
-			class IGraphicsManager
+			class IGraphicsManager : public common::IReferenceCounter
 			{
-#pragma region Constructors
-
-			public:
-
-				static AFX_EXT_API IGraphicsManager* Get();
-
-#pragma endregion
 #pragma region Operations
 
 			public:
@@ -69,6 +62,8 @@ namespace scion
 
 #pragma endregion
 			};
+
+			HRESULT AFX_EXT_API CreateGraphicsManager(IGraphicsManager** ppGraphicsManager);
 
 		}
 	}

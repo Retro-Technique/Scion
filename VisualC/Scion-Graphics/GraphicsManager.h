@@ -52,19 +52,16 @@ namespace scion
 
 				DECLARE_DYNAMIC(CGraphicsManager)
 
-			private:
+			public:
 
 				CGraphicsManager();
 				virtual ~CGraphicsManager();
 
 #pragma endregion
-#pragma region Attributes
 
 			private:
 
-				static CGraphicsManager ms_Instance;
-
-			private:
+				mutable LONG m_nRef;
 
 				ID2D1Factory8* m_pD2DFactory;
 				IDWriteFactory8* m_pDWriteFactory;
@@ -75,13 +72,6 @@ namespace scion
 				inline ID2D1Factory8* GetD2DFactory() const { return m_pD2DFactory; }
 				inline IDWriteFactory8* GetDWriteFactory() const { return m_pDWriteFactory; }
 				inline IWICImagingFactory2* GetWICFactory() const { return m_pWICFactory; }
-
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				static CGraphicsManager& GetInstance();
 
 #pragma endregion
 #pragma region Overridables
@@ -95,6 +85,8 @@ namespace scion
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
 			};
@@ -102,5 +94,3 @@ namespace scion
 		}
 	}
 }
-
-#define GraphicsManager scion::engine::gfx::CGraphicsManager::GetInstance()

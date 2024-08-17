@@ -45,5 +45,6 @@
 #include <Scion/Common/CommonIncludes.h>
 #include <Scion/Common/ErrorCode.h>
 #include <Scion/Common/ErrorMessage.h>
+#include <Scion/Common/IReferenceCounter.h>
 
 #endif

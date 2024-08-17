@@ -49,14 +49,14 @@ namespace scion
 		IMPLEMENT_DYNAMIC(CGameEngine, CObject);
 
 		CGameEngine::CGameEngine()
-			: m_pGraphicsManager(gfx::IGraphicsManager::Get())
+			: m_pGraphicsManager(NULL)
 		{
 			
 		}
 
 		CGameEngine::~CGameEngine()
 		{
-			
+			Quit();
 		}
 
 #pragma endregion
@@ -64,12 +64,15 @@ namespace scion
 
 		HRESULT CGameEngine::Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
 		{
-			ASSERT_VALID(this);
-
 			HRESULT hr = S_OK;
 
 			do
 			{
+				if (hr = CreateManagers(); FAILED(hr))
+				{
+					break;
+				}
+
 				if (hr = m_pGraphicsManager->Initialize(pD2DState); FAILED(hr))
 				{
 					break;
@@ -101,11 +104,7 @@ namespace scion
 			m_VideoManager.Quit();
 			m_AudioManager.Quit();
 
-			if (m_pGraphicsManager)
-			{
-				m_pGraphicsManager->Quit();
-				m_pGraphicsManager = NULL;
-			}
+			DestroyManagers();
 		}
 
 #pragma endregion
@@ -133,6 +132,34 @@ namespace scion
 		}
 
 #endif
+
+#pragma endregion
+#pragma region Implementations
+
+		HRESULT CGameEngine::CreateManagers()
+		{
+			HRESULT hr = S_OK;
+
+			do
+			{
+				if (hr = gfx::CreateGraphicsManager(&m_pGraphicsManager); FAILED(hr))
+				{
+					break;
+				}
+
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			return hr;
+		}
+
+		void CGameEngine::DestroyManagers()
+		{
+			if (m_pGraphicsManager)
+			{
+				m_pGraphicsManager->Release();
+				m_pGraphicsManager = NULL;
+			}
+		}
 
 #pragma endregion
 	}

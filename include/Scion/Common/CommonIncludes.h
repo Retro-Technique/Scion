@@ -45,10 +45,18 @@
 
 #include <afxwin.h>
 #include <afxmt.h>
+#include <afxwinappex.h>
 #include <DirectXMath.h>
 
 #define SCION_NULL_WHILE_LOOP_CONDITION (-1 == __LINE__)
 
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(P) (P)
+#endif
+
+#ifdef _DEBUG
+#define STATIC_DOWNCAST_CONST(class_name, object) \
+	(static_cast<const class_name*>(AfxStaticDownCast(RUNTIME_CLASS(class_name), object)))
+#else
+#define STATIC_DOWNCAST_CONST(class_name, object) (static_cast<const class_name*>(object))
 #endif

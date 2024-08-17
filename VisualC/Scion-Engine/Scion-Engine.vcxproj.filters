@@ -27,22 +27,13 @@
     <ClCompile Include="Scion-Engine.cpp">
       <Filter>local</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Manager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\ResourceManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\GameEngine.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\SceneManager.cpp">
+    <ClCompile Include="..\..\src\Engine\RenderView.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Node.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Resource.cpp">
+    <ClCompile Include="..\..\src\Engine\GameApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -67,25 +58,13 @@
     <ClInclude Include="pch.h">
       <Filter>local</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Engine\Manager.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Engine\ResourceManager.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Scion\Engine\GameEngine.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Engine\SceneManager.h">
+    <ClInclude Include="..\..\include\Scion\Engine\RenderView.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Engine\Node.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Engine\Resource.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Engine\INode.h">
+    <ClInclude Include="..\..\include\Scion\Engine\GameApp.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

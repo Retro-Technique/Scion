@@ -6,7 +6,7 @@
 
 #include "resource.h"   
 
-class CMainApp : public CWinAppEx
+class CMainApp : public scion::engine::CGameApp
 {
 #pragma region Constructors
 
@@ -20,10 +20,6 @@ public:
 public:
 
 	BOOL  m_bHiColorIcons;
-
-private:
-
-	scion::engine::CGameEngine	m_GameEngine;
 
 private:
 

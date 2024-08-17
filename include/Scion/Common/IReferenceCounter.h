@@ -37,55 +37,27 @@
  *
  */
 
-#include "pch.h"
-#include "GraphicsManager.h"
+#ifndef __SCION_COMMON_H_INCLUDED__
+#error Do not include IReferenceCounter.h directly, include the Common.h file
+#endif
+
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace gfx
+		namespace common
 		{
 
-			class CRenderWindow : public CObject, public IRenderWindow
+			class IReferenceCounter
 			{
-#pragma region Constructors
-
-				DECLARE_DYNAMIC(CRenderWindow)
+#pragma region Operations
 
 			public:
 
-				CRenderWindow(CGraphicsManager* pGraphicsManager);
-				virtual ~CRenderWindow();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				mutable LONG m_nRef;
-
-				CGraphicsManager*		m_pGraphicsManager;
-				ID2D1DeviceContext7*	m_pD2DDeviceContext;
-
-			public:
-
-				inline ID2D1DeviceContext7* GetD2DDeviceContext() const { return m_pD2DDeviceContext; }
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-				HRESULT Create(CWnd* pWnd) override;
-				void Destroy() override;
-				void SelfDestroy() override;
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
-				void AddRef() const override;
-				BOOL Release() const override;
+				virtual void AddRef() const = 0;
+				virtual BOOL Release() const = 0;
 
 #pragma endregion
 			};

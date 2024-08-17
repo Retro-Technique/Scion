@@ -90,6 +90,14 @@ namespace scion
 #endif
 
 #pragma endregion
+#pragma region Implementations
+
+		private:
+
+			HRESULT CreateManagers();
+			void DestroyManagers();
+
+#pragma endregion
 		};
 
 	}

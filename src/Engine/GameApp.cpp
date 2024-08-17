@@ -38,58 +38,51 @@
  */
 
 #include "pch.h"
-#include "GraphicsManager.h"
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace gfx
-		{
 
-			class CRenderWindow : public CObject, public IRenderWindow
-			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CRenderWindow)
+		CGameApp::CGameApp() noexcept
+		{
 
-			public:
-
-				CRenderWindow(CGraphicsManager* pGraphicsManager);
-				virtual ~CRenderWindow();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				mutable LONG m_nRef;
-
-				CGraphicsManager*		m_pGraphicsManager;
-				ID2D1DeviceContext7*	m_pD2DDeviceContext;
-
-			public:
-
-				inline ID2D1DeviceContext7* GetD2DDeviceContext() const { return m_pD2DDeviceContext; }
+		}
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+		BOOL CGameApp::InitInstance()
+		{
+			CWinAppEx::InitInstance();
 
-				HRESULT Create(CWnd* pWnd) override;
-				void Destroy() override;
-				void SelfDestroy() override;
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
-				void AddRef() const override;
-				BOOL Release() const override;
+			if (!EnableD2DSupport())
+			{
+				return FALSE;
+			}
+
+			_AFX_D2D_STATE* pD2DState = AfxGetD2DState();
+			CWnd* pMainWnd = AfxGetMainWnd();
+
+			HRESULT hr = m_GameEngine.Initialize(m_hInstance, pMainWnd, pD2DState);
+			if (FAILED(hr))
+			{
+				return FALSE;
+			}
+
+			return TRUE;
+		}
+
+		int CGameApp::ExitInstance()
+		{
+			m_GameEngine.Quit();
+
+			return CWinAppEx::ExitInstance();
+		}
 
 #pragma endregion
-			};
 
-		}
 	}
 }

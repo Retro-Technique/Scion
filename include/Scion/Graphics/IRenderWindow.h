@@ -50,7 +50,7 @@ namespace scion
 		namespace gfx
 		{
 
-			class IRenderWindow
+			class IRenderWindow : public common::IReferenceCounter
 			{
 #pragma region Operations
 

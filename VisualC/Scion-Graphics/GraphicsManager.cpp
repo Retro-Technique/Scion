@@ -50,17 +50,26 @@ namespace scion
 
 #pragma region Constructors
 
-			IGraphicsManager* IGraphicsManager::Get()
+			HRESULT CreateGraphicsManager(IGraphicsManager** ppGraphicsManager)
 			{
-				return &GraphicsManager;
-			}
+				ASSERT_NULL_OR_POINTER(*ppGraphicsManager, IGraphicsManager);
 
-			CGraphicsManager CGraphicsManager::ms_Instance;
+				IGraphicsManager* pGraphicsManager = new CGraphicsManager;
+				if (!pGraphicsManager)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppGraphicsManager = pGraphicsManager;
+
+				return S_OK;
+			}
 
 			IMPLEMENT_DYNAMIC(CGraphicsManager, CObject)
 
 			CGraphicsManager::CGraphicsManager()
-				: m_pD2DFactory(NULL)
+				: m_nRef(1)
+				, m_pD2DFactory(NULL)
 				, m_pDWriteFactory(NULL)
 				, m_pWICFactory(NULL)
 			{
@@ -73,12 +82,7 @@ namespace scion
 			}
 
 #pragma endregion
-#pragma region Operations
-
-			CGraphicsManager& CGraphicsManager::GetInstance()
-			{
-				return ms_Instance;
-			}
+#pragma region Overridables
 
 			HRESULT CGraphicsManager::Initialize(_AFX_D2D_STATE* pD2DState)
 			{
@@ -152,9 +156,6 @@ namespace scion
 				return S_OK;
 			}
 
-#pragma endregion
-#pragma region Overridables
-
 #ifdef _DEBUG
 
 			void CGraphicsManager::AssertValid() const
@@ -172,6 +173,23 @@ namespace scion
 			}
 
 #endif
+
+			void CGraphicsManager::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CGraphicsManager::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
 
 #pragma endregion
 

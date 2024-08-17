@@ -48,11 +48,8 @@
 #ifndef __SCION_ENGINE_H_INCLUDED__
 #define __SCION_ENGINE_H_INCLUDED__
 
-#include <Scion/Engine/Manager.h>
-#include <Scion/Engine/ResourceManager.h>
-#include <Scion/Engine/SceneManager.h>
-#include <Scion/Engine/Node.h>
-#include <Scion/Engine/Resource.h>
+#include <Scion/Engine/RenderView.h>
 #include <Scion/Engine/GameEngine.h>
+#include <Scion/Engine/GameApp.h>
 
 #endif

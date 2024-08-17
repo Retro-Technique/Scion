@@ -90,21 +90,7 @@ BOOL CMainApp::InitInstance()
 	}
 #endif
 
-	if (!EnableD2DSupport())
-	{
-		return FALSE;
-	}
-
 	if (!ProcessShellCommand(cmdInfo))
-	{
-		return FALSE;
-	}
-
-	_AFX_D2D_STATE* pD2DState = AfxGetD2DState();
-	CWnd* pMainWnd = AfxGetMainWnd();
-
-	HRESULT hr = m_GameEngine.Initialize(m_hInstance, pMainWnd, pD2DState);
-	if (FAILED(hr))
 	{
 		return FALSE;
 	}
@@ -122,9 +108,7 @@ BOOL CMainApp::InitInstance()
 
 int CMainApp::ExitInstance()
 {
-	m_GameEngine.Quit();
-
-	return CWinAppEx::ExitInstance();
+	return scion::engine::CGameApp::ExitInstance();
 }
 
 void CMainApp::PreLoadState()
@@ -248,7 +232,7 @@ void CMainApp::InitAppInfo()
 #pragma endregion
 #pragma region Messages
 
-BEGIN_MESSAGE_MAP(CMainApp, CWinAppEx)
+BEGIN_MESSAGE_MAP(CMainApp, scion::engine::CGameApp)
 	ON_COMMAND(ID_APP_ABOUT, &CMainApp::OnAppAbout)
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
