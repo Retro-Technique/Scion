@@ -66,7 +66,7 @@ namespace scion
 
 		private:
 
-			gfx::CGraphicsManager	m_GraphicsManager;
+			gfx::IGraphicsManager*	m_pGraphicsManager;
 			sfx::CAudioManager		m_AudioManager;
 			vfx::CVideoManager		m_VideoManager;
 			ifx::CInputManager		m_InputManager;

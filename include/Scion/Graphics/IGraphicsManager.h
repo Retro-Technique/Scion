@@ -37,103 +37,39 @@
  *
  */
 
-#include "pch.h"
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#error Do not include IGraphicsManager.h directly, include the Graphics.h file
+#endif
+
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-
+		namespace gfx
+		{
+			
+			class IGraphicsManager
+			{
 #pragma region Constructors
 
-		IMPLEMENT_DYNAMIC(CGameEngine, CObject);
+			public:
 
-		CGameEngine::CGameEngine()
-			: m_pGraphicsManager(gfx::IGraphicsManager::Get())
-		{
-			
-		}
-
-		CGameEngine::~CGameEngine()
-		{
-			
-		}
+				static AFX_EXT_API IGraphicsManager* Get();
 
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CGameEngine::Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
-		{
-			ASSERT_VALID(this);
+			public:
 
-			HRESULT hr = S_OK;
-
-			do
-			{
-				if (hr = m_pGraphicsManager->Initialize(pD2DState); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_AudioManager.Initialize(pMainWnd); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_VideoManager.Initialize(); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_InputManager.Initialize(hInstance); FAILED(hr))
-				{
-					break;
-				}
-
-			} while (SCION_NULL_WHILE_LOOP_CONDITION);
-
-			return hr;
-		}
-
-		void CGameEngine::Quit()
-		{
-			m_InputManager.Quit();
-			m_VideoManager.Quit();
-			m_AudioManager.Quit();
-
-			if (m_pGraphicsManager)
-			{
-				m_pGraphicsManager->Quit();
-				m_pGraphicsManager = NULL;
-			}
-		}
+				virtual HRESULT Initialize(_AFX_D2D_STATE* pD2DState) = 0;
+				virtual void Quit() = 0;
+				virtual HRESULT CreateRenderWindow(IRenderWindow** ppRenderWindow) = 0;
 
 #pragma endregion
-#pragma region Overridables
+			};
 
-#ifdef _DEBUG
-
-		void CGameEngine::AssertValid() const
-		{
-			CObject::AssertValid();
-
-			ASSERT_VALID(&m_InputManager);
-			ASSERT_VALID(&m_VideoManager);
-			ASSERT_VALID(&m_AudioManager);
-			ASSERT_POINTER(m_pGraphicsManager, gfx::IGraphicsManager);
 		}
-
-		void CGameEngine::Dump(CDumpContext& dc) const
-		{
-			CObject::Dump(dc);
-
-			AFXDUMP(&m_InputManager);
-			AFXDUMP(&m_VideoManager);
-			AFXDUMP(&m_AudioManager);
-		}
-
-#endif
-
-#pragma endregion
 	}
 }

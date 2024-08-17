@@ -27,19 +27,10 @@
     <ClCompile Include="AudioManagerImpl.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="AudioManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="SoundBufferImpl.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="SoundImpl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundBuffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Listener.cpp">
@@ -49,6 +40,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="WaveBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

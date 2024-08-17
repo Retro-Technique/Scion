@@ -45,6 +45,7 @@
 #define __SCION_GRAPHICS_H_INCLUDED__
 
 #include <Scion/Graphics/MatrixStack.h>
-#include <Scion/Graphics/GraphicsManager.h>
+#include <Scion/Graphics/IRenderWindow.h>
+#include <Scion/Graphics/IGraphicsManager.h>
 
 #endif

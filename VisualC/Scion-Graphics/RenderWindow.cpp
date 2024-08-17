@@ -37,11 +37,8 @@
  *
  */
 
-#ifndef __SCION_GRAPHICS_H_INCLUDED__
-#error Do not include GraphicsManager.h directly, include the Graphics.h file
-#endif
-
-#pragma once
+#include "pch.h"
+#include "RenderWindow.h"
 
 namespace scion
 {
@@ -49,38 +46,86 @@ namespace scion
 	{
 		namespace gfx
 		{
-			
-			class AFX_EXT_CLASS CGraphicsManager : public CObject
-			{
+
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CGraphicsManager);
+			IMPLEMENT_DYNAMIC(CRenderWindow, CObject)
 
-			public:
+			CRenderWindow::CRenderWindow(CGraphicsManager* pGraphicsManager)
+				: m_pGraphicsManager(pGraphicsManager)
+				, m_pD2DDeviceContext(NULL)
+			{
 
-				CGraphicsManager();
-				virtual ~CGraphicsManager();
+			}
+
+			CRenderWindow::~CRenderWindow()
+			{
+				Destroy();
+			}
 
 #pragma endregion
 #pragma region Operations
 
-			public:
-
-				HRESULT Initialize(_AFX_D2D_STATE* pD2DState);
-				void Quit();
 
 #pragma endregion
 #pragma region Overridables
 
-			public:
+			HRESULT CRenderWindow::Create(CWnd* pWnd)
+			{
+				if (!pWnd)
+				{
+					return E_INVALIDARG;
+				}
+
+				ASSERT_VALID(pWnd);
+
+				CHwndRenderTarget* pHwndRenderTarget = pWnd->GetRenderTarget();
+				if (pHwndRenderTarget)
+				{
+					return E_POINTER;
+				}
+
+				ASSERT_VALID(pHwndRenderTarget);
+
+				ID2D1HwndRenderTarget* pD2DRenderTarget = pHwndRenderTarget->GetHwndRenderTarget();
+				ASSERT_POINTER(pD2DRenderTarget, ID2D1HwndRenderTarget);
+
+				return pD2DRenderTarget->QueryInterface(__uuidof(ID2D1DeviceContext7), reinterpret_cast<void**>(&m_pD2DDeviceContext));
+			}
+
+			void CRenderWindow::Destroy()
+			{
+				if (m_pD2DDeviceContext)
+				{
+					m_pD2DDeviceContext->Release();
+					m_pD2DDeviceContext = NULL;
+				}
+			}
+
+			void CRenderWindow::SelfDestroy()
+			{
+				delete this;
+			}
 
 #ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+
+			void CRenderWindow::AssertValid() const
+			{
+				CObject::AssertValid();
+
+				ASSERT_POINTER(m_pGraphicsManager, CGraphicsManager);
+				ASSERT_VALID(m_pGraphicsManager);
+				ASSERT_POINTER(m_pD2DDeviceContext, ID2D1DeviceContext7);
+			}
+
+			void CRenderWindow::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+			}
+
 #endif
 
 #pragma endregion
-			};
 
 		}
 	}

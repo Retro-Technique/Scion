@@ -234,7 +234,6 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GraphicsManager.cpp" />
-    <ClCompile Include="GraphicsManagerImpl.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="MatrixStack.cpp" />
     <ClCompile Include="pch.cpp">
@@ -243,6 +242,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Scion-Graphics.cpp" />
     <ClCompile Include="TextureImpl.cpp" />
   </ItemGroup>
@@ -251,12 +251,14 @@
     <None Include="Scion-Graphics.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\Scion\Graphics\GraphicsManager.h" />
+    <ClInclude Include="..\..\include\Scion\Graphics\IGraphicsManager.h" />
     <ClInclude Include="..\..\include\Scion\Graphics\MatrixStack.h" />
+    <ClInclude Include="..\..\include\Scion\Graphics\IRenderWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="GraphicsManagerImpl.h" />
+    <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextureImpl.h" />

@@ -38,7 +38,8 @@
  */
 
 #include "pch.h"
-#include "GraphicsManagerImpl.h"
+#include "GraphicsManager.h"
+#include "RenderWindow.h"
 
 namespace scion
 {
@@ -49,29 +50,106 @@ namespace scion
 
 #pragma region Constructors
 
+			IGraphicsManager* IGraphicsManager::Get()
+			{
+				return &GraphicsManager;
+			}
+
+			CGraphicsManager CGraphicsManager::ms_Instance;
+
 			IMPLEMENT_DYNAMIC(CGraphicsManager, CObject)
 
 			CGraphicsManager::CGraphicsManager()
+				: m_pD2DFactory(NULL)
+				, m_pDWriteFactory(NULL)
+				, m_pWICFactory(NULL)
 			{
 
 			}
 
 			CGraphicsManager::~CGraphicsManager()
 			{
-				
+
 			}
 
 #pragma endregion
 #pragma region Operations
 
+			CGraphicsManager& CGraphicsManager::GetInstance()
+			{
+				return ms_Instance;
+			}
+
 			HRESULT CGraphicsManager::Initialize(_AFX_D2D_STATE* pD2DState)
 			{
-				return GraphicsManager.Initialize(pD2DState);
+				if (!pD2DState)
+				{
+					return E_INVALIDARG;
+				}
+
+				if (!pD2DState->IsD2DInitialized())
+				{
+					return E_FAIL;
+				}
+
+				ASSERT_NULL_OR_POINTER(m_pD2DFactory, ID2D1Factory8);
+				ASSERT_NULL_OR_POINTER(m_pDWriteFactory, IDWriteFactory8);
+				ASSERT_NULL_OR_POINTER(m_pWICFactory, IWICImagingFactory2);
+
+				ID2D1Factory* pD2DFactory = pD2DState->GetDirect2dFactory();
+				HRESULT hr = pD2DFactory->QueryInterface(__uuidof(ID2D1Factory8), reinterpret_cast<void**>(&m_pD2DFactory));
+				ASSERT(SUCCEEDED(hr));
+				ASSERT_POINTER(m_pD2DFactory, ID2D1Factory8);
+
+				IDWriteFactory* pDWFactory = pD2DState->GetWriteFactory();
+				hr = pDWFactory->QueryInterface(__uuidof(IDWriteFactory8), reinterpret_cast<void**>(&m_pDWriteFactory));
+				ASSERT(SUCCEEDED(hr));
+				ASSERT_POINTER(m_pDWriteFactory, IDWriteFactory8);
+
+				IWICImagingFactory* pWICFactory = pD2DState->GetWICFactory();
+				hr = pWICFactory->QueryInterface(__uuidof(IWICImagingFactory2), reinterpret_cast<void**>(&m_pWICFactory));
+				ASSERT(SUCCEEDED(hr));
+				ASSERT_POINTER(m_pWICFactory, IWICImagingFactory2);
+
+				return hr;
 			}
 
 			void CGraphicsManager::Quit()
 			{
-				GraphicsManager.Quit();
+				if (m_pWICFactory)
+				{
+					m_pWICFactory->Release();
+					m_pWICFactory = NULL;
+				}
+
+				if (m_pDWriteFactory)
+				{
+					m_pDWriteFactory->Release();
+					m_pDWriteFactory = NULL;
+				}
+
+				if (m_pD2DFactory)
+				{
+					m_pD2DFactory->Release();
+					m_pD2DFactory = NULL;
+				}
+			}
+
+			HRESULT CGraphicsManager::CreateRenderWindow(IRenderWindow** ppRenderWindow)
+			{
+				ASSERT_POINTER(this, CGraphicsManager);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppRenderWindow, IRenderWindow);
+
+				IRenderWindow* pRenderWindow = new CRenderWindow(this);
+				if (!pRenderWindow)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppRenderWindow = pRenderWindow;
+
+				return S_OK;
 			}
 
 #pragma endregion
@@ -83,14 +161,14 @@ namespace scion
 			{
 				CObject::AssertValid();
 
-				ASSERT_VALID(&GraphicsManager);
+				ASSERT_POINTER(m_pD2DFactory, ID2D1Factory8);
+				ASSERT_POINTER(m_pDWriteFactory, IDWriteFactory8);
+				ASSERT_POINTER(m_pWICFactory, IWICImagingFactory2);
 			}
 
 			void CGraphicsManager::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
-
-				AFXDUMP(&GraphicsManager);
 			}
 
 #endif

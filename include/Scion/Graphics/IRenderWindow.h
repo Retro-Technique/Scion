@@ -38,48 +38,31 @@
  */
 
 #ifndef __SCION_GRAPHICS_H_INCLUDED__
-#error Do not include IRenderer.h directly, include the Graphics.h file
+#error Do not include IRenderWindow.h directly, include the Graphics.h file
 #endif
 
 #pragma once
 
 namespace scion
 {
-	namespace gfx
+	namespace engine
 	{
-		
-		class IRenderer
+		namespace gfx
 		{
-		public:
-			
-			virtual void SetTransform(const D2D1::Matrix3x2F& mMatrix) = 0;
-			virtual void Clear(const D2D1_COLOR_F& clrClear) = 0;
-			virtual void DrawBitmap(IBitmapResource* pBitmap, const D2D_RECT_F& rcDst, EBitmapInterpolationMode eInterpolationMode, const D2D_RECT_F& rcSrc) = 0;
-			virtual void DrawGeometry(IGeometryResource* pGeometry, IBrushResource* pBrush, FLOAT fStrokeWidth, IStrokeStyleResource* pStrokeStyle) = 0;
-			virtual void FillGeometry(IGeometryResource* pGeometry, IBrushResource* pBrush, IBrushResource* pOpacityBrush) = 0;
-			virtual void DrawText() = 0;
-			virtual void DrawSpriteBatch(ISpriteBatchResource* pSpriteBatch, UINT uStartIndex, UINT uSpriteCount, IBitmapResource* pBitmap, EBitmapInterpolationMode eInterpolationMode, EBitmapSpriteOptions eSpriteOptions) = 0;
 
-		public:
+			class IRenderWindow
+			{
+#pragma region Operations
 
-			static AFX_EXT_API IRenderer* Create(CHwndRenderTarget* pRenderTarget);
-			static AFX_EXT_API void Free(IRenderer* pRenderer);
+			public:
 
-		};
+				virtual HRESULT Create(CWnd* pWnd) = 0;
+				virtual void Destroy() = 0;
+				virtual void SelfDestroy() = 0;
 
-		enum EBitmapInterpolationMode { };
-		enum EBitmapSpriteOptions { };
+#pragma endregion
+			};
 
-
-		class IResource { };
-		class IBitmapResource : public IResource { };
-		class IGeometryResource : public IResource { };
-		class ITextFormatResource : public IResource { };
-		class ISpriteBatchResource : public IResource { };
-		class IStrokeStyleResource :public IResource { };
-		class IBrushResource : public IResource { };
-		class ISolidColorResource : public IBrushResource { };
-		class ILinearGradientResource : public IBrushResource { };
-
+		}
 	}
 }

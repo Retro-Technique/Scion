@@ -24,19 +24,19 @@
     <ClCompile Include="Scion-Graphics.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="MatrixStack.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsManagerImpl.cpp">
+    <ClCompile Include="GraphicsManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="TextureImpl.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderWindow.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,19 +61,25 @@
     <ClInclude Include="pch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Graphics\GraphicsManager.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Scion\Graphics\MatrixStack.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsManagerImpl.h">
+    <ClInclude Include="GraphicsManager.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="TextureImpl.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Graphics\IRenderWindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Graphics\IGraphicsManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderWindow.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

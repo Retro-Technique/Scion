@@ -39,7 +39,7 @@
 
 #include "pch.h"
 #include "Image.h"
-#include "GraphicsManagerImpl.h"
+#include "GraphicsManager.h"
 
 namespace scion
 {

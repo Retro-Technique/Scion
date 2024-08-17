@@ -37,7 +37,8 @@
  *
  */
 
-#pragma once
+#include "pch.h"
+#include "GraphicsManager.h"
 
 namespace scion
 {
@@ -45,67 +46,46 @@ namespace scion
 	{
 		namespace gfx
 		{
-			namespace priv
-			{
 
-				class  CGraphicsManagerImpl : public CObject
-				{
+			class CRenderWindow : public CObject, public IRenderWindow
+			{
 #pragma region Constructors
 
-					DECLARE_DYNAMIC(CGraphicsManagerImpl);
+				DECLARE_DYNAMIC(CRenderWindow)
 
-				private:
+			public:
 
-					CGraphicsManagerImpl();
-					virtual ~CGraphicsManagerImpl();
+				CRenderWindow(CGraphicsManager* pGraphicsManager);
+				virtual ~CRenderWindow();
 
 #pragma endregion
 #pragma region Attributes
 
-				private:
+			private:
 
-					static CGraphicsManagerImpl ms_Instance;
+				CGraphicsManager*		m_pGraphicsManager;
+				ID2D1DeviceContext7*	m_pD2DDeviceContext;
 
-				private:
+			public:
 
-					ID2D1Factory8* m_pD2DFactory;
-					IDWriteFactory8* m_pDWriteFactory;
-					IWICImagingFactory2* m_pWICFactory;
-
-				public:
-
-					inline ID2D1Factory8* GetD2DFactory() const { return m_pD2DFactory; }
-					inline IDWriteFactory8* GetDWriteFactory() const { return m_pDWriteFactory; }
-					inline IWICImagingFactory2* GetWICFactory() const { return m_pWICFactory; }
-
-#pragma endregion
-#pragma region Operations
-
-				public:
-
-					static CGraphicsManagerImpl& GetInstance();
-
-				public:
-
-					HRESULT Initialize(_AFX_D2D_STATE* pD2DState);
-					void Quit();
+				inline ID2D1DeviceContext7* GetD2DDeviceContext() const { return m_pD2DDeviceContext; }
 
 #pragma endregion
 #pragma region Overridables
 
-				public:
+			public:
 
+				HRESULT Create(CWnd* pWnd) override;
+				void Destroy() override;
+				void SelfDestroy() override;
 #ifdef _DEBUG
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
-				};
+			};
 
-			}
 		}
 	}
 }
-
-#define GraphicsManager scion::engine::gfx::priv::CGraphicsManagerImpl::GetInstance()

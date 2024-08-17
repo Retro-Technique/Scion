@@ -37,103 +37,70 @@
  *
  */
 
-#include "pch.h"
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
+		namespace gfx
+		{
 
+			class CGraphicsManager : public CObject, public IGraphicsManager
+			{
 #pragma region Constructors
 
-		IMPLEMENT_DYNAMIC(CGameEngine, CObject);
+				DECLARE_DYNAMIC(CGraphicsManager)
 
-		CGameEngine::CGameEngine()
-			: m_pGraphicsManager(gfx::IGraphicsManager::Get())
-		{
-			
-		}
+			private:
 
-		CGameEngine::~CGameEngine()
-		{
-			
-		}
+				CGraphicsManager();
+				virtual ~CGraphicsManager();
+
+#pragma endregion
+#pragma region Attributes
+
+			private:
+
+				static CGraphicsManager ms_Instance;
+
+			private:
+
+				ID2D1Factory8* m_pD2DFactory;
+				IDWriteFactory8* m_pDWriteFactory;
+				IWICImagingFactory2* m_pWICFactory;
+
+			public:
+
+				inline ID2D1Factory8* GetD2DFactory() const { return m_pD2DFactory; }
+				inline IDWriteFactory8* GetDWriteFactory() const { return m_pDWriteFactory; }
+				inline IWICImagingFactory2* GetWICFactory() const { return m_pWICFactory; }
 
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CGameEngine::Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
-		{
-			ASSERT_VALID(this);
+			public:
 
-			HRESULT hr = S_OK;
-
-			do
-			{
-				if (hr = m_pGraphicsManager->Initialize(pD2DState); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_AudioManager.Initialize(pMainWnd); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_VideoManager.Initialize(); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_InputManager.Initialize(hInstance); FAILED(hr))
-				{
-					break;
-				}
-
-			} while (SCION_NULL_WHILE_LOOP_CONDITION);
-
-			return hr;
-		}
-
-		void CGameEngine::Quit()
-		{
-			m_InputManager.Quit();
-			m_VideoManager.Quit();
-			m_AudioManager.Quit();
-
-			if (m_pGraphicsManager)
-			{
-				m_pGraphicsManager->Quit();
-				m_pGraphicsManager = NULL;
-			}
-		}
+				static CGraphicsManager& GetInstance();
 
 #pragma endregion
 #pragma region Overridables
 
+			public:
+
+				HRESULT Initialize(_AFX_D2D_STATE* pD2DState) override;
+				void Quit() override;
+				HRESULT CreateRenderWindow(IRenderWindow** ppRenderWindow) override;
 #ifdef _DEBUG
-
-		void CGameEngine::AssertValid() const
-		{
-			CObject::AssertValid();
-
-			ASSERT_VALID(&m_InputManager);
-			ASSERT_VALID(&m_VideoManager);
-			ASSERT_VALID(&m_AudioManager);
-			ASSERT_POINTER(m_pGraphicsManager, gfx::IGraphicsManager);
-		}
-
-		void CGameEngine::Dump(CDumpContext& dc) const
-		{
-			CObject::Dump(dc);
-
-			AFXDUMP(&m_InputManager);
-			AFXDUMP(&m_VideoManager);
-			AFXDUMP(&m_AudioManager);
-		}
-
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
 
 #pragma endregion
+			};
+
+		}
 	}
 }
+
+#define GraphicsManager scion::engine::gfx::CGraphicsManager::GetInstance()
