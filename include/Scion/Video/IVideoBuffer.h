@@ -38,7 +38,7 @@
  */
 
 #ifndef __SCION_VIDEO_H_INCLUDED__
-#error Do not include VideoBuffer.h directly, include the Video.h file
+#error Do not include IVideoBuffer.h directly, include the Video.h file
 #endif
 
 #pragma once

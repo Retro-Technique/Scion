@@ -38,8 +38,9 @@
  */
 
 #include "pch.h"
+#include "Texture.h"
+#include "Image.h"
 #include "RenderWindow.h"
-#include "GraphicsManager.h"
 
 namespace scion
 {
@@ -50,86 +51,101 @@ namespace scion
 
 #pragma region Constructors
 
-			IMPLEMENT_DYNAMIC(CRenderWindow, CObject)
+			IMPLEMENT_DYNAMIC(CTexture, CObject)
 
-			CRenderWindow::CRenderWindow(CGraphicsManager* pGraphicsManager)
+			CTexture::CTexture(CRenderWindow* pRenderWindow)
 				: m_nRef(1)
-				, m_pGraphicsManager(pGraphicsManager)
-				, m_pD2DDeviceContext(NULL)
+				, m_pRenderWindow(pRenderWindow)
+				, m_pD2DBitmap(NULL)
 			{
-				m_pGraphicsManager->AddRef();
+				m_pRenderWindow->AddRef();
 			}
 
-			CRenderWindow::~CRenderWindow()
+			CTexture::~CTexture()
 			{
-				Destroy();
+				Unload();
 
-				if (m_pGraphicsManager)
+				if (m_pRenderWindow)
 				{
-					m_pGraphicsManager->Release();
-					m_pGraphicsManager = NULL;
+					m_pRenderWindow->Release();
+					m_pRenderWindow = NULL;
 				}
 			}
 
 #pragma endregion
 #pragma region Overridables
 
-			HRESULT CRenderWindow::Create(CWnd* pWnd)
+			HRESULT CTexture::LoadFromFile(LPCTSTR pszFileName)
 			{
-				if (!pWnd)
+				ASSERT_VALID(this);
+
+				if (!AfxIsValidString(pszFileName, MAX_PATH))
 				{
 					return E_INVALIDARG;
 				}
 
-				ASSERT_VALID(pWnd);
+				HRESULT hr = S_OK;
+				priv::CImage Image;
 
-				CHwndRenderTarget* pHwndRenderTarget = pWnd->GetRenderTarget();
-				if (pHwndRenderTarget)
+				do
 				{
-					return E_POINTER;
+					if (hr = Image.LoadFromFile(pszFileName); FAILED(hr))
+					{
+						break;
+					}
+
+					IWICBitmap* pWICBitmap = Image.GetWICBitmap();
+					ID2D1DeviceContext7* pD2DDeviceContext = m_pRenderWindow->GetD2DDeviceContext();
+
+					if (hr = pD2DDeviceContext->CreateBitmapFromWicBitmap(pWICBitmap, &m_pD2DBitmap); FAILED(hr))
+					{
+						break;
+					}
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+				Image.Unload();
+
+				if (FAILED(hr))
+				{
+					Unload();
 				}
 
-				ASSERT_VALID(pHwndRenderTarget);
-
-				ID2D1HwndRenderTarget* pD2DRenderTarget = pHwndRenderTarget->GetHwndRenderTarget();
-				ASSERT_POINTER(pD2DRenderTarget, ID2D1HwndRenderTarget);
-
-				return pD2DRenderTarget->QueryInterface(__uuidof(ID2D1DeviceContext7), reinterpret_cast<void**>(&m_pD2DDeviceContext));
+				return hr;
 			}
 
-			void CRenderWindow::Destroy()
+			void CTexture::Unload()
 			{
-				if (m_pD2DDeviceContext)
+				if (m_pD2DBitmap)
 				{
-					m_pD2DDeviceContext->Release();
-					m_pD2DDeviceContext = NULL;
+					m_pD2DBitmap->Release();
+					m_pD2DBitmap = NULL;
 				}
 			}
 
 #ifdef _DEBUG
 
-			void CRenderWindow::AssertValid() const
+			void CTexture::AssertValid() const
 			{
 				CObject::AssertValid();
 
-				ASSERT_POINTER(m_pGraphicsManager, CGraphicsManager);
-				ASSERT_VALID(m_pGraphicsManager);
-				ASSERT_POINTER(m_pD2DDeviceContext, ID2D1DeviceContext7);
+				ASSERT_POINTER(m_pRenderWindow, CRenderWindow);
+				ASSERT_VALID(m_pRenderWindow);
 			}
 
-			void CRenderWindow::Dump(CDumpContext& dc) const
+			void CTexture::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
 			}
 
 #endif
 
-			void CRenderWindow::AddRef() const
+			void CTexture::AddRef() const
 			{
 				InterlockedIncrement(&m_nRef);
 			}
 
-			BOOL CRenderWindow::Release() const
+			BOOL CTexture::Release() const
 			{
 				const LONG nRefCount = InterlockedDecrement(&m_nRef);
 				if (0l == nRefCount)

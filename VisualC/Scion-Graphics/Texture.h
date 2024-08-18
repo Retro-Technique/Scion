@@ -45,49 +45,46 @@ namespace scion
 	{
 		namespace gfx
 		{
-			namespace priv
-			{
+			class CRenderWindow;
 
-				class  CTextureImpl : public CObject
-				{
+			class CTexture : public CObject, public ITexture
+			{
 #pragma region Constructors
 
-					DECLARE_DYNAMIC(CTextureImpl);
+				DECLARE_DYNAMIC(CTexture);
 
-				public:
+			public:
 
-					CTextureImpl();
-					virtual ~CTextureImpl();
+				CTexture(CRenderWindow* pRenderWindow);
+				virtual ~CTexture();
 
 #pragma endregion
 #pragma region Attributes
 
-				private:
+			private:
 
-					ID2D1Bitmap* m_pD2DBitmap;
+				mutable LONG m_nRef;
+				CRenderWindow* m_pRenderWindow;
 
-#pragma endregion
-#pragma region Operations
-
-				public:
-
-					HRESULT LoadFromFile(LPCTSTR pszFileName);
-					void Unload();
+				ID2D1Bitmap* m_pD2DBitmap;
 
 #pragma endregion
 #pragma region Overridables
 
-				public:
+			public:
 
+				HRESULT LoadFromFile(LPCTSTR pszFileName) override;
+				void Unload() override;
 #ifdef _DEBUG
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
-				};
+			};
 
-			}
 		}
 	}
 }

@@ -30,7 +30,7 @@
     <ClCompile Include="GraphicsManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="TextureImpl.cpp">
+    <ClCompile Include="Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
@@ -67,7 +67,7 @@
     <ClInclude Include="GraphicsManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="TextureImpl.h">
+    <ClInclude Include="Texture.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
@@ -81,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="RenderWindow.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Graphics\ITexture.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

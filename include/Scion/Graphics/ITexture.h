@@ -37,9 +37,11 @@
  *
  */
 
-#include "pch.h"
-#include "TextureImpl.h"
-#include "Image.h"
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#error Do not include ITexture.h directly, include the Graphics.h file
+#endif
+
+#pragma once
 
 namespace scion
 {
@@ -47,98 +49,19 @@ namespace scion
 	{
 		namespace gfx
 		{
-			namespace priv
+
+			class ITexture : public common::IReferenceCounter
 			{
-
-#pragma region Constructors
-
-				IMPLEMENT_DYNAMIC(CTextureImpl, CObject)
-
-				CTextureImpl::CTextureImpl()
-					: m_pD2DBitmap(NULL)
-				{
-
-				}
-
-				CTextureImpl::~CTextureImpl()
-				{
-					Unload();
-				}
-
-#pragma endregion
 #pragma region Operations
 
-				HRESULT CTextureImpl::LoadFromFile(LPCTSTR pszFileName)
-				{
-					ASSERT_VALID(this);
+			public:
 
-					if (!AfxIsValidString(pszFileName, MAX_PATH))
-					{
-						return E_INVALIDARG;
-					}
-
-					HRESULT hr = S_OK;
-
-					do
-					{
-						CImage Image;
-
-						if (hr = Image.LoadFromFile(pszFileName); FAILED(hr))
-						{
-							break;
-						}
-
-						IWICBitmap* pWICBitmap = Image.GetWICBitmap();
-						
-						ID2D1DeviceContext7* pD2DDeviceContext = NULL;
-
-						if (hr = pD2DDeviceContext->CreateBitmapFromWicBitmap(pWICBitmap, &m_pD2DBitmap); FAILED(hr))
-						{
-							break;
-						}
-					
-						Image.Unload();
-
-					} while (SCION_NULL_WHILE_LOOP_CONDITION);
-
-					if (FAILED(hr))
-					{
-						Unload();
-					}
-
-					return hr;
-				}
-
-				void CTextureImpl::Unload()
-				{
-					if (m_pD2DBitmap)
-					{
-						m_pD2DBitmap->Release();
-						m_pD2DBitmap = NULL;
-					}
-				}
+				virtual HRESULT LoadFromFile(LPCTSTR pszFileName) = 0;
+				virtual void Unload() = 0;
 
 #pragma endregion
-#pragma region Overridables
+			};
 
-#ifdef _DEBUG
-
-				void CTextureImpl::AssertValid() const
-				{
-					CObject::AssertValid();
-
-				}
-
-				void CTextureImpl::Dump(CDumpContext& dc) const
-				{
-					CObject::Dump(dc);
-				}
-
-#endif
-
-#pragma endregion
-
-			}
 		}
 	}
 }

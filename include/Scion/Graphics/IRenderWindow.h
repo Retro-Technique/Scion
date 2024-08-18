@@ -58,7 +58,7 @@ namespace scion
 
 				virtual HRESULT Create(CWnd* pWnd) = 0;
 				virtual void Destroy() = 0;
-				virtual void SelfDestroy() = 0;
+		
 
 #pragma endregion
 			};

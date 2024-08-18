@@ -79,7 +79,6 @@ namespace scion
 
 				HRESULT Create(CWnd* pWnd) override;
 				void Destroy() override;
-				void SelfDestroy() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
