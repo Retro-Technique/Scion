@@ -225,7 +225,6 @@
     </ClCompile>
     <ClCompile Include="Scion-Video.cpp" />
     <ClCompile Include="VideoBuffer.cpp" />
-    <ClCompile Include="VideoBufferImpl.cpp" />
     <ClCompile Include="VideoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -234,12 +233,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Scion\Video\IVideoManager.h" />
-    <ClInclude Include="..\..\include\Scion\Video\VideoBuffer.h" />
+    <ClInclude Include="..\..\include\Scion\Video\IVideoBuffer.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="VideoBufferImpl.h" />
+    <ClInclude Include="VideoBuffer.h" />
     <ClInclude Include="VideoManager.h" />
   </ItemGroup>
   <ItemGroup>

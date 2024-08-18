@@ -71,6 +71,7 @@ namespace scion
 
 				HRESULT Initialize() override;
 				void Quit() override;
+				HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;

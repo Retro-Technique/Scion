@@ -9,20 +9,13 @@ namespace ScionVideoTest
 	{
 	private:
 
-		scion::engine::vfx::CVideoManager m_VideoManager;
+		
 
 	public:
 		
 		VideoBufferTest()
 		{
 			SetCurrentDirectory(_T("..\\..\\Scion-Video.Test"));
-
-			m_VideoManager.Initialize();
-		}
-
-		~VideoBufferTest()
-		{
-			m_VideoManager.Quit();
 		}
 
 		TEST_METHOD(TestLoad)
@@ -39,16 +32,43 @@ namespace ScionVideoTest
 			FLOAT fFrameRate = 0.f;
 			CTimeSpan durVideo;
 			HRESULT hr = S_OK;
+			scion::engine::vfx::IVideoManager* pVideoManager = NULL;
+			scion::engine::vfx::IVideoBuffer* pVideoBuffer = NULL;
 
+			do
 			{
-				scion::engine::vfx::CVideoBuffer VideoBuffer;
+				if (hr = scion::engine::vfx::CreateVideoManager(&pVideoManager); FAILED(hr))
+				{
+					break;
+				}
 
-				hr = VideoBuffer.LoadFromFile(_T("res\\PLANET.AVI"));
+				if (hr = pVideoManager->CreateVideoBuffer(&pVideoBuffer); FAILED(hr))
+				{
+					break;
+				}
 
-				fFrameRate = VideoBuffer.GetFrameRate();
-				durVideo = VideoBuffer.GetDuration();
+				if (hr = pVideoBuffer->OpenFromFile(_T("res\\PLANET.AVI")); FAILED(hr))
+				{
+					break;
+				}
 
-				VideoBuffer.Unload();
+				fFrameRate = pVideoBuffer->GetFrameRate();
+				durVideo = pVideoBuffer->GetDuration();
+
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			if (pVideoBuffer)
+			{
+				pVideoBuffer->Close();
+				pVideoBuffer->Release();
+				pVideoBuffer = NULL;
+			}
+
+			if (pVideoManager)
+			{
+				pVideoManager->Quit();
+				pVideoManager->Release();
+				pVideoManager = NULL;
 			}
 
 #ifdef _DEBUG

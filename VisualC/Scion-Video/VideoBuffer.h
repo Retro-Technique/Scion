@@ -37,10 +37,6 @@
  *
  */
 
-#ifndef __SCION_VIDEO_H_INCLUDED__
-#error Do not include VideoBuffer.h directly, include the Video.h file
-#endif
-
 #pragma once
 
 namespace scion
@@ -49,14 +45,9 @@ namespace scion
 	{
 		namespace vfx
 		{
-			namespace priv
-			{
+			class CVideoManager;
 
-				class CVideoBufferImpl;
-
-			}
-			
-			class AFX_EXT_CLASS CVideoBuffer : public CObject
+			class CVideoBuffer : public CObject, public IVideoBuffer
 			{
 #pragma region Constructors
 
@@ -64,7 +55,7 @@ namespace scion
 
 			public:
 
-				CVideoBuffer();
+				CVideoBuffer(CVideoManager* pVideoManager);
 				virtual ~CVideoBuffer();
 
 #pragma endregion
@@ -72,28 +63,27 @@ namespace scion
 
 			private:
 
-				priv::CVideoBufferImpl* m_pImpl;
+				mutable LONG m_nRef;
+				CVideoManager* m_pVideoManager;
 
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				HRESULT LoadFromFile(LPCTSTR pszFileName);
-				BOOL IsLoaded() const;
-				FLOAT GetFrameRate() const;
-				CTimeSpan GetDuration() const;
-				void Unload();
+				PAVIFILE		m_pAviFile;
+				PAVISTREAM		m_pAviStream;
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
+				HRESULT OpenFromFile(LPCTSTR pszFileName) override;
+				FLOAT GetFrameRate() const override;
+				CTimeSpan GetDuration() const override;
+				void Close() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
 			};

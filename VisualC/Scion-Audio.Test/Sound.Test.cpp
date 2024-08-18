@@ -96,47 +96,78 @@ namespace ScionAudioTest
 #endif
 
 			HRESULT hr = S_OK;
+			scion::engine::sfx::IAudioManager* pAudioManager = NULL;
+			scion::engine::sfx::ISoundBuffer* pSoundBuffer = NULL;
+			scion::engine::sfx::ISound* pSound = NULL;
 
 			do
 			{
-				scion::engine::sfx::CAudioManager AudioManager;
 				HWND hWnd = GetDesktopWindow();
 				CWnd* pWnd = CWnd::FromHandle(hWnd);
 
-				AudioManager.Initialize(pWnd);
-
-				scion::engine::sfx::CSoundBuffer SoundBuffer;
-				scion::engine::sfx::CSound Sound;
-
-				hr = SoundBuffer.LoadFromFile(pszFileName);
-				if (FAILED(hr))
+				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager))
 				{
 					break;
 				}
 
-				hr = Sound.LoadFromBuffer(SoundBuffer);
-				if (FAILED(hr))
+				if (hr = pAudioManager->Initialize(pWnd); FAILED(hr))
 				{
 					break;
 				}
 
-				durSound = SoundBuffer.GetDuration();
-				bIsPlayingBefore = Sound.IsPlaying();
+				if (hr = pAudioManager->CreateSoundBuffer(&pSoundBuffer); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = pAudioManager->CreateSound(&pSound); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = pSoundBuffer->LoadFromFile(pszFileName); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = pSound->LoadFromBuffer(pSoundBuffer); FAILED(hr))
+				{
+					break;
+				}
+
+				durSound = pSoundBuffer->GetDuration();
+				bIsPlayingBefore = pSound->IsPlaying();
 				
-				hr = Sound.Play(FALSE);
+				hr = pSound->Play(FALSE);
 				if (FAILED(hr))
 				{
 					break;
 				}
 
-				bIsPlayingAfter = Sound.IsPlaying();
-
-				Sound.Unload();
-				SoundBuffer.Unload();
-
-				AudioManager.Quit();
+				bIsPlayingAfter = pSound->IsPlaying();
 
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			if (pSound)
+			{
+				pSound->Unload();
+				pSound->Release();
+				pSound = NULL;
+			}
+
+			if (pSoundBuffer)
+			{
+				pSoundBuffer->Unload();
+				pSoundBuffer->Release();
+				pSoundBuffer = NULL;
+			}
+
+			if (pAudioManager)
+			{
+				pAudioManager->Quit();
+				pAudioManager->Release();
+				pAudioManager = NULL;
+			}
 
 #ifdef _DEBUG
 			_CrtMemCheckpoint(&State2);

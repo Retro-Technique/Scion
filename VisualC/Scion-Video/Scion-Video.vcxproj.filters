@@ -30,9 +30,6 @@
     <ClCompile Include="VideoBuffer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="VideoBufferImpl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Scion-Video.def">
@@ -58,10 +55,10 @@
     <ClInclude Include="VideoManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Video\VideoBuffer.h">
+    <ClInclude Include="..\..\include\Scion\Video\IVideoBuffer.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="VideoBufferImpl.h">
+    <ClInclude Include="VideoBuffer.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Scion\Video\IVideoManager.h">

@@ -59,7 +59,7 @@ namespace scion
 				, m_pSecondaryBuffer(NULL)
 				, m_uDataSize(0)
 			{
-
+				m_pAudioManager->AddRef();
 			}
 
 			CSoundBuffer::~CSoundBuffer()

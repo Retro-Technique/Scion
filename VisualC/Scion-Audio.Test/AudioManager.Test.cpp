@@ -18,23 +18,34 @@ namespace ScionAudioTest
 
 			_CrtMemCheckpoint(&State1);
 #endif
-			HRESULT hr = S_OK;
 			BOOL bIsMemDifferent = TRUE;
 
+			HRESULT hr = S_OK;
 			scion::engine::sfx::IAudioManager* pAudioManager = NULL;
 
-			hr = scion::engine::sfx::CreateAudioManager(&pAudioManager);
-			if (SUCCEEDED(hr))
+			do
 			{
 				HWND hWnd = GetDesktopWindow();
 				CWnd* pWnd = CWnd::FromHandle(hWnd);
 
-				hr = pAudioManager->Initialize(pWnd);
+				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager))
+				{
+					break;
+				}
+
+				if (hr = pAudioManager->Initialize(pWnd); FAILED(hr))
+				{
+					break;
+				}
 
 				pAudioManager->Quit();
-				pAudioManager->Release();
 
-				pWnd->Detach();
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			if (pAudioManager)
+			{
+				pAudioManager->Release();
+				pAudioManager = NULL;
 			}
 
 #ifdef _DEBUG

@@ -39,6 +39,7 @@
 
 #include "pch.h"
 #include "VideoManager.h"
+#include "VideoBuffer.h"
 
 namespace scion
 {
@@ -90,6 +91,23 @@ namespace scion
 			void CVideoManager::Quit()
 			{
 				AVIFileExit();
+			}
+
+			HRESULT CVideoManager::CreateVideoBuffer(IVideoBuffer** ppVideoBuffer)
+			{
+				ASSERT_POINTER(this, CVideoManager);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppVideoBuffer, IVideoBuffer);
+
+				IVideoBuffer* pListener = new CVideoBuffer(this);
+				if (!pListener)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppVideoBuffer = pListener;
+
+				return S_OK;
 			}
 
 #ifdef _DEBUG

@@ -10,12 +10,12 @@ namespace ScionAudioTest
 	public:
 
 		SoundBufferTest()
-		{			
+		{
 			SetCurrentDirectory(_T("..\\..\\Scion-Audio.Test"));
 		}
 
 		TEST_METHOD(TestLoadBOURB1M1)
-		{			
+		{
 			BOOL bIsDifferent = FALSE;
 			CTimeSpan durSound;
 
@@ -92,23 +92,50 @@ namespace ScionAudioTest
 #endif
 
 			HRESULT hr = S_OK;
+			scion::engine::sfx::IAudioManager* pAudioManager = NULL;
+			scion::engine::sfx::ISoundBuffer* pSoundBuffer = NULL;
 
+			do
 			{
-				scion::engine::sfx::CAudioManager AudioManager;
 				HWND hWnd = GetDesktopWindow();
 				CWnd* pWnd = CWnd::FromHandle(hWnd);
 
-				AudioManager.Initialize(pWnd);
+				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager))
+				{
+					break;
+				}
 
-				scion::engine::sfx::CSoundBuffer SoundBuffer;
+				if (hr = pAudioManager->Initialize(pWnd); FAILED(hr))
+				{
+					break;
+				}
 
-				hr = SoundBuffer.LoadFromFile(pszFileName);
+				if (hr = pAudioManager->CreateSoundBuffer(&pSoundBuffer); FAILED(hr))
+				{
+					break;
+				}
 
-				durSound = SoundBuffer.GetDuration();
+				if (hr = pSoundBuffer->LoadFromFile(pszFileName); FAILED(hr))
+				{
+					break;
+				}
 
-				SoundBuffer.Unload();
+				durSound = pSoundBuffer->GetDuration();
 
-				AudioManager.Quit();
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			if (pSoundBuffer)
+			{
+				pSoundBuffer->Unload();
+				pSoundBuffer->Release();
+				pSoundBuffer = NULL;
+			}
+
+			if (pAudioManager)
+			{
+				pAudioManager->Quit();
+				pAudioManager->Release();
+				pAudioManager = NULL;
 			}
 
 #ifdef _DEBUG
