@@ -37,76 +37,52 @@
  *
  */
 
-#include "pch.h"
-#include "VideoManagerImpl.h"
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace vfx
+		namespace sfx
 		{
-			namespace priv
-			{
+			class CAudioManager;
 
+			class CListener : public CObject, public IListener
+			{
 #pragma region Constructors
 
-				CVideoManagerImpl CVideoManagerImpl::ms_Instance;
+				DECLARE_DYNAMIC(CListener)
 
-				IMPLEMENT_DYNAMIC(CVideoManagerImpl, CObject)
+			public:
 
-				CVideoManagerImpl::CVideoManagerImpl()
-				{
-
-				}
-
-				CVideoManagerImpl::~CVideoManagerImpl()
-				{
-
-				}
+				CListener(CAudioManager* pAudioManager);
+				virtual ~CListener();
 
 #pragma endregion
-#pragma region Operations
+#pragma region Attributes
 
-				CVideoManagerImpl& CVideoManagerImpl::GetInstance()
-				{
-					return ms_Instance;
-				}
+			private:
 
-				HRESULT CVideoManagerImpl::Initialize()
-				{
-					AVIFileInit();
-
-					return S_OK;
-				}
-
-				void CVideoManagerImpl::Quit()
-				{
-					AVIFileExit();
-				}
+				mutable LONG m_nRef;
+				CAudioManager* m_pAudioManager;
 
 #pragma endregion
 #pragma region Overridables
 
+			public:
+
+				HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z) override;
+				HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const override;
 #ifdef _DEBUG
-
-				void CVideoManagerImpl::AssertValid() const
-				{
-					CObject::AssertValid();
-
-				}
-
-				void CVideoManagerImpl::Dump(CDumpContext& dc) const
-				{
-					CObject::Dump(dc);
-
-				}
-
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
+			};
 
-			}
 		}
 	}
 }

@@ -38,7 +38,7 @@
  */
 
 #ifndef __SCION_AUDIO_H_INCLUDED__
-#error Do not include Listener.h directly, include the Audio.h file
+#error Do not include ISound.h directly, include the Audio.h file
 #endif
 
 #pragma once
@@ -50,34 +50,24 @@ namespace scion
 		namespace sfx
 		{
 
-			class AFX_EXT_CLASS CListener : public CObject
+			class ISound : public common::IReferenceCounter
 			{
-#pragma region Constructors
-
-				DECLARE_DYNAMIC(CListener)
-
-			public:
-
-				CListener();
-				virtual ~CListener();
-
-#pragma endregion
 #pragma region Operations
 
 			public:
 
-				HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z);
-				HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const;
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
+				virtual HRESULT LoadFromBuffer(const ISoundBuffer* pSoundBuffer) = 0;
+				virtual HRESULT Play(BOOL bLooping) = 0;
+				virtual HRESULT Stop() = 0;
+				virtual HRESULT SetVolume(LONG nVolume) = 0;
+				virtual HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z) = 0;
+				virtual HRESULT SetMinDistance(FLOAT fDistance) = 0;
+				virtual HRESULT GetVolume(LONG& nVolume) const = 0;
+				virtual HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) = 0;
+				virtual HRESULT GetMinDistance(FLOAT& fDistance) = 0;
+				virtual BOOL IsPlaying() const = 0;
+				virtual BOOL IsLooping() const = 0;
+				virtual void Unload() = 0;
 
 #pragma endregion
 			};

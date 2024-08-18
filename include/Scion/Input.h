@@ -44,6 +44,6 @@
 #ifndef __SCION_INPUT_H_INCLUDED__
 #define __SCION_INPUT_H_INCLUDED__
 
-#include <Scion/Input/InputManager.h>
+#include <Scion/Input/IInputManager.h>
 
 #endif

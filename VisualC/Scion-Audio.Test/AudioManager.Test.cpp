@@ -8,9 +8,9 @@ namespace ScionAudioTest
 	TEST_CLASS(AudioManagerTest)
 	{
 	public:
-		
+
 		TEST_METHOD(TestInitialize)
-		{			
+		{
 #ifdef _DEBUG
 			_CrtMemState State1;
 			_CrtMemState State2;
@@ -21,15 +21,18 @@ namespace ScionAudioTest
 			HRESULT hr = S_OK;
 			BOOL bIsMemDifferent = TRUE;
 
-			{
-				scion::engine::sfx::CAudioManager AudioManager;
+			scion::engine::sfx::IAudioManager* pAudioManager = NULL;
 
+			hr = scion::engine::sfx::CreateAudioManager(&pAudioManager);
+			if (SUCCEEDED(hr))
+			{
 				HWND hWnd = GetDesktopWindow();
 				CWnd* pWnd = CWnd::FromHandle(hWnd);
 
-				hr = AudioManager.Initialize(pWnd);
+				hr = pAudioManager->Initialize(pWnd);
 
-				AudioManager.Quit();
+				pAudioManager->Quit();
+				pAudioManager->Release();
 
 				pWnd->Detach();
 			}

@@ -37,10 +37,6 @@
  *
  */
 
-#ifndef __SCION_AUDIO_H_INCLUDED__
-#error Do not include Sound.h directly, include the Audio.h file
-#endif
-
 #pragma once
 
 namespace scion
@@ -49,63 +45,51 @@ namespace scion
 	{
 		namespace sfx
 		{
-			namespace priv
-			{
+			class CAudioManager;
 
-				class CSoundImpl;
-
-			}
-
-			class AFX_EXT_CLASS CSound : public CObject
+			class CSoundBuffer : public CObject, public ISoundBuffer
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CSound)
+				DECLARE_DYNAMIC(CSoundBuffer)
 
 			public:
 
-				CSound();
-				virtual ~CSound();
+				CSoundBuffer(CAudioManager* pAudioManager);
+				virtual ~CSoundBuffer();
 
 #pragma endregion
 #pragma region Attributes
 
 			private:
 
-				priv::CSoundImpl* m_pImpl;
+				mutable LONG m_nRef;
+				CAudioManager* m_pAudioManager;
 
-#pragma endregion
-#pragma region Operations
-
-			public:
-
-				static LONG GetMaxVolume();
-				static LONG GetMinVolume();
+				LPDIRECTSOUNDBUFFER8	m_pSecondaryBuffer;
+				UINT m_uDataSize;
 
 			public:
 
-				HRESULT LoadFromBuffer(const CSoundBuffer& SoundBuffer);
-				HRESULT Play(BOOL bLooping);
-				HRESULT Stop();
-				HRESULT SetVolume(LONG nVolume);
-				HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z);
-				HRESULT SetMinDistance(FLOAT fDistance);
-				HRESULT GetVolume(LONG& nVolume) const;
-				HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z);
-				HRESULT GetMinDistance(FLOAT& fDistance);
-				BOOL IsPlaying() const;
-				BOOL IsLooping() const;
-				void Unload();
+				inline const LPDIRECTSOUNDBUFFER8 GetBuffer() const { return m_pSecondaryBuffer; }
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
+				HRESULT LoadFromFile(LPCTSTR pszFileName) override;
+				CTimeSpan GetDuration() const override;
+				WORD GetChannelCount() const override;
+				DWORD GetSampleRate() const override;
+				DWORD GetSize() const override;
+				void Unload() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
 			};

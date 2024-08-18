@@ -44,9 +44,9 @@
 #ifndef __SCION_AUDIO_H_INCLUDED__
 #define __SCION_AUDIO_H_INCLUDED__
 
-#include <Scion/Audio/SoundBuffer.h>
-#include <Scion/Audio/Sound.h>
-#include <Scion/Audio/Listener.h>
-#include <Scion/Audio/AudioManager.h>
+#include <Scion/Audio/ISoundBuffer.h>
+#include <Scion/Audio/ISound.h>
+#include <Scion/Audio/IListener.h>
+#include <Scion/Audio/IAudioManager.h>
 
 #endif

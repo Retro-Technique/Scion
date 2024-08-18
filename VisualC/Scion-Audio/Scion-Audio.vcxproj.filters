@@ -24,13 +24,13 @@
     <ClCompile Include="pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="AudioManagerImpl.cpp">
+    <ClCompile Include="AudioManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="SoundBufferImpl.cpp">
+    <ClCompile Include="SoundBuffer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="SoundImpl.cpp">
+    <ClCompile Include="Sound.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Listener.cpp">
@@ -40,15 +40,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="WaveBuffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundBuffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -73,25 +64,25 @@
     <ClInclude Include="targetver.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Audio\SoundBuffer.h">
+    <ClInclude Include="..\..\include\Scion\Audio\ISoundBuffer.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManagerImpl.h">
+    <ClInclude Include="AudioManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Audio\AudioManager.h">
+    <ClInclude Include="..\..\include\Scion\Audio\IAudioManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="SoundBufferImpl.h">
+    <ClInclude Include="SoundBuffer.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="SoundImpl.h">
+    <ClInclude Include="Sound.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Audio\Sound.h">
+    <ClInclude Include="..\..\include\Scion\Audio\ISound.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Audio\Listener.h">
+    <ClInclude Include="..\..\include\Scion\Audio\IListener.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="MMIO.h">
@@ -101,6 +92,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="MMIOUtils.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Listener.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

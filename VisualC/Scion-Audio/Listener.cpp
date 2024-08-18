@@ -38,7 +38,8 @@
  */
 
 #include "pch.h"
-#include "AudioManagerImpl.h"
+#include "Listener.h"
+#include "AudioManager.h"
 
 namespace scion
 {
@@ -51,31 +52,38 @@ namespace scion
 
 				IMPLEMENT_DYNAMIC(CListener, CObject)
 
-				CListener::CListener()
+				CListener::CListener(CAudioManager* pAudioManager)
+					: m_nRef(1)
+					, m_pAudioManager(pAudioManager)
 				{
-
+					m_pAudioManager->AddRef();
 				}
 
 				CListener::~CListener()
 				{
-					
-				}
-
-#pragma endregion
-#pragma region Operations
-
-				HRESULT CListener::SetPosition(FLOAT x, FLOAT y, FLOAT z)
-				{
-					return AudioManager.SetListenerPosition(x, y, z);
-				}
-
-				HRESULT CListener::GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const
-				{
-					return AudioManager.GetListenerPosition(x, y, z);
+					if (m_pAudioManager)
+					{
+						m_pAudioManager->Release();
+						m_pAudioManager = NULL;
+					}
 				}
 
 #pragma endregion
 #pragma region Overridables
+
+				HRESULT CListener::SetPosition(FLOAT x, FLOAT y, FLOAT z)
+				{
+					ASSERT_VALID(this);
+
+					return m_pAudioManager->SetListenerPosition(x, y, z);
+				}
+
+				HRESULT CListener::GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const
+				{
+					ASSERT_VALID(this);
+
+					return m_pAudioManager->GetListenerPosition(x, y, z);
+				}
 
 #ifdef _DEBUG
 
@@ -83,15 +91,42 @@ namespace scion
 				{
 					CObject::AssertValid();
 
+					ASSERT_POINTER(m_pAudioManager, CAudioManager);
+					ASSERT_VALID(m_pAudioManager);
 				}
 
 				void CListener::Dump(CDumpContext& dc) const
 				{
 					CObject::Dump(dc);
 
+					FLOAT x = 0.f;
+					FLOAT y = 0.f;
+					FLOAT z = 0.f;
+
+					if (const HRESULT hr = GetPosition(x, y, z); SUCCEEDED(hr))
+					{
+						dc << _T("Position: (") << x << _T(";") << y << _T(";") << z << _T(")\n");
+					}
 				}
 
 #endif
+
+				void CListener::AddRef() const
+				{
+					InterlockedIncrement(&m_nRef);
+				}
+
+				BOOL CListener::Release() const
+				{
+					const LONG nRefCount = InterlockedDecrement(&m_nRef);
+					if (0l == nRefCount)
+					{
+						delete this;
+						return TRUE;
+					}
+
+					return FALSE;
+				}
 
 #pragma endregion
 

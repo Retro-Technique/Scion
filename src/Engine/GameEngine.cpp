@@ -50,6 +50,9 @@ namespace scion
 
 		CGameEngine::CGameEngine()
 			: m_pGraphicsManager(NULL)
+			, m_pAudioManager(NULL)
+			, m_pVideoManager(NULL)
+			, m_pInputManager(NULL)
 		{
 			
 		}
@@ -78,17 +81,17 @@ namespace scion
 					break;
 				}
 
-				if (hr = m_AudioManager.Initialize(pMainWnd); FAILED(hr))
+				if (hr = m_pAudioManager->Initialize(pMainWnd); FAILED(hr))
 				{
 					break;
 				}
 
-				if (hr = m_VideoManager.Initialize(); FAILED(hr))
+				if (hr = m_pVideoManager->Initialize(); FAILED(hr))
 				{
 					break;
 				}
 
-				if (hr = m_InputManager.Initialize(hInstance); FAILED(hr))
+				if (hr = m_pInputManager->Initialize(hInstance); FAILED(hr))
 				{
 					break;
 				}
@@ -100,9 +103,10 @@ namespace scion
 
 		void CGameEngine::Quit()
 		{
-			m_InputManager.Quit();
-			m_VideoManager.Quit();
-			m_AudioManager.Quit();
+			m_pGraphicsManager->Quit();
+			m_pInputManager->Quit();
+			m_pVideoManager->Quit();
+			m_pAudioManager->Quit();
 
 			DestroyManagers();
 		}
@@ -116,19 +120,15 @@ namespace scion
 		{
 			CObject::AssertValid();
 
-			ASSERT_VALID(&m_InputManager);
-			ASSERT_VALID(&m_VideoManager);
-			ASSERT_VALID(&m_AudioManager);
+			ASSERT_POINTER(m_pInputManager, ifx::IInputManager);
+			ASSERT_POINTER(m_pVideoManager, vfx::IVideoManager);
+			ASSERT_POINTER(m_pAudioManager, sfx::IAudioManager);
 			ASSERT_POINTER(m_pGraphicsManager, gfx::IGraphicsManager);
 		}
 
 		void CGameEngine::Dump(CDumpContext& dc) const
 		{
 			CObject::Dump(dc);
-
-			AFXDUMP(&m_InputManager);
-			AFXDUMP(&m_VideoManager);
-			AFXDUMP(&m_AudioManager);
 		}
 
 #endif
@@ -147,6 +147,16 @@ namespace scion
 					break;
 				}
 
+				if (hr = vfx::CreateVideoManager(&m_pVideoManager); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = ifx::CreateInputManager(&m_pInputManager); FAILED(hr))
+				{
+					break;
+				}
+
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 			return hr;
@@ -154,6 +164,24 @@ namespace scion
 
 		void CGameEngine::DestroyManagers()
 		{
+			if (m_pInputManager)
+			{
+				m_pInputManager->Release();
+				m_pInputManager = NULL;
+			}
+
+			if (m_pVideoManager)
+			{
+				m_pVideoManager->Release();
+				m_pVideoManager = NULL;
+			}
+
+			if (m_pAudioManager)
+			{
+				m_pAudioManager->Release();
+				m_pAudioManager = NULL;
+			}
+
 			if (m_pGraphicsManager)
 			{
 				m_pGraphicsManager->Release();

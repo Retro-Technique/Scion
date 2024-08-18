@@ -38,7 +38,7 @@
  */
 
 #include "pch.h"
-#include "VideoManagerImpl.h"
+#include "VideoManager.h"
 
 namespace scion
 {
@@ -49,33 +49,48 @@ namespace scion
 
 #pragma region Constructors
 
+			HRESULT CreateVideoManager(IVideoManager** ppVideoManager)
+			{
+				ASSERT_NULL_OR_POINTER(*ppVideoManager, IVideoManager);
+
+				IVideoManager* pVideoManager = new CVideoManager;
+				if (!pVideoManager)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppVideoManager = pVideoManager;
+
+				return S_OK;
+			}
+
 			IMPLEMENT_DYNAMIC(CVideoManager, CObject)
 
 			CVideoManager::CVideoManager()
+				: m_nRef(1)
 			{
 
 			}
 
 			CVideoManager::~CVideoManager()
 			{
-				
-			}
 
-#pragma endregion
-#pragma region Operations
-
-			HRESULT CVideoManager::Initialize()
-			{
-				return VideoManager.Initialize();
-			}
-
-			void CVideoManager::Quit()
-			{
-				VideoManager.Quit();
 			}
 
 #pragma endregion
 #pragma region Overridables
+
+			HRESULT CVideoManager::Initialize()
+			{
+				AVIFileInit();
+
+				return S_OK;
+			}
+
+			void CVideoManager::Quit()
+			{
+				AVIFileExit();
+			}
 
 #ifdef _DEBUG
 
@@ -83,19 +98,35 @@ namespace scion
 			{
 				CObject::AssertValid();
 
-				ASSERT_VALID(&VideoManager);
 			}
 
 			void CVideoManager::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
 
-				AFXDUMP(&VideoManager);
 			}
 
 #endif
 
+			void CVideoManager::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CVideoManager::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
+
 #pragma endregion
+
 		}
 	}
 }

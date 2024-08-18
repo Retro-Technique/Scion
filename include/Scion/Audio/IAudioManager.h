@@ -37,63 +37,36 @@
  *
  */
 
+#ifndef __SCION_AUDIO_H_INCLUDED__
+#error Do not include IAudioManager.h directly, include the Audio.h file
+#endif
+
 #pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace vfx
+		namespace sfx
 		{
-			namespace priv
+
+			class IAudioManager : public common::IReferenceCounter
 			{
-
-				class CVideoManagerImpl : public CObject
-				{
-#pragma region Constructors
-
-					DECLARE_DYNAMIC(CVideoManagerImpl)
-
-				private:
-
-					CVideoManagerImpl();
-					virtual ~CVideoManagerImpl();
-
-#pragma endregion
-#pragma region Attributes
-
-				private:
-
-					static CVideoManagerImpl ms_Instance;
-
-#pragma endregion
 #pragma region Operations
 
-				public:
+			public:
 
-					static CVideoManagerImpl& GetInstance();
-
-				public:
-
-					HRESULT Initialize();
-					void Quit();
-
-#pragma endregion
-#pragma region Overridables
-
-				public:
-
-#ifdef _DEBUG
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
-#endif
+				virtual HRESULT Initialize(CWnd* pWnd) = 0;
+				virtual void Quit() = 0;
+				virtual HRESULT CreateSoundBuffer(ISoundBuffer** ppSoundBuffer) = 0;
+				virtual HRESULT CreateSound(ISound** ppSound) = 0;
+				virtual HRESULT CreateListener(IListener** ppListener) = 0;
 
 #pragma endregion
-				};
+			};
 
-			}
+			HRESULT AFX_EXT_API CreateAudioManager(IAudioManager** ppAudioManager);
+
 		}
 	}
 }
-
-#define VideoManager scion::engine::vfx::priv::CVideoManagerImpl::GetInstance()

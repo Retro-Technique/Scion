@@ -38,7 +38,10 @@
  */
 
 #include "pch.h"
-#include "AudioManagerImpl.h"
+#include "AudioManager.h"
+#include "SoundBuffer.h"
+#include "Sound.h"
+#include "Listener.h"
 
 namespace scion
 {
@@ -49,51 +52,389 @@ namespace scion
 
 #pragma region Constructors
 
-				IMPLEMENT_DYNAMIC(CAudioManager, CObject)
+			HRESULT CreateAudioManager(IAudioManager** ppAudioManager)
+			{
+				ASSERT_NULL_OR_POINTER(*ppAudioManager, IAudioManager);
 
-				CAudioManager::CAudioManager()
+				IAudioManager* pAudioManager = new CAudioManager;
+				if (!pAudioManager)
 				{
-				
+					return E_OUTOFMEMORY;
 				}
 
-				CAudioManager::~CAudioManager()
-				{
-					
-				}
+				*ppAudioManager = pAudioManager;
+
+				return S_OK;
+			}
+
+			IMPLEMENT_DYNAMIC(CAudioManager, CObject)
+
+			CAudioManager::CAudioManager()
+				: m_nRef(1)
+				, m_pDevice(NULL)
+				, m_pPrimaryBuffer(NULL)
+				, m_pListener(NULL)
+			{
+
+			}
+
+			CAudioManager::~CAudioManager()
+			{
+
+			}
 
 #pragma endregion
 #pragma region Operations
 
-				HRESULT CAudioManager::Initialize(CWnd* pWnd)
+			HRESULT CAudioManager::CreateSecondaryBuffer(LPCDSBUFFERDESC pBufferDesc, LPDIRECTSOUNDBUFFER* ppBuffer)
+			{
+				ASSERT_POINTER(pBufferDesc, DSBUFFERDESC);
+				ASSERT_NULL_OR_POINTER(*ppBuffer, IDirectSoundBuffer);
+
+				if (!m_pDevice)
 				{
-					return AudioManager.Initialize(pWnd);
+					return E_FAIL;
 				}
 
-				void CAudioManager::Quit()
+				return m_pDevice->CreateSoundBuffer(pBufferDesc, ppBuffer, NULL);
+			}
+
+			HRESULT CAudioManager::DuplicateSecondaryBuffer(LPDIRECTSOUNDBUFFER pOriginalBuffer, LPDIRECTSOUNDBUFFER* ppDuplicateBuffer)
+			{
+				ASSERT_POINTER(m_pDevice, IDirectSound);
+				ASSERT_POINTER(pOriginalBuffer, IDirectSoundBuffer);
+				ASSERT_NULL_OR_POINTER(*ppDuplicateBuffer, IDirectSoundBuffer);
+
+				return m_pDevice->DuplicateSoundBuffer(pOriginalBuffer, ppDuplicateBuffer);
+			}
+
+			HRESULT CAudioManager::SetListenerPosition(FLOAT x, FLOAT y, FLOAT z)
+			{
+				ASSERT_POINTER(m_pListener, IDirectSound3DListener8);
+
+				return m_pListener->SetPosition(x, y, z, DS3D_DEFERRED);
+			}
+
+			HRESULT CAudioManager::GetListenerPosition(FLOAT& x, FLOAT& y, FLOAT& z)
+			{
+				ASSERT_POINTER(m_pListener, IDirectSound3DListener8);
+
+				D3DVECTOR vPosition = { 0 };
+				if (const HRESULT hr = m_pListener->GetPosition(&vPosition); FAILED(hr))
 				{
-					AudioManager.Quit();
+					return hr;
 				}
+
+				x = vPosition.x;
+				y = vPosition.y;
+				z = vPosition.z;
+
+				return S_OK;
+			}
 
 #pragma endregion
 #pragma region Overridables
 
+			HRESULT CAudioManager::Initialize(CWnd* pWnd)
+			{
+				ASSERT_POINTER(pWnd, CWnd);
+				ASSERT_VALID(pWnd);
+
+				HRESULT hr = S_OK;
+
+				do
+				{
+					if (hr = CreateDevice(pWnd); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = CreatePrimaryBuffer(); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = CreateListener(); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = StartThread(); FAILED(hr))
+					{
+						break;
+					}
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+				return hr;
+			}
+
+			void CAudioManager::Quit()
+			{
+				StopThread();
+				DestroyListener();
+				DestroyPrimaryBuffer();
+				DestroyDevice();
+			}
+
+			HRESULT CAudioManager::CreateSoundBuffer(ISoundBuffer** ppSoundBuffer)
+			{
+				ASSERT_POINTER(this, CAudioManager);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppSoundBuffer, ISoundBuffer);
+
+				ISoundBuffer* pSoundBuffer = new CSoundBuffer(this);
+				if (!pSoundBuffer)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppSoundBuffer = pSoundBuffer;
+
+				return S_OK;
+			}
+
+			HRESULT CAudioManager::CreateSound(ISound** ppSound)
+			{
+				ASSERT_POINTER(this, CAudioManager);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppSound, ISound);
+
+				ISound* pSound = new CSound(this);
+				if (!pSound)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppSound = pSound;
+
+				return S_OK;
+			}
+
+			HRESULT CAudioManager::CreateListener(IListener** ppListener)
+			{
+				ASSERT_POINTER(this, CAudioManager);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppListener, IListener);
+
+				IListener* pListener = new CListener(this);
+				if (!pListener)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppListener = pListener;
+
+				return S_OK;
+			}
+
 #ifdef _DEBUG
 
-				void CAudioManager::AssertValid() const
-				{
-					CObject::AssertValid();
+			void CAudioManager::AssertValid() const
+			{
+				CObject::AssertValid();
 
-					ASSERT_VALID(&AudioManager);
-				}
+			}
 
-				void CAudioManager::Dump(CDumpContext& dc) const
-				{
-					CObject::Dump(dc);
-
-					AFXDUMP(&AudioManager);
-				}
+			void CAudioManager::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+			}
 
 #endif
+
+			void CAudioManager::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CAudioManager::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
+
+#pragma endregion
+#pragma region Implementations
+
+			HRESULT CAudioManager::CreateDevice(CWnd* pWnd)
+			{
+				HRESULT hr = S_OK;
+
+				do
+				{
+					if (hr = DirectSoundCreate8(NULL, &m_pDevice, NULL); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = m_pDevice->SetCooperativeLevel(pWnd->GetSafeHwnd(), DSSCL_PRIORITY); FAILED(hr))
+					{
+						break;
+					}
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+				return hr;
+			}
+
+			HRESULT CAudioManager::CreatePrimaryBuffer()
+			{
+				HRESULT hr = S_OK;
+
+				do
+				{
+					DSBUFFERDESC BufferDesc = { 0 };
+					BufferDesc.dwSize = sizeof(DSBUFFERDESC);
+					BufferDesc.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
+
+					if (hr = m_pDevice->CreateSoundBuffer(&BufferDesc, &m_pPrimaryBuffer, NULL); FAILED(hr))
+					{
+						break;
+					}
+
+					WAVEFORMATEX WaveFormat = { 0 };
+					WaveFormat.wFormatTag = WAVE_FORMAT_PCM;
+					WaveFormat.nChannels = DEFAULT_CHANNEL_COUNT;
+					WaveFormat.nSamplesPerSec = DEFAULT_FREQUENCY;
+					WaveFormat.wBitsPerSample = DEFAULT_FORMAT;
+					WaveFormat.nBlockAlign = (WaveFormat.nChannels * WaveFormat.wBitsPerSample) / 8; // divisé par 8 pour passer de bits à bytes
+					WaveFormat.nAvgBytesPerSec = WaveFormat.nSamplesPerSec * WaveFormat.nBlockAlign;
+
+					if (hr = m_pPrimaryBuffer->SetFormat(&WaveFormat); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = m_pPrimaryBuffer->Play(0, 0, DSBPLAY_LOOPING); FAILED(hr))
+					{
+						break;
+					}
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+				return hr;
+			}
+
+			HRESULT CAudioManager::CreateListener()
+			{
+				HRESULT hr = S_OK;
+
+				do
+				{
+					if (hr = m_pPrimaryBuffer->QueryInterface(IID_IDirectSound3DListener8, reinterpret_cast<void**>(&m_pListener)); FAILED(hr))
+					{
+						break;
+					}
+
+					/*DS3DLISTENER ds3dListener = { 0 };
+					ds3dListener.dwSize = sizeof(DS3DLISTENER);
+					ds3dListener.vPosition.x = 0.0f;
+					ds3dListener.vPosition.y = 0.0f;
+					ds3dListener.vPosition.z = 0.0f;
+					ds3dListener.vVelocity.x = 0.0f;
+					ds3dListener.vVelocity.y = 0.0f;
+					ds3dListener.vVelocity.z = 0.0f;
+					ds3dListener.vOrientFront.x = 0.0f;
+					ds3dListener.vOrientFront.y = 0.0f;
+					ds3dListener.vOrientFront.z = 1.0f;
+					ds3dListener.vOrientTop.x = 0.0f;
+					ds3dListener.vOrientTop.y = 1.0f;
+					ds3dListener.vOrientTop.z = 0.0f;
+					ds3dListener.flDistanceFactor = 1.0f;
+					ds3dListener.flRolloffFactor = 0.0f;
+					ds3dListener.flDopplerFactor = 0.0f;
+
+					if (hr = m_pListener->SetAllParameters(&ds3dListener, DS3D_DEFERRED); FAILED(hr))
+					{
+						break;
+					}*/
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+				return hr;
+			}
+
+			HRESULT CAudioManager::StartThread()
+			{
+				m_evAudioLoopExit.ResetEvent();
+
+				if (LPCVOID pThread = AfxBeginThread(AudioThreadProc, this); !pThread)
+				{
+					return E_FAIL;
+				}
+
+				return S_OK;
+			}
+
+			void CAudioManager::StopThread()
+			{
+				m_evAudioLoopExit.SetEvent();
+			}
+
+			void CAudioManager::DestroyListener()
+			{
+				if (m_pListener)
+				{
+					m_pListener->Release();
+					m_pListener = NULL;
+				}
+			}
+
+			void CAudioManager::DestroyPrimaryBuffer()
+			{
+				if (m_pPrimaryBuffer)
+				{
+					m_pPrimaryBuffer->Release();
+					m_pPrimaryBuffer = NULL;
+				}
+			}
+
+			void CAudioManager::DestroyDevice()
+			{
+				if (m_pDevice)
+				{
+					m_pDevice->Release();
+					m_pDevice = NULL;
+				}
+			}
+
+			void CAudioManager::OnAudioLoop()
+			{
+				ASSERT_POINTER(m_pListener, IDirectSound3DListener8);
+
+				m_pListener->CommitDeferredSettings();
+			}
+
+			UINT CAudioManager::AudioThreadProc(LPVOID pData)
+			{
+				CAudioManager* pAudioManager = reinterpret_cast<CAudioManager*>(pData);
+				BOOL bIsRunning = TRUE;
+
+				while (bIsRunning)
+				{
+					DWORD uResult = WaitForSingleObject(pAudioManager->GetExitEvent(), DEFAULT_THREAD_LOOP_MS);
+
+					switch (uResult)
+					{
+					case WAIT_TIMEOUT:
+						pAudioManager->OnAudioLoop();
+						break;
+					case WAIT_OBJECT_0:
+					default:
+						bIsRunning = FALSE;
+						break;
+					}
+				}
+
+				return 0;
+			}
 
 #pragma endregion
 

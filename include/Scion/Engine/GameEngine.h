@@ -67,9 +67,9 @@ namespace scion
 		private:
 
 			gfx::IGraphicsManager*	m_pGraphicsManager;
-			sfx::CAudioManager		m_AudioManager;
-			vfx::CVideoManager		m_VideoManager;
-			ifx::CInputManager		m_InputManager;
+			sfx::IAudioManager*		m_pAudioManager;
+			vfx::IVideoManager*		m_pVideoManager;
+			ifx::IInputManager*		m_pInputManager;
 
 #pragma endregion
 #pragma region Operations

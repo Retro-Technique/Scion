@@ -39,6 +39,7 @@
 
 #include "pch.h"
 #include "RenderWindow.h"
+#include "GraphicsManager.h"
 
 namespace scion
 {
@@ -52,8 +53,8 @@ namespace scion
 			IMPLEMENT_DYNAMIC(CRenderWindow, CObject)
 
 			CRenderWindow::CRenderWindow(CGraphicsManager* pGraphicsManager)
-				: m_pGraphicsManager(pGraphicsManager)
-				, m_nRef(1)
+				: m_nRef(1)
+				, m_pGraphicsManager(pGraphicsManager)
 				, m_pD2DDeviceContext(NULL)
 			{
 				m_pGraphicsManager->AddRef();

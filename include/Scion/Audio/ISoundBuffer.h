@@ -37,6 +37,10 @@
  *
  */
 
+#ifndef __SCION_AUDIO_H_INCLUDED__
+#error Do not include ISoundBuffer.h directly, include the Audio.h file
+#endif
+
 #pragma once
 
 namespace scion
@@ -45,58 +49,23 @@ namespace scion
 	{
 		namespace sfx
 		{
-			namespace priv
+
+			class ISoundBuffer : public common::IReferenceCounter
 			{
-
-				class CSoundBufferImpl : public CObject
-				{
-#pragma region Constructors
-
-					DECLARE_DYNAMIC(CSoundBufferImpl)
-
-				public:
-
-					CSoundBufferImpl();
-					virtual ~CSoundBufferImpl();
-
-#pragma endregion
-#pragma region Attributes
-
-				private:
-					
-					LPDIRECTSOUNDBUFFER8	m_pSecondaryBuffer;
-					UINT m_uDataSize;
-
-				public:
-
-					inline const LPDIRECTSOUNDBUFFER8 GetBuffer() const { return m_pSecondaryBuffer; }
-					inline UINT GetSize() const { return m_uDataSize; }
-
-#pragma endregion
 #pragma region Operations
 
-				public:
+			public:
 
-					HRESULT LoadFromFile(LPCTSTR pszFileName);
-					CTimeSpan GetDuration() const;
-					WORD GetChannelCount() const;
-					DWORD GetSampleRate() const;
-					void Unload();
-
-#pragma endregion
-#pragma region Overridables
-
-				public:
-
-#ifdef _DEBUG
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
-#endif
+				virtual HRESULT LoadFromFile(LPCTSTR pszFileName) = 0;
+				virtual CTimeSpan GetDuration() const = 0;
+				virtual WORD GetChannelCount() const = 0;
+				virtual DWORD GetSampleRate() const = 0;
+				virtual DWORD GetSize() const = 0;
+				virtual void Unload() = 0;
 
 #pragma endregion
-				};
+			};
 
-			}
 		}
 	}
 }

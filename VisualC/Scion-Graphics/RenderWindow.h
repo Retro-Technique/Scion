@@ -38,7 +38,6 @@
  */
 
 #include "pch.h"
-#include "GraphicsManager.h"
 
 namespace scion
 {
@@ -46,6 +45,7 @@ namespace scion
 	{
 		namespace gfx
 		{
+			class CGraphicsManager;
 
 			class CRenderWindow : public CObject, public IRenderWindow
 			{
@@ -64,8 +64,8 @@ namespace scion
 			private:
 
 				mutable LONG m_nRef;
-
 				CGraphicsManager*		m_pGraphicsManager;
+
 				ID2D1DeviceContext7*	m_pD2DDeviceContext;
 
 			public:

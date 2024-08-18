@@ -37,10 +37,6 @@
  *
  */
 
-#ifndef __SCION_AUDIO_H_INCLUDED__
-#error Do not include AudioManager.h directly, include the Audio.h file
-#endif
-
 #pragma once
 
 namespace scion
@@ -49,35 +45,53 @@ namespace scion
 	{
 		namespace sfx
 		{
+			class CAudioManager;
 
-			class AFX_EXT_CLASS CAudioManager : public CObject
+			class CSound : public CObject, public ISound
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CAudioManager)
+				DECLARE_DYNAMIC(CSound)
 
 			public:
 
-				CAudioManager();
-				virtual ~CAudioManager();
+				CSound(CAudioManager* pAudioManager);
+				virtual ~CSound();
 
 #pragma endregion
-#pragma region Operations
+#pragma region Attributes
 
-			public:
+			private:
 
-				HRESULT Initialize(CWnd* pWnd);
-				void Quit();
+				mutable LONG m_nRef;
+				CAudioManager* m_pAudioManager;
+
+				LPDIRECTSOUNDBUFFER8	m_pSecondaryBuffer;
+				LPDIRECTSOUND3DBUFFER8	m_p3DBuffer;
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
+				HRESULT LoadFromBuffer(const ISoundBuffer* pSoundBuffer) override;
+				HRESULT Play(BOOL bLooping) override;
+				HRESULT Stop() override;
+				HRESULT SetVolume(LONG nVolume) override;
+				HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z) override;
+				HRESULT SetMinDistance(FLOAT fDistance) override;
+				HRESULT GetVolume(LONG& nVolume) const override;
+				HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) override;
+				HRESULT GetMinDistance(FLOAT& fDistance) override;
+				BOOL IsPlaying() const override;
+				BOOL IsLooping() const override;
+				void Unload() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
 			};

@@ -218,7 +218,6 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="InputManagerImpl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -232,9 +231,9 @@
     <None Include="Scion-Input.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\Scion\Input\InputManager.h" />
+    <ClInclude Include="..\..\include\Scion\Input\IInputManager.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="InputManagerImpl.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />

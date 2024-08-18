@@ -37,47 +37,48 @@
  *
  */
 
-#ifndef __SCION_VIDEO_H_INCLUDED__
-#error Do not include VideoManager.h directly, include the Video.h file
-#endif
-
 #pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace vfx
+		namespace ifx
 		{
-			
-			class AFX_EXT_CLASS CVideoManager : public CObject
+
+			class CInputManager : public CObject, public IInputManager
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CVideoManager)
+				DECLARE_DYNAMIC(CInputManager)
 
 			public:
 
-				CVideoManager();
-				virtual ~CVideoManager();
+				CInputManager();
+				virtual ~CInputManager();
 
 #pragma endregion
-#pragma region Operations
+#pragma region Attributes
 
-			public:
+			private:
 
-				HRESULT Initialize();
-				void Quit();
+				mutable LONG m_nRef;
+
+				LPDIRECTINPUT8 m_pDevice;
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
+				HRESULT Initialize(HINSTANCE hInstance) override;
+				void Quit() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
 			};

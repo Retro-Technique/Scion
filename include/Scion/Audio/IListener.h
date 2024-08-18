@@ -37,6 +37,10 @@
  *
  */
 
+#ifndef __SCION_AUDIO_H_INCLUDED__
+#error Do not include IListener.h directly, include the Audio.h file
+#endif
+
 #pragma once
 
 namespace scion
@@ -45,60 +49,19 @@ namespace scion
 	{
 		namespace sfx
 		{
-			namespace priv
+
+			class IListener : public common::IReferenceCounter
 			{
-
-				class CSoundImpl : public CObject
-				{
-#pragma region Constructors
-
-					DECLARE_DYNAMIC(CSoundImpl)
-
-				public:
-
-					CSoundImpl();
-					virtual ~CSoundImpl();
-
-#pragma endregion
-#pragma region Attributes
-
-				private:
-
-					LPDIRECTSOUNDBUFFER8	m_pSecondaryBuffer;
-					LPDIRECTSOUND3DBUFFER8	m_p3DBuffer;
-
-#pragma endregion
 #pragma region Operations
 
-				public:
+			public:
 
-					HRESULT LoadFromBuffer(const CSoundBuffer& SoundBuffer);
-					HRESULT Play(BOOL bLooping);
-					HRESULT Stop();
-					HRESULT SetVolume(LONG nVolume);
-					HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z);
-					HRESULT SetMinDistance(FLOAT fDistance);
-					HRESULT GetVolume(LONG& nVolume) const;
-					HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z);
-					HRESULT GetMinDistance(FLOAT& fDistance);
-					BOOL IsPlaying() const;
-					BOOL IsLooping() const;
-					void Unload();
+				virtual HRESULT SetPosition(FLOAT x, FLOAT y, FLOAT z) = 0;
+				virtual HRESULT GetPosition(FLOAT& x, FLOAT& y, FLOAT& z) const = 0;
 
 #pragma endregion
-#pragma region Overridables
+			};
 
-				public:
-
-#ifdef _DEBUG
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
-#endif
-
-#pragma endregion
-				};
-
-			}
 		}
 	}
 }

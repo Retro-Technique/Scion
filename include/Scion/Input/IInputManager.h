@@ -38,7 +38,7 @@
  */
 
 #ifndef __SCION_INPUT_H_INCLUDED__
-#error Do not include InputManager.h directly, include the Input.h file
+#error Do not include IInputManager.h directly, include the Input.h file
 #endif
 
 #pragma once
@@ -50,37 +50,19 @@ namespace scion
 		namespace ifx
 		{
 
-			class AFX_EXT_CLASS CInputManager : public CObject
+			class IInputManager : public common::IReferenceCounter
 			{
-#pragma region Constructors
-
-				DECLARE_DYNAMIC(CInputManager)
-
-			public:
-
-				CInputManager();
-				virtual ~CInputManager();
-
-#pragma endregion
 #pragma region Operations
 
 			public:
 
-				HRESULT Initialize(HINSTANCE hInstance);
-				void Quit();
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
+				virtual HRESULT Initialize(HINSTANCE hInstance) = 0;
+				virtual void Quit() = 0;
 
 #pragma endregion
 			};
+
+			HRESULT AFX_EXT_API CreateInputManager(IInputManager** ppInputManager);
 
 		}
 	}

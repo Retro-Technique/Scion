@@ -37,67 +37,33 @@
  *
  */
 
+#ifndef __SCION_VIDEO_H_INCLUDED__
+#error Do not include IVideoManager.h directly, include the Video.h file
+#endif
+
 #pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace ifx
+		namespace vfx
 		{
-			namespace priv
+			
+			class IVideoManager : public common::IReferenceCounter
 			{
-
-				class CInputManagerImpl : public CObject
-				{
-#pragma region Constructors
-
-					DECLARE_DYNAMIC(CInputManagerImpl)
-
-				private:
-
-					CInputManagerImpl();
-					virtual ~CInputManagerImpl();
-
-#pragma endregion
-#pragma region Attributes
-
-				private:
-
-					static CInputManagerImpl ms_Instance;
-
-				private:
-
-					LPDIRECTINPUT8 m_pDevice;
-
-#pragma endregion
 #pragma region Operations
 
-				public:
+			public:
 
-					static CInputManagerImpl& GetInstance();
-
-				public:
-
-					HRESULT Initialize(HINSTANCE hInstance);
-					void Quit();
+				virtual HRESULT Initialize() = 0;
+				virtual void Quit() = 0;
 
 #pragma endregion
-#pragma region Overridables
+			};
 
-				public:
+			HRESULT AFX_EXT_API CreateVideoManager(IVideoManager** ppVideoManager);
 
-#ifdef _DEBUG
-					void AssertValid() const override;
-					void Dump(CDumpContext& dc) const override;
-#endif
-
-#pragma endregion
-				};
-
-			}
 		}
 	}
 }
-
-#define InputManager scion::engine::ifx::priv::CInputManagerImpl::GetInstance()

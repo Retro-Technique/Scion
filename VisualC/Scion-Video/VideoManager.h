@@ -37,86 +37,52 @@
  *
  */
 
-#include "pch.h"
-#include "InputManagerImpl.h"
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace ifx
+		namespace vfx
 		{
-			namespace priv
-			{
 
+			class CVideoManager : public CObject, public IVideoManager
+			{
 #pragma region Constructors
 
-				CInputManagerImpl CInputManagerImpl::ms_Instance;
+				DECLARE_DYNAMIC(CVideoManager)
 
-				IMPLEMENT_DYNAMIC(CInputManagerImpl, CObject)
+			public:
 
-				CInputManagerImpl::CInputManagerImpl()
-					: m_pDevice(NULL)
-				{
-
-				}
-
-				CInputManagerImpl::~CInputManagerImpl()
-				{
-
-				}
+				CVideoManager();
+				virtual ~CVideoManager();
 
 #pragma endregion
-#pragma region Operations
+#pragma region Attributes
 
-				CInputManagerImpl& CInputManagerImpl::GetInstance()
-				{
-					return ms_Instance;
-				}
+			private:
 
-				HRESULT CInputManagerImpl::Initialize(HINSTANCE hInstance)
-				{
-					ASSERT_POINTER(hInstance, HINSTANCE);
-
-					HRESULT hr = DirectInput8Create(hInstance,
-						DIRECTINPUT_VERSION,
-						IID_IDirectInput8,
-						reinterpret_cast<void**>(&m_pDevice),
-						NULL);
-
-					return hr;
-				}
-
-				void CInputManagerImpl::Quit()
-				{
-					if (m_pDevice)
-					{
-						m_pDevice->Release();
-						m_pDevice = NULL;
-					}
-				}
+				mutable LONG m_nRef;
 
 #pragma endregion
 #pragma region Overridables
 
+			public:
+
+				HRESULT Initialize() override;
+				void Quit() override;
 #ifdef _DEBUG
-
-				void CInputManagerImpl::AssertValid() const
-				{
-					CObject::AssertValid();
-
-				}
-
-				void CInputManagerImpl::Dump(CDumpContext& dc) const
-				{
-					CObject::Dump(dc);
-				}
-
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
+			};
 
-			}
 		}
 	}
 }
+
+#define VideoManager scion::engine::vfx::CVideoManager::GetInstance()

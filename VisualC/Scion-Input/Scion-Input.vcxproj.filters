@@ -27,9 +27,6 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="InputManagerImpl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Scion-Input.def">
@@ -52,10 +49,10 @@
     <ClInclude Include="Resource.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Scion\Input\InputManager.h">
+    <ClInclude Include="..\..\include\Scion\Input\IInputManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="InputManagerImpl.h">
+    <ClInclude Include="InputManager.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

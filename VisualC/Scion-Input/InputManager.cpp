@@ -38,7 +38,7 @@
  */
 
 #include "pch.h"
-#include "InputManagerImpl.h"
+#include "InputManager.h"
 
 namespace scion
 {
@@ -49,9 +49,26 @@ namespace scion
 
 #pragma region Constructors
 
+			HRESULT CreateInputManager(IInputManager** ppInputManager)
+			{
+				ASSERT_NULL_OR_POINTER(*ppInputManager, IInputManager);
+
+				IInputManager* pInputManager = new CInputManager;
+				if (!pInputManager)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppInputManager = pInputManager;
+
+				return S_OK;
+			}
+
 			IMPLEMENT_DYNAMIC(CInputManager, CObject)
 
 			CInputManager::CInputManager()
+				: m_nRef(1)
+				, m_pDevice(NULL)
 			{
 
 			}
@@ -62,20 +79,29 @@ namespace scion
 			}
 
 #pragma endregion
-#pragma region Operations
+#pragma region Overridables
 
 			HRESULT CInputManager::Initialize(HINSTANCE hInstance)
 			{
-				return InputManager.Initialize(hInstance);
+				ASSERT_POINTER(hInstance, HINSTANCE);
+
+				HRESULT hr = DirectInput8Create(hInstance,
+					DIRECTINPUT_VERSION,
+					IID_IDirectInput8,
+					reinterpret_cast<void**>(&m_pDevice),
+					NULL);
+
+				return hr;
 			}
 
 			void CInputManager::Quit()
 			{
-				InputManager.Quit();
+				if (m_pDevice)
+				{
+					m_pDevice->Release();
+					m_pDevice = NULL;
+				}
 			}
-
-#pragma endregion
-#pragma region Overridables
 
 #ifdef _DEBUG
 
@@ -83,17 +109,31 @@ namespace scion
 			{
 				CObject::AssertValid();
 
-				ASSERT_VALID(&InputManager);
 			}
 
 			void CInputManager::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
-
-				AFXDUMP(&InputManager);
 			}
 
 #endif
+
+			void CInputManager::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CInputManager::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
 
 #pragma endregion
 

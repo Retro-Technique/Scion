@@ -38,7 +38,9 @@
  */
 
 #include "pch.h"
-#include "SoundBufferImpl.h"
+#include "SoundBuffer.h"
+#include "AudioManager.h"
+#include "WaveBuffer.h"
 
 namespace scion
 {
@@ -51,57 +53,178 @@ namespace scion
 
 			IMPLEMENT_DYNAMIC(CSoundBuffer, CObject)
 
-			CSoundBuffer::CSoundBuffer()
-				: m_pImpl(new priv::CSoundBufferImpl)
+			CSoundBuffer::CSoundBuffer(CAudioManager* pAudioManager)
+				: m_nRef(1)
+				, m_pAudioManager(pAudioManager)
+				, m_pSecondaryBuffer(NULL)
+				, m_uDataSize(0)
 			{
-			
+
 			}
 
 			CSoundBuffer::~CSoundBuffer()
 			{
-				delete m_pImpl;
-			}
+				Unload();
 
-#pragma endregion
-#pragma region Operations
-
-			HRESULT CSoundBuffer::LoadFromFile(LPCTSTR pszFileName)
-			{
-				return m_pImpl->LoadFromFile(pszFileName);
-			}
-
-			CTimeSpan CSoundBuffer::GetDuration() const
-			{
-				return m_pImpl->GetDuration();
-			}
-
-			WORD CSoundBuffer::GetChannelCount() const
-			{
-				return m_pImpl->GetChannelCount();
-			}
-
-			DWORD CSoundBuffer::GetSampleRate() const
-			{
-				return m_pImpl->GetSampleRate();
-			}
-
-			LPCVOID CSoundBuffer::GetBuffer() const
-			{
-				return m_pImpl->GetBuffer();
-			}
-
-			DWORD CSoundBuffer::GetSize() const
-			{
-				return m_pImpl->GetSize();
-			}
-
-			void CSoundBuffer::Unload()
-			{
-				m_pImpl->Unload();
+				if (m_pAudioManager)
+				{
+					m_pAudioManager->Release();
+					m_pAudioManager = NULL;
+				}
 			}
 
 #pragma endregion
 #pragma region Overridables
+
+			HRESULT CSoundBuffer::LoadFromFile(LPCTSTR pszFileName)
+			{
+				ASSERT_VALID(this);
+
+				if (!AfxIsValidString(pszFileName, MAX_PATH))
+				{
+					return E_INVALIDARG;
+				}
+
+				HRESULT hr = S_OK;
+
+				do
+				{
+					priv::CWaveBuffer WaveBuffer;
+
+					if (hr = WaveBuffer.LoadFromFile(pszFileName); FAILED(hr))
+					{
+						break;
+					}
+
+					DWORD uDataLen = WaveBuffer.GetDataLen();
+					WAVEFORMATEX wfFormat = { 0 };
+
+					if (hr = WaveBuffer.GetFormat(wfFormat); FAILED(hr))
+					{
+						break;
+					}
+
+					DSBUFFERDESC BufferDesc = { 0 };
+					BufferDesc.dwSize = sizeof(DSBUFFERDESC);
+					BufferDesc.dwFlags = 0ul;
+					BufferDesc.dwFlags |= DSBCAPS_STATIC;
+					BufferDesc.dwFlags |= DSBCAPS_CTRLVOLUME;
+					BufferDesc.dwFlags |= DSBCAPS_GETCURRENTPOSITION2;
+					BufferDesc.dwFlags |= DSBCAPS_STICKYFOCUS;
+					BufferDesc.dwFlags |= DSBCAPS_GLOBALFOCUS;
+					BufferDesc.dwFlags |= DSBCAPS_CTRL3D;
+					BufferDesc.dwBufferBytes = uDataLen;
+					BufferDesc.lpwfxFormat = &wfFormat;
+					BufferDesc.guid3DAlgorithm = DS3DALG_DEFAULT;
+
+					LPDIRECTSOUNDBUFFER pSecondaryBuffer = NULL;
+					if (hr = m_pAudioManager->CreateSecondaryBuffer(&BufferDesc, &pSecondaryBuffer); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = pSecondaryBuffer->QueryInterface(IID_IDirectSoundBuffer8, reinterpret_cast<void**>(&m_pSecondaryBuffer)); FAILED(hr))
+					{
+						break;
+					}
+
+					pSecondaryBuffer->Release();
+
+					LPBYTE pData = NULL;
+
+					if (hr = m_pSecondaryBuffer->Lock(0ul, uDataLen, reinterpret_cast<void**>(&pData)
+						, &uDataLen, NULL, NULL, 0ul); FAILED(hr))
+					{
+						break;
+					}
+
+					uDataLen = WaveBuffer.GetData(pData, uDataLen);
+
+					if (hr = m_pSecondaryBuffer->Unlock(pData, uDataLen, NULL, NULL); FAILED(hr))
+					{
+						break;
+					}
+
+					m_uDataSize = uDataLen;
+
+					WaveBuffer.Unload();
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+				if (FAILED(hr))
+				{
+					Unload();
+				}
+
+				return hr;
+			}
+
+			CTimeSpan CSoundBuffer::GetDuration() const
+			{
+				if (!m_pSecondaryBuffer)
+				{
+					return CTimeSpan();
+				}
+
+				WAVEFORMATEX WaveFormat = { 0 };
+				if (const HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL); FAILED(hr))
+				{
+					return CTimeSpan();
+				}
+
+				const FLOAT fSeconds = static_cast<FLOAT>(m_uDataSize) / (WaveFormat.nAvgBytesPerSec * WaveFormat.nBlockAlign);
+				const INT nSeconds = static_cast<INT>(fSeconds);
+
+				return CTimeSpan(0, 0, 0, nSeconds);
+			}
+
+			WORD CSoundBuffer::GetChannelCount() const
+			{
+				if (!m_pSecondaryBuffer)
+				{
+					return 0u;
+				}
+
+				WAVEFORMATEX WaveFormat = { 0 };
+				if (const HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL); FAILED(hr))
+				{
+					return 0u;
+				}
+
+				return WaveFormat.nChannels;
+			}
+
+			DWORD CSoundBuffer::GetSampleRate() const
+			{
+				if (!m_pSecondaryBuffer)
+				{
+					return 0ul;
+				}
+
+				WAVEFORMATEX WaveFormat = { 0 };
+				if (const HRESULT hr = m_pSecondaryBuffer->GetFormat(&WaveFormat, sizeof(WAVEFORMATEX), NULL); FAILED(hr))
+				{
+					return 0ul;
+				}
+
+				return WaveFormat.nSamplesPerSec;
+			}
+
+			DWORD CSoundBuffer::GetSize() const
+			{
+				return m_uDataSize;
+			}
+
+			void CSoundBuffer::Unload()
+			{
+				if (m_pSecondaryBuffer)
+				{
+					m_pSecondaryBuffer->Release();
+					m_pSecondaryBuffer = NULL;
+				}
+
+				m_uDataSize = 0;
+			}
 
 #ifdef _DEBUG
 
@@ -109,19 +232,40 @@ namespace scion
 			{
 				CObject::AssertValid();
 
-				ASSERT_VALID(m_pImpl);
+				ASSERT_POINTER(m_pAudioManager, CAudioManager);
+				ASSERT_VALID(m_pAudioManager);
 			}
 
 			void CSoundBuffer::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
 
-				AFXDUMP(m_pImpl);
+				dc << _T("Duration: ") << GetDuration() << _T("\n");
+				dc << _T("ChannelCount: ") << GetChannelCount() << _T("\n");
+				dc << _T("SampleRate: ") << GetSampleRate() << _T("\n");
 			}
 
 #endif
 
+			void CSoundBuffer::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CSoundBuffer::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
+
 #pragma endregion
+
 		}
 	}
 }
