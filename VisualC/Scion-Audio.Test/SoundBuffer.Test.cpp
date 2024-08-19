@@ -100,7 +100,7 @@ namespace ScionAudioTest
 				HWND hWnd = GetDesktopWindow();
 				CWnd* pWnd = CWnd::FromHandle(hWnd);
 
-				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager))
+				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager); FAILED(hr))
 				{
 					break;
 				}

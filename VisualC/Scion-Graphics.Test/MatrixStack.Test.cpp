@@ -15,7 +15,7 @@ namespace ScionGraphicsTest
 
 			HRESULT hr = Allocate(8, bIsDifferent);
 			
-			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory lead"));
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 		}
 
@@ -25,7 +25,7 @@ namespace ScionGraphicsTest
 
 			HRESULT hr = Allocate(24, bIsDifferent);
 
-			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory lead"));
+			Assert::AreEqual(FALSE, bIsDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());
 		}
 

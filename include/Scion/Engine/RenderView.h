@@ -96,6 +96,7 @@ namespace scion
 			DECLARE_MESSAGE_MAP()
 
 			afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+			afx_msg void OnDestroy();
 			afx_msg void OnTimer(UINT_PTR nIDEvent);
 			afx_msg LRESULT OnAfxDraw2d(WPARAM wParam, LPARAM lParam);
 			afx_msg LRESULT OnAfxRecreated2dresources(WPARAM wParam, LPARAM lParam);

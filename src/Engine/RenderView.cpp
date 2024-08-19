@@ -99,6 +99,7 @@ namespace scion
 		BEGIN_MESSAGE_MAP(CRenderView, CView)
 			ON_WM_TIMER()
 			ON_WM_CREATE()
+			ON_WM_DESTROY()
 			ON_REGISTERED_MESSAGE(AFX_WM_DRAW2D, &CRenderView::OnAfxDraw2d)
 			ON_REGISTERED_MESSAGE(AFX_WM_RECREATED2DRESOURCES, &CRenderView::OnAfxRecreated2dresources)
 		END_MESSAGE_MAP()
@@ -118,9 +119,34 @@ namespace scion
 				return -1;
 			}
 
+			HRESULT hr = S_OK;
+			scion::engine::gfx::IGraphicsManager* pGraphicsManager = NULL;
+			
+			if (hr = pGraphicsManager->CreateRenderWindow(&m_pRenderWindow); FAILED(hr))
+			{
+				return -1;
+			}
+
+			if (hr = m_pRenderWindow->Create(this); FAILED(hr))
+			{
+				return -1;
+			}
+
 			SetTimer(TIMER_REFRESH_ID, TIMER_REFRESH_ELAPSE, NULL);
 
 			return 0;
+		}
+
+		void CRenderView::OnDestroy()
+		{
+			CView::OnDestroy();
+
+			if (m_pRenderWindow)
+			{
+				m_pRenderWindow->Destroy();
+				m_pRenderWindow->Release();
+				m_pRenderWindow = NULL;
+			}
 		}
 
 		void CRenderView::OnTimer(UINT_PTR nIDEvent)
