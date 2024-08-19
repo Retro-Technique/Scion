@@ -80,7 +80,7 @@ namespace scion
 
 				HRESULT Initialize(_AFX_D2D_STATE* pD2DState) override;
 				void Quit() override;
-				HRESULT CreateRenderWindow(IRenderWindow** ppRenderWindow) override;
+				HRESULT CreateRenderWindow(IRenderWindow** ppRenderWindow) const override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;

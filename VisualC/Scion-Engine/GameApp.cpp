@@ -52,22 +52,19 @@ namespace scion
 		}
 
 #pragma endregion
-#pragma region Overridables
+#pragma region Implementations
 
-		BOOL CGameApp::InitInstance()
+		BOOL CGameApp::InitScionEngine()
 		{
-			CWinAppEx::InitInstance();
-
 			if (!EnableD2DSupport())
 			{
 				return FALSE;
 			}
 
 			_AFX_D2D_STATE* pD2DState = AfxGetD2DState();
-			CWnd* pMainWnd = AfxGetMainWnd();
+			CWnd* pMainWnd = CWnd::FromHandle(GetDesktopWindow());
 
-			HRESULT hr = m_GameEngine.Initialize(m_hInstance, pMainWnd, pD2DState);
-			if (FAILED(hr))
+			if (const HRESULT hr = m_GameEngine.Initialize(m_hInstance, pMainWnd, pD2DState); FAILED(hr))
 			{
 				return FALSE;
 			}
@@ -75,11 +72,9 @@ namespace scion
 			return TRUE;
 		}
 
-		int CGameApp::ExitInstance()
+		void CGameApp::QuitScionEngine()
 		{
 			m_GameEngine.Quit();
-
-			return CWinAppEx::ExitInstance();
 		}
 
 #pragma endregion

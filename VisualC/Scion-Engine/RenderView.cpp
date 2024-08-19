@@ -111,6 +111,13 @@ namespace scion
 				return -1;
 			}
 
+			CWinApp* pWinApp = AfxGetApp();
+			ASSERT_POINTER(pWinApp, CWinApp);
+			ASSERT_VALID(pWinApp);
+			ASSERT_KINDOF(CGameApp, pWinApp);
+
+			CGameApp* pGameApp = STATIC_DOWNCAST(CGameApp, pWinApp);
+		
 			EnableD2DSupport();
 
 			if (!IsD2DSupportEnabled())
@@ -120,7 +127,7 @@ namespace scion
 			}
 
 			HRESULT hr = S_OK;
-			scion::engine::gfx::IGraphicsManager* pGraphicsManager = NULL;
+			const gfx::IGraphicsManager* pGraphicsManager = pGameApp->GetGraphicsManager();
 			
 			if (hr = pGraphicsManager->CreateRenderWindow(&m_pRenderWindow); FAILED(hr))
 			{

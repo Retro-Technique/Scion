@@ -52,7 +52,7 @@ namespace scion
 
 			IMPLEMENT_DYNAMIC(CRenderWindow, CObject)
 
-			CRenderWindow::CRenderWindow(CGraphicsManager* pGraphicsManager)
+			CRenderWindow::CRenderWindow(const CGraphicsManager* pGraphicsManager)
 				: m_nRef(1)
 				, m_pGraphicsManager(pGraphicsManager)
 				, m_pD2DDeviceContext(NULL)
@@ -84,7 +84,7 @@ namespace scion
 				ASSERT_VALID(pWnd);
 
 				CHwndRenderTarget* pHwndRenderTarget = pWnd->GetRenderTarget();
-				if (pHwndRenderTarget)
+				if (!pHwndRenderTarget)
 				{
 					return E_POINTER;
 				}

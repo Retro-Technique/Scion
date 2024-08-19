@@ -59,7 +59,7 @@ namespace scion
 
 		CGameEngine::~CGameEngine()
 		{
-			Quit();
+			
 		}
 
 #pragma endregion
@@ -143,6 +143,11 @@ namespace scion
 			do
 			{
 				if (hr = gfx::CreateGraphicsManager(&m_pGraphicsManager); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = sfx::CreateAudioManager(&m_pAudioManager); FAILED(hr))
 				{
 					break;
 				}

@@ -55,7 +55,7 @@ namespace scion
 
 			public:
 
-				CRenderWindow(CGraphicsManager* pGraphicsManager);
+				CRenderWindow(const CGraphicsManager* pGraphicsManager);
 				virtual ~CRenderWindow();
 
 #pragma endregion
@@ -64,7 +64,7 @@ namespace scion
 			private:
 
 				mutable LONG m_nRef;
-				CGraphicsManager*		m_pGraphicsManager;
+				const CGraphicsManager*		m_pGraphicsManager;
 
 				ID2D1DeviceContext7*	m_pD2DDeviceContext;
 

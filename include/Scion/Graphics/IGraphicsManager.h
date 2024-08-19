@@ -58,7 +58,7 @@ namespace scion
 
 				virtual HRESULT Initialize(_AFX_D2D_STATE* pD2DState) = 0;
 				virtual void Quit() = 0;
-				virtual HRESULT CreateRenderWindow(IRenderWindow** ppRenderWindow) = 0;
+				virtual HRESULT CreateRenderWindow(IRenderWindow** ppRenderWindow) const = 0;
 
 #pragma endregion
 			};

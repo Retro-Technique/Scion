@@ -64,12 +64,19 @@ namespace scion
 			scion::engine::CGameEngine	m_GameEngine;
 
 #pragma endregion
-#pragma region Overridables
+#pragma region Operations
 
 		public:
 
-			BOOL InitInstance() override;
-			int ExitInstance() override;
+			inline const gfx::IGraphicsManager* GetGraphicsManager() const { return m_GameEngine.GetGraphicsManager(); }
+
+#pragma endregion
+#pragma region Implementations
+
+		public:
+
+			BOOL InitScionEngine();
+			void QuitScionEngine();
 
 #pragma endregion
 		};

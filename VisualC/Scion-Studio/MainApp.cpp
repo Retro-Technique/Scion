@@ -32,9 +32,11 @@ CMainApp theApp;
 
 BOOL CMainApp::InitInstance()
 {
-	CWinAppEx::InitInstance();
+	scion::engine::CGameApp::InitInstance();
 
 	EnableTaskbarInteraction(FALSE);
+
+	// SPLASH SCREEN BEGIN
 
 	SetRegistryKey(_T("Retro Technique"));
 	LoadStdProfileSettings(4);
@@ -49,12 +51,12 @@ BOOL CMainApp::InitInstance()
 	CMFCToolTipInfo ttParams;
 	ttParams.m_bVislManagerTheme = TRUE;
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-
+	
 #ifdef APP_MODE_MDI
 	CMultiDocTemplate* pDocTemplate;
 	pDocTemplate = new CMultiDocTemplate(IDR_ApplicationTYPE,
 		RUNTIME_CLASS(CMainDocument),
-		RUNTIME_CLASS(CChildFrame), 
+		RUNTIME_CLASS(CChildFrame),
 		RUNTIME_CLASS(CMainView));
 #else
 	CSingleDocTemplate* pDocTemplate;
@@ -80,6 +82,13 @@ BOOL CMainApp::InitInstance()
 	m_pMainWnd = pMainFrame;
 #endif
 
+	if (!InitScionEngine())
+	{
+		return FALSE;
+	}
+
+	// SPLASH SCREEN END
+
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
@@ -102,12 +111,14 @@ BOOL CMainApp::InitInstance()
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
 #endif
-	
+
 	return TRUE;
 }
 
 int CMainApp::ExitInstance()
 {
+	QuitScionEngine();
+
 	return scion::engine::CGameApp::ExitInstance();
 }
 

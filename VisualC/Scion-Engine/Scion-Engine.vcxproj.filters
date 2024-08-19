@@ -5,10 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="local">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -19,21 +15,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
-      <Filter>local</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>local</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Scion-Engine.cpp">
-      <Filter>local</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\GameEngine.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\RenderView.cpp">
+    <ClCompile Include="GameApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\GameApp.cpp">
+    <ClCompile Include="GameEngine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderView.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,22 +38,10 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="Scion-Engine.def">
-      <Filter>local</Filter>
+      <Filter>src</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>local</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>local</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>local</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>local</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Scion\Engine\GameEngine.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -66,6 +50,18 @@
     </ClInclude>
     <ClInclude Include="..\..\include\Scion\Engine\GameApp.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

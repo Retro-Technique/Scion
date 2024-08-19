@@ -139,7 +139,7 @@ namespace scion
 				}
 			}
 
-			HRESULT CGraphicsManager::CreateRenderWindow(IRenderWindow** ppRenderWindow)
+			HRESULT CGraphicsManager::CreateRenderWindow(IRenderWindow** ppRenderWindow) const
 			{
 				ASSERT_POINTER(this, CGraphicsManager);
 				ASSERT_VALID(this);

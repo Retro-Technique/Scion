@@ -71,6 +71,10 @@ namespace scion
 			vfx::IVideoManager*		m_pVideoManager;
 			ifx::IInputManager*		m_pInputManager;
 
+		public:
+
+			inline const gfx::IGraphicsManager* GetGraphicsManager() const { return m_pGraphicsManager; }
+
 #pragma endregion
 #pragma region Operations
 
