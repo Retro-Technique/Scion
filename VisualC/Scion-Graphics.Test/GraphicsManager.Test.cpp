@@ -3,9 +3,9 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace ScionAudioTest
+namespace ScionGraphicsTest
 {
-	TEST_CLASS(AudioManagerTest)
+	TEST_CLASS(GraphicsManagerTest)
 	{
 	public:
 
@@ -21,30 +21,44 @@ namespace ScionAudioTest
 			BOOL bIsMemDifferent = TRUE;
 
 			HRESULT hr = S_OK;
-			scion::engine::sfx::IAudioManager* pAudioManager = NULL;
+			_AFX_D2D_STATE* pD2DState = NULL;
+			scion::engine::gfx::IGraphicsManager* pGraphicsManager = NULL;
 
 			do
 			{
-				HWND hWnd = GetDesktopWindow();
-				CWnd* pWnd = CWnd::FromHandle(hWnd);
-
-				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager); FAILED(hr))
+				if (pD2DState = AfxGetD2DState(); !pD2DState)
 				{
 					break;
 				}
 
-				if (hr = pAudioManager->Initialize(pWnd); FAILED(hr))
+				if (const BOOL bSucceeded = pD2DState->InitD2D(); !bSucceeded)
+				{
+					break;
+				}
+
+				if (hr = scion::engine::gfx::CreateGraphicsManager(&pGraphicsManager); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = pGraphicsManager->Initialize(pD2DState); FAILED(hr))
 				{
 					break;
 				}
 
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
-			if (pAudioManager)
+			if (pGraphicsManager)
 			{
-				pAudioManager->Quit();
-				pAudioManager->Release();
-				pAudioManager = NULL;
+				pGraphicsManager->Quit();
+				pGraphicsManager->Release();
+				pGraphicsManager = NULL;
+			}
+
+			if (pD2DState)
+			{
+				pD2DState->ReleaseD2DRefs();
+				pD2DState = NULL;
 			}
 
 #ifdef _DEBUG
