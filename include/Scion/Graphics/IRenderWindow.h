@@ -56,9 +56,9 @@ namespace scion
 
 			public:
 
-				virtual HRESULT Create(CWnd* pWnd) = 0;
+				virtual HRESULT CreateFromWindow(CWnd* pWnd) = 0;
 				virtual void Destroy() = 0;
-		
+				virtual HRESULT CreateTexture(ITexture** ppTexture) const = 0;
 
 #pragma endregion
 			};

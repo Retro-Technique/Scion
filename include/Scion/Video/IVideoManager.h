@@ -59,6 +59,7 @@ namespace scion
 				virtual HRESULT Initialize() = 0;
 				virtual void Quit() = 0;
 				virtual HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) = 0;
+				virtual HRESULT CreateVideo(IVideo** ppVideo) = 0;
 
 #pragma endregion
 			};

@@ -70,15 +70,23 @@ namespace scion
 
 			public:
 
-				inline ID2D1DeviceContext7* GetD2DDeviceContext() const { return m_pD2DDeviceContext; }
+				inline const CGraphicsManager* GetGraphicsManager() const { return m_pGraphicsManager; }
+				
+#pragma endregion
+#pragma region Operations
+
+			public:
+
+				HRESULT CreateBitmapFromWicBitmap(IWICBitmapSource* pBitmapSource, ID2D1Bitmap** ppBitmap) const;
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
-				HRESULT Create(CWnd* pWnd) override;
+				HRESULT CreateFromWindow(CWnd* pWnd) override;
 				void Destroy() override;
+				HRESULT CreateTexture(ITexture** ppTexture) const override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;

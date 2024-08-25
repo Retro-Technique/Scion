@@ -46,6 +46,7 @@
 
 #include <Scion/Graphics/MatrixStack.h>
 #include <Scion/Graphics/ITexture.h>
+#include <Scion/Graphics/IFont.h>
 #include <Scion/Graphics/IRenderWindow.h>
 #include <Scion/Graphics/IGraphicsManager.h>
 

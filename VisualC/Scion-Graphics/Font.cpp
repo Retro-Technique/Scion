@@ -38,9 +38,8 @@
  */
 
 #include "pch.h"
-#include "Texture.h"
-#include "Image.h"
-#include "RenderWindow.h"
+#include "Font.h"
+#include "GraphicsManager.h"
 
 namespace scion
 {
@@ -51,31 +50,30 @@ namespace scion
 
 #pragma region Constructors
 
-			IMPLEMENT_DYNAMIC(CTexture, CObject)
+			IMPLEMENT_DYNAMIC(CFont, CObject)
 
-			CTexture::CTexture(const CRenderWindow* pRenderWindow)
+			CFont::CFont(const CGraphicsManager* pGraphicsManager)
 				: m_nRef(1)
-				, m_pRenderWindow(pRenderWindow)
-				, m_pD2DBitmap(NULL)
+				, m_pGraphicsManager(pGraphicsManager)
 			{
-				m_pRenderWindow->AddRef();
+				m_pGraphicsManager->AddRef();
 			}
 
-			CTexture::~CTexture()
+			CFont::~CFont()
 			{
 				Unload();
 
-				if (m_pRenderWindow)
+				if (m_pGraphicsManager)
 				{
-					m_pRenderWindow->Release();
-					m_pRenderWindow = NULL;
+					m_pGraphicsManager->Release();
+					m_pGraphicsManager = NULL;
 				}
 			}
 
 #pragma endregion
 #pragma region Overridables
 
-			HRESULT CTexture::LoadFromFile(LPCTSTR pszFileName)
+			HRESULT CFont::LoadFromFile(LPCTSTR pszFileName)
 			{
 				ASSERT_VALID(this);
 
@@ -83,31 +81,55 @@ namespace scion
 				{
 					return E_INVALIDARG;
 				}
-
-				const CGraphicsManager* pGraphicsManager = m_pRenderWindow->GetGraphicsManager();
-
+				
 				HRESULT hr = S_OK;
-				priv::CImage Image(pGraphicsManager);
+				IDWriteFontFile* pDWFontFile = NULL;
+				IDWriteFontSetBuilder2* pDWFontSetBuilder = NULL;
+				IDWriteFontSet* pDWFontSet = NULL;
 
 				do
 				{
-					if (hr = Image.LoadFromFile(pszFileName); FAILED(hr))
+					if (hr = m_pGraphicsManager->DWCreateFontFileReference(pszFileName, &pDWFontFile); FAILED(hr))
 					{
 						break;
 					}
 
-					IWICBitmap* pWICBitmap = Image.Lock();
-
-					if (hr = m_pRenderWindow->CreateBitmapFromWicBitmap(pWICBitmap, &m_pD2DBitmap); FAILED(hr))
+					if (hr = m_pGraphicsManager->DWCreateFontSetBuilder(&pDWFontSetBuilder); FAILED(hr))
 					{
 						break;
 					}
 
-					Image.Unlock();
+					if (hr = pDWFontSetBuilder->AddFontFile(pDWFontFile); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = pDWFontSetBuilder->CreateFontSet(&pDWFontSet); FAILED(hr))
+					{
+						break;
+					}
+
+					/*pDWriteFactory->CreateFontCollectionFromFontSet(fontSet, &fontCollection);*/
 
 				} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
-				Image.Unload();
+				if (pDWFontSet)
+				{
+					pDWFontSet->Release();
+					pDWFontSet = NULL;
+				}
+
+				if (pDWFontSetBuilder)
+				{
+					pDWFontSetBuilder->Release();
+					pDWFontSetBuilder = NULL;
+				}
+
+				if (pDWFontFile)
+				{
+					pDWFontFile->Release();
+					pDWFontFile = NULL;
+				}
 
 				if (FAILED(hr))
 				{
@@ -117,38 +139,34 @@ namespace scion
 				return hr;
 			}
 
-			void CTexture::Unload()
+			void CFont::Unload()
 			{
-				if (m_pD2DBitmap)
-				{
-					m_pD2DBitmap->Release();
-					m_pD2DBitmap = NULL;
-				}
+				
 			}
 
 #ifdef _DEBUG
 
-			void CTexture::AssertValid() const
+			void CFont::AssertValid() const
 			{
 				CObject::AssertValid();
 
-				ASSERT_POINTER(m_pRenderWindow, CRenderWindow);
-				ASSERT_VALID(m_pRenderWindow);
+				ASSERT_POINTER(m_pGraphicsManager, CGraphicsManager);
+				ASSERT_VALID(m_pGraphicsManager);
 			}
 
-			void CTexture::Dump(CDumpContext& dc) const
+			void CFont::Dump(CDumpContext& dc) const
 			{
 				CObject::Dump(dc);
 			}
 
 #endif
 
-			void CTexture::AddRef() const
+			void CFont::AddRef() const
 			{
 				InterlockedIncrement(&m_nRef);
 			}
 
-			BOOL CTexture::Release() const
+			BOOL CFont::Release() const
 			{
 				const LONG nRefCount = InterlockedDecrement(&m_nRef);
 				if (0l == nRefCount)

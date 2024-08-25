@@ -5,11 +5,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ScionVideoTest
 {
-	TEST_CLASS(VideoBufferTest)
+	TEST_CLASS(VideoTest)
 	{
 	public:
 		
-		VideoBufferTest()
+		VideoTest()
 		{
 			SetCurrentDirectory(_T("..\\..\\Scion-Video.Test"));
 		}
@@ -66,6 +66,7 @@ namespace ScionVideoTest
 			HRESULT hr = S_OK;
 			scion::engine::vfx::IVideoManager* pVideoManager = NULL;
 			scion::engine::vfx::IVideoBuffer* pVideoBuffer = NULL;
+			scion::engine::vfx::IVideo* pVideo = NULL;
 
 			do
 			{
@@ -84,16 +85,83 @@ namespace ScionVideoTest
 					break;
 				}
 
+				if (hr = pVideoManager->CreateVideo(&pVideo); FAILED(hr))
+				{
+					break;
+				}
+
 				if (hr = pVideoBuffer->OpenFromFile(pszFileName); FAILED(hr))
 				{
 					break;
 				}
 
+				if (hr = pVideo->LoadFromBuffer(pVideoBuffer); FAILED(hr))
+				{
+					break;
+				}
+
+				pVideo->SetStreamCallback([](const LPBYTE pData, LPVOID) -> HRESULT
+					{
+						static LONG iFrame = 0;
+						Assert::IsNotNull(pData);
+
+						BITMAPINFOHEADER bih;
+						MoveMemory(&bih.biSize, pData, sizeof(BITMAPINFOHEADER));
+
+						Assert::IsTrue(bih.biSizeImage >= 1);
+
+						BYTE* Bits = new BYTE[bih.biSizeImage];
+
+						BYTE memBitmapInfo[40];
+						MoveMemory(memBitmapInfo, &bih, sizeof(bih));
+
+						BITMAPFILEHEADER bfh;
+						bfh.bfType = 19778;    //BM header
+						bfh.bfSize = 55 + bih.biSizeImage;
+						bfh.bfReserved1 = 0;
+						bfh.bfReserved2 = 0;
+						bfh.bfOffBits = sizeof(BITMAPINFOHEADER) + sizeof(BITMAPFILEHEADER);
+
+#if 0
+						CString FileName;
+						FileName.Format(_T("C:\\Users\\olivi\\AppData\\Local\\Temp\\Test\\Frame-%05d.bmp"), iFrame);
+						iFrame++;
+
+						CFileException ex;
+						CFile File;
+						BOOL bOpened = File.Open(FileName, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &ex);
+						if (bOpened)
+						{
+							File.Write(&bfh, sizeof(bfh));
+							File.Write(&memBitmapInfo, sizeof(memBitmapInfo));
+							File.Write(Bits, bih.biSizeImage);
+
+							File.Close();
+						}
+#endif
+
+						delete[] Bits;
+
+						return S_OK;
+					});
+
+				pVideo->Play();
+
 				fFrameRate = pVideoBuffer->GetFrameRate();
 				durVideo = pVideoBuffer->GetDuration();
 				nFrameCount = pVideoBuffer->GetFrameCount();
 
+				Sleep(durVideo.GetSeconds() * 1100);
+
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			if (pVideo)
+			{
+				pVideo->Stop();
+				pVideo->Unload();
+				pVideo->Release();
+				pVideo = NULL;
+			}
 
 			if (pVideoBuffer)
 			{

@@ -82,6 +82,77 @@ namespace scion
 			}
 
 #pragma endregion
+#pragma region Operations
+
+			HRESULT CGraphicsManager::WICCreateStream(IWICStream** ppStream) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppStream, IWICStream);
+				
+				return m_pWICFactory->CreateStream(ppStream);
+			}
+
+			HRESULT CGraphicsManager::WICCreateEncoder(IWICBitmapEncoder** ppEncoder) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppEncoder, IWICBitmapEncoder);
+
+				return m_pWICFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, ppEncoder);
+			}
+
+			HRESULT CGraphicsManager::WICCreateDecoderFromFilename(LPCTSTR pszFileName, IWICBitmapDecoder** ppDecoder) const
+			{
+				ASSERT_VALID(this);
+				ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
+				ASSERT_NULL_OR_POINTER(*ppDecoder, IWICBitmapDecoder);
+				
+				return m_pWICFactory->CreateDecoderFromFilename(pszFileName, NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, ppDecoder);
+			}
+
+			HRESULT CGraphicsManager::WICCreateDecoderFromStream(IWICStream* pStream, IWICBitmapDecoder** ppDecoder) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_POINTER(pStream, IWICStream);
+				ASSERT_NULL_OR_POINTER(*ppDecoder, IWICBitmapDecoder);
+				
+				return m_pWICFactory->CreateDecoderFromStream(pStream, NULL, WICDecodeMetadataCacheOnDemand, ppDecoder);
+			}
+
+			HRESULT CGraphicsManager::WICCreateFormatConverter(IWICFormatConverter** ppConverter) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppConverter, IWICFormatConverter);
+
+				return m_pWICFactory->CreateFormatConverter(ppConverter);
+			}
+
+			HRESULT CGraphicsManager::WICCreateBitmapFromSource(IWICBitmapSource* pSource, IWICBitmap** ppDestination) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_POINTER(pSource, IWICBitmapSource);
+				ASSERT_NULL_OR_POINTER(*ppDestination, IWICBitmap);
+			
+				return m_pWICFactory->CreateBitmapFromSource(pSource, WICBitmapCacheOnDemand, ppDestination);
+			}
+
+			HRESULT CGraphicsManager::DWCreateFontFileReference(LPCTSTR pszFileName, IDWriteFontFile** ppFontFile) const
+			{
+				ASSERT_VALID(this);
+				ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
+				ASSERT_NULL_OR_POINTER(*ppFontFile, IDWriteFontFile);
+				
+				return m_pDWriteFactory->CreateFontFileReference(pszFileName, NULL, ppFontFile);
+			}
+
+			HRESULT CGraphicsManager::DWCreateFontSetBuilder(IDWriteFontSetBuilder2** ppFontSetBuild) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppFontSetBuild, IDWriteFontSetBuilder2);
+
+				return m_pDWriteFactory->CreateFontSetBuilder(ppFontSetBuild);
+			}
+
+#pragma endregion
 #pragma region Overridables
 
 			HRESULT CGraphicsManager::Initialize(_AFX_D2D_STATE* pD2DState)

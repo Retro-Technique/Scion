@@ -45,6 +45,7 @@
 #define __SCION_VIDEO_H_INCLUDED__
 
 #include <Scion/Video/IVideoBuffer.h>
+#include <Scion/Video/IVideo.h>
 #include <Scion/Video/IVideoManager.h>
 
 #endif

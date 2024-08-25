@@ -37,6 +37,10 @@
  *
  */
 
+#ifndef __SCION_VIDEO_H_INCLUDED__
+#error Do not include IVideo.h directly, include the Video.h file
+#endif
+
 #pragma once
 
 namespace scion
@@ -45,40 +49,23 @@ namespace scion
 	{
 		namespace vfx
 		{
-
-			class CVideoManager : public CObject, public IVideoManager
+			
+			class IVideo : public common::IReferenceCounter
 			{
-#pragma region Constructors
+			public:
 
-				DECLARE_DYNAMIC(CVideoManager)
+				typedef HRESULT(*STREAMPROC)(const LPBYTE, void*);
+
+#pragma region Operations
 
 			public:
 
-				CVideoManager();
-				virtual ~CVideoManager();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				mutable LONG m_nRef;
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-				HRESULT Initialize() override;
-				void Quit() override;
-				HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) override;
-				HRESULT CreateVideo(IVideo** ppVideo) override;
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
-				void AddRef() const override;
-				BOOL Release() const override;
+				virtual HRESULT LoadFromBuffer(const IVideoBuffer* pVideoBuffer) = 0;
+				virtual void Unload() = 0;
+				virtual void SetStreamCallback(STREAMPROC pfnStreamProc, LPVOID pData = NULL) = 0;
+				virtual HRESULT Play() = 0;
+				virtual void Stop() = 0;
+				virtual BOOL IsPlaying() const = 0;
 
 #pragma endregion
 			};
@@ -86,5 +73,3 @@ namespace scion
 		}
 	}
 }
-
-#define VideoManager scion::engine::vfx::CVideoManager::GetInstance()

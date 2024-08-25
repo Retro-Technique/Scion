@@ -23,6 +23,9 @@
     <ClInclude Include="..\..\include\Scion\Common\IReferenceCounter.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Common\MemoryLeakChecker.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ErrorCode.mc" />

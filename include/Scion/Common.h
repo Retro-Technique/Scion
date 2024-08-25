@@ -46,5 +46,6 @@
 #include <Scion/Common/ErrorCode.h>
 #include <Scion/Common/ErrorMessage.h>
 #include <Scion/Common/IReferenceCounter.h>
+#include <Scion/Common/MemoryLeakChecker.h>
 
 #endif

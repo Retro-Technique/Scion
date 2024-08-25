@@ -39,6 +39,9 @@
     <ClCompile Include="RenderWindow.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Scion-Graphics.rc2">
@@ -84,6 +87,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\Scion\Graphics\ITexture.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Scion\Graphics\IFont.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

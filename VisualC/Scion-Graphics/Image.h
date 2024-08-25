@@ -45,9 +45,11 @@ namespace scion
 	{
 		namespace gfx
 		{
+			class CGraphicsManager;
+
 			namespace priv
 			{
-
+				
 				class  CImage : public CObject
 				{
 #pragma region Constructors
@@ -56,13 +58,15 @@ namespace scion
 
 				public:
 
-					CImage();
+					CImage(const CGraphicsManager* pGraphicsManager);
 					virtual ~CImage();
 
 #pragma endregion
 #pragma region Attributes
 
 				private:
+
+					const CGraphicsManager* m_pGraphicsManager;
 
 					IWICBitmap* m_pWICBitmap;
 
@@ -81,6 +85,8 @@ namespace scion
 					HRESULT LoadFromResource(LPCTSTR pszModule, LPCTSTR pszResourceName);
 					HRESULT SaveToFile(LPCTSTR pszFileName);
 					void Unload();
+					IWICBitmap* Lock();
+					void Unlock();
 
 #pragma endregion
 #pragma region Overridables

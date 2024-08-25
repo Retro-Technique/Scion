@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\include\Scion\Common\ErrorCode.h" />
     <ClInclude Include="..\..\include\Scion\Common\ErrorMessage.h" />
     <ClInclude Include="..\..\include\Scion\Common\IReferenceCounter.h" />
+    <ClInclude Include="..\..\include\Scion\Common\MemoryLeakChecker.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

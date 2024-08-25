@@ -37,54 +37,47 @@
  *
  */
 
+#ifndef __SCION_COMMON_H_INCLUDED__
+#error Do not include MemoryLeakChecker.h directly, include the Common.h file
+#endif
+
 #pragma once
 
 namespace scion
 {
-	namespace engine
+	namespace common
 	{
-		namespace vfx
+
+		class CMemoryLeakChecker
 		{
+		public:
 
-			class CVideoManager : public CObject, public IVideoManager
+			void Begin()
 			{
-#pragma region Constructors
-
-				DECLARE_DYNAMIC(CVideoManager)
-
-			public:
-
-				CVideoManager();
-				virtual ~CVideoManager();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				mutable LONG m_nRef;
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-				HRESULT Initialize() override;
-				void Quit() override;
-				HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) override;
-				HRESULT CreateVideo(IVideo** ppVideo) override;
 #ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
+				m_Start.Checkpoint();
 #endif
-				void AddRef() const override;
-				BOOL Release() const override;
+			}
 
-#pragma endregion
-			};
+			BOOL End()
+			{
+#ifdef _DEBUG
+				m_Stop.Checkpoint();
+				return m_Result.Difference(m_Start, m_Stop);
+#else
+				return FALSE;
+#endif
+			}
 
-		}
+		private:
+
+#ifdef _DEBUG
+			CMemoryState m_Start;
+			CMemoryState m_Stop;
+			CMemoryState m_Result;
+#endif
+
+		};
+
 	}
 }
-
-#define VideoManager scion::engine::vfx::CVideoManager::GetInstance()

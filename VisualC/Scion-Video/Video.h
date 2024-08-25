@@ -45,34 +45,56 @@ namespace scion
 	{
 		namespace vfx
 		{
+			class CVideoManager;
+			class CVideoBuffer;
 
-			class CVideoManager : public CObject, public IVideoManager
+			class CVideo : public CObject, public IVideo
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CVideoManager)
+				DECLARE_DYNAMIC(CVideo)
 
 			public:
 
-				CVideoManager();
-				virtual ~CVideoManager();
+				CVideo(CVideoManager* pVideoManager);
+				virtual ~CVideo();
 
 #pragma endregion
 #pragma region Attributes
 
 			private:
 
+				struct TVideoInfo
+				{
+					
+					CVideo* pVideo;
+				};
+
+			private:
+
 				mutable LONG m_nRef;
+				CVideoManager*		m_pVideoManager;
+				const CVideoBuffer*	m_pVideoBuffer;
+				CEvent				m_evVideoLoopExit;
+				STREAMPROC			m_pfnStreamProc;
+				LPVOID				m_pData;
+				BOOL				m_bIsPlaying;
+
+			public:
+
+				inline const CEvent& GetExitEvent() const { return m_evVideoLoopExit; }
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
-				HRESULT Initialize() override;
-				void Quit() override;
-				HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) override;
-				HRESULT CreateVideo(IVideo** ppVideo) override;
+				HRESULT LoadFromBuffer(const IVideoBuffer* pVideoBuffer) override;
+				void Unload() override;
+				void SetStreamCallback(STREAMPROC pfnStreamProc, LPVOID pData) override;
+				HRESULT Play() override;
+				void Stop() override;
+				BOOL IsPlaying() const override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
@@ -81,10 +103,15 @@ namespace scion
 				BOOL Release() const override;
 
 #pragma endregion
+#pragma region Implementations
+
+			private:
+
+				static UINT VideoThreadProc(LPVOID pData);
+
+#pragma endregion
 			};
 
 		}
 	}
 }
-
-#define VideoManager scion::engine::vfx::CVideoManager::GetInstance()

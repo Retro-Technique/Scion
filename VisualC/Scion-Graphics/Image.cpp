@@ -54,15 +54,22 @@ namespace scion
 
 				IMPLEMENT_DYNAMIC(CImage, CObject)
 
-				CImage::CImage()
-					: m_pWICBitmap(NULL)
+				CImage::CImage(const CGraphicsManager* pGraphicsManager)
+					: m_pGraphicsManager(pGraphicsManager)
+					, m_pWICBitmap(NULL)
 				{
-
+					m_pGraphicsManager->AddRef();
 				}
 
 				CImage::~CImage()
 				{
 					Unload();
+
+					if (m_pGraphicsManager)
+					{
+						m_pGraphicsManager->Release();
+						m_pGraphicsManager = NULL;
+					}
 				}
 
 #pragma endregion
@@ -84,53 +91,40 @@ namespace scion
 					IWICBitmapDecoder* pDecoder = NULL;
 					IWICBitmapFrameDecode* pFrame = NULL;
 					IWICFormatConverter* pConverterFrame = NULL;
-					IWICImagingFactory2* pFactory = /*GraphicsManager.GetWICFactory()*/NULL; //TODO
-
+					
 					do
 					{
-						hr = pFactory->CreateStream(&pStream);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateStream(&pStream); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pStream->InitializeFromFilename(pszFileName, GENERIC_READ);
-						if (FAILED(hr))
+						if (hr = pStream->InitializeFromFilename(pszFileName, GENERIC_READ); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pFactory->CreateDecoderFromFilename(pszFileName, NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &pDecoder);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateDecoderFromFilename(pszFileName, &pDecoder); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pDecoder->GetFrame(0, &pFrame);
-						if (FAILED(hr))
+						if (hr = pDecoder->GetFrame(0, &pFrame); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pFactory->CreateFormatConverter(&pConverterFrame);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateFormatConverter(&pConverterFrame); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pConverterFrame->Initialize(pFrame,
-							GUID_WICPixelFormat32bppPRGBA,
-							WICBitmapDitherTypeNone,
-							NULL,
-							0.,
-							WICBitmapPaletteTypeCustom);
-						if (FAILED(hr))
+						if (hr = pConverterFrame->Initialize(pFrame, GUID_WICPixelFormat32bppPRGBA, WICBitmapDitherTypeNone, NULL, 0., WICBitmapPaletteTypeCustom); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pFactory->CreateBitmapFromSource(pConverterFrame, WICBitmapCacheOnDemand, &m_pWICBitmap);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateBitmapFromSource(pConverterFrame, &m_pWICBitmap); FAILED(hr))
 						{
 							break;
 						}
@@ -178,53 +172,40 @@ namespace scion
 					IWICBitmapDecoder* pDecoder = NULL;
 					IWICBitmapFrameDecode* pFrame = NULL;
 					IWICFormatConverter* pConverterFrame = NULL;
-					IWICImagingFactory2* pFactory = /*GraphicsManager.GetWICFactory()*/NULL; //TODO
-
+	
 					do
 					{
-						hr = pFactory->CreateStream(&pStream);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateStream(&pStream); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pStream->InitializeFromMemory(reinterpret_cast<BYTE*>(const_cast<LPVOID>(pData)), uSize);
-						if (FAILED(hr))
+						if (hr = pStream->InitializeFromMemory(reinterpret_cast<BYTE*>(const_cast<LPVOID>(pData)), uSize); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pFactory->CreateDecoderFromStream(pStream, NULL, WICDecodeMetadataCacheOnDemand, &pDecoder);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateDecoderFromStream(pStream, &pDecoder); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pDecoder->GetFrame(0, &pFrame);
-						if (FAILED(hr))
+						if (hr = pDecoder->GetFrame(0, &pFrame); FAILED(hr))						
 						{
 							break;
 						}
 
-						hr = pFactory->CreateFormatConverter(&pConverterFrame);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateFormatConverter(&pConverterFrame); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pConverterFrame->Initialize(pFrame,
-							GUID_WICPixelFormat32bppPRGBA,
-							WICBitmapDitherTypeNone,
-							NULL,
-							0.,
-							WICBitmapPaletteTypeCustom);
-						if (FAILED(hr))
+						if (hr = pConverterFrame->Initialize(pFrame, GUID_WICPixelFormat32bppPRGBA, WICBitmapDitherTypeNone, NULL, 0., WICBitmapPaletteTypeCustom); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pFactory->CreateBitmapFromSource(pConverterFrame, WICBitmapCacheOnDemand, &m_pWICBitmap);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateBitmapFromSource(pConverterFrame, &m_pWICBitmap); FAILED(hr))
 						{
 							break;
 						}
@@ -353,60 +334,52 @@ namespace scion
 					IWICBitmapEncoder* pEncoder = NULL;
 					IWICBitmapFrameEncode* pFrame = NULL;
 					IPropertyBag2* pPropertyBag = NULL;
-					IWICImagingFactory2* pFactory = /*GraphicsManager.GetWICFactory()*/NULL; //TODO
-
+				
 					do
 					{
-						hr = pFactory->CreateStream(&pStream);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateStream(&pStream); FAILED(hr))						
 						{
 							break;
 						}
 
-						hr = pStream->InitializeFromFilename(pszFileName, GENERIC_WRITE);
-						if (FAILED(hr))
+						if (hr = pStream->InitializeFromFilename(pszFileName, GENERIC_WRITE); FAILED(hr))
+						
 						{
 							break;
 						}
 
-						hr = pFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &pEncoder);
-						if (FAILED(hr))
+						if (hr = m_pGraphicsManager->WICCreateEncoder(&pEncoder); FAILED(hr))						
 						{
 							break;
 						}
 
-						hr = pEncoder->Initialize(pStream, WICBitmapEncoderNoCache);
-						if (FAILED(hr))
+						if (hr = pEncoder->Initialize(pStream, WICBitmapEncoderNoCache); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pEncoder->CreateNewFrame(&pFrame, &pPropertyBag);
-						if (FAILED(hr))
+						if (hr = pEncoder->CreateNewFrame(&pFrame, &pPropertyBag); FAILED(hr))		
 						{
 							break;
 						}
 
-						hr = pFrame->Initialize(pPropertyBag);
-						if (FAILED(hr))
+						if (hr = pFrame->Initialize(pPropertyBag); FAILED(hr))
+						
 						{
 							break;
 						}
 
-						hr = pFrame->WriteSource(m_pWICBitmap, NULL);
-						if (FAILED(hr))
+						if (hr = pFrame->WriteSource(m_pWICBitmap, NULL); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pFrame->Commit();
-						if (FAILED(hr))
+						if (hr = pFrame->Commit(); FAILED(hr))
 						{
 							break;
 						}
 
-						hr = pEncoder->Commit();
-						if (FAILED(hr))
+						if (hr = pEncoder->Commit(); FAILED(hr))
 						{
 							break;
 						}
@@ -447,6 +420,21 @@ namespace scion
 						m_pWICBitmap->Release();
 						m_pWICBitmap = NULL;
 					}
+				}
+
+				IWICBitmap* CImage::Lock()
+				{
+					ASSERT_POINTER(m_pWICBitmap, IWICBitmap);
+
+					m_pWICBitmap->AddRef();
+					return m_pWICBitmap;
+				}
+
+				void CImage::Unlock()
+				{
+					ASSERT_POINTER(m_pWICBitmap, IWICBitmap);
+
+					m_pWICBitmap->Release();
 				}
 
 #pragma endregion

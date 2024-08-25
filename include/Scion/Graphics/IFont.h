@@ -37,48 +37,27 @@
  *
  */
 
+#ifndef __SCION_GRAPHICS_H_INCLUDED__
+#error Do not include IFont.h directly, include the Graphics.h file
+#endif
+
 #pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-		namespace vfx
+		namespace gfx
 		{
 
-			class CVideoManager : public CObject, public IVideoManager
+			class IFont : public common::IReferenceCounter
 			{
-#pragma region Constructors
-
-				DECLARE_DYNAMIC(CVideoManager)
+#pragma region Operations
 
 			public:
 
-				CVideoManager();
-				virtual ~CVideoManager();
-
-#pragma endregion
-#pragma region Attributes
-
-			private:
-
-				mutable LONG m_nRef;
-
-#pragma endregion
-#pragma region Overridables
-
-			public:
-
-				HRESULT Initialize() override;
-				void Quit() override;
-				HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) override;
-				HRESULT CreateVideo(IVideo** ppVideo) override;
-#ifdef _DEBUG
-				void AssertValid() const override;
-				void Dump(CDumpContext& dc) const override;
-#endif
-				void AddRef() const override;
-				BOOL Release() const override;
+				virtual HRESULT LoadFromFile(LPCTSTR pszFileName) = 0;
+				virtual void Unload() = 0;
 
 #pragma endregion
 			};
@@ -86,5 +65,3 @@ namespace scion
 		}
 	}
 }
-
-#define VideoManager scion::engine::vfx::CVideoManager::GetInstance()

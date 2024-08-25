@@ -40,6 +40,7 @@
 #include "pch.h"
 #include "RenderWindow.h"
 #include "GraphicsManager.h"
+#include "Texture.h"
 
 namespace scion
 {
@@ -72,9 +73,21 @@ namespace scion
 			}
 
 #pragma endregion
+#pragma region Operations
+
+			HRESULT CRenderWindow::CreateBitmapFromWicBitmap(IWICBitmapSource* pBitmapSource, ID2D1Bitmap** ppBitmap) const
+			{
+				ASSERT_VALID(this);
+				ASSERT_POINTER(pBitmapSource, IWICBitmapSource);
+				ASSERT_NULL_OR_POINTER(*ppBitmap, ID2D1Bitmap);
+				
+				return m_pD2DDeviceContext->CreateBitmapFromWicBitmap(pBitmapSource, ppBitmap);
+			}
+
+#pragma endregion
 #pragma region Overridables
 
-			HRESULT CRenderWindow::Create(CWnd* pWnd)
+			HRESULT CRenderWindow::CreateFromWindow(CWnd* pWnd)
 			{
 				if (!pWnd)
 				{
@@ -104,6 +117,23 @@ namespace scion
 					m_pD2DDeviceContext->Release();
 					m_pD2DDeviceContext = NULL;
 				}
+			}
+
+			HRESULT CRenderWindow::CreateTexture(ITexture** ppTexture) const
+			{
+				ASSERT_POINTER(this, CRenderWindow);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppTexture, ITexture);
+
+				ITexture* pTexture = new CTexture(this);
+				if (!pTexture)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppTexture = pTexture;
+
+				return S_OK;
 			}
 
 #ifdef _DEBUG

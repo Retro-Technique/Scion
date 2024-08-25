@@ -66,8 +66,17 @@ namespace scion
 				mutable LONG m_nRef;
 				CVideoManager* m_pVideoManager;
 
-				PAVIFILE		m_pAviFile;
-				PAVISTREAM		m_pAviStream;
+				PAVIFILE		m_pAVIFile;
+				PAVISTREAM		m_pAVIStream;
+				PGETFRAME		m_pGetFrame;
+				
+#pragma endregion
+#pragma region Operations
+
+			public:
+
+				LONG GetFirstFrameIndex() const;
+				const LPBYTE GetFrameBuffer(LONG nIndex) const;
 
 #pragma endregion
 #pragma region Overridables
@@ -75,9 +84,10 @@ namespace scion
 			public:
 
 				HRESULT OpenFromFile(LPCTSTR pszFileName) override;
+				void Close() override;
 				FLOAT GetFrameRate() const override;
 				CTimeSpan GetDuration() const override;
-				void Close() override;
+				LONG GetFrameCount() const override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;

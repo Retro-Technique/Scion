@@ -60,6 +60,7 @@ namespace scion
 				virtual void Close() = 0;
 				virtual FLOAT GetFrameRate() const = 0;
 				virtual CTimeSpan GetDuration() const = 0;
+				virtual LONG GetFrameCount() const = 0;
 
 #pragma endregion
 			};

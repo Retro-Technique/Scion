@@ -55,7 +55,7 @@ namespace scion
 
 			public:
 
-				CTexture(CRenderWindow* pRenderWindow);
+				CTexture(const CRenderWindow* pRenderWindow);
 				virtual ~CTexture();
 
 #pragma endregion
@@ -64,7 +64,7 @@ namespace scion
 			private:
 
 				mutable LONG m_nRef;
-				CRenderWindow* m_pRenderWindow;
+				const CRenderWindow* m_pRenderWindow;
 
 				ID2D1Bitmap* m_pD2DBitmap;
 

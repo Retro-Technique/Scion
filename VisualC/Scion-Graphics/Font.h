@@ -43,19 +43,20 @@ namespace scion
 {
 	namespace engine
 	{
-		namespace vfx
+		namespace gfx
 		{
+			class CGraphicsManager;
 
-			class CVideoManager : public CObject, public IVideoManager
+			class CFont : public CObject, public IFont
 			{
 #pragma region Constructors
 
-				DECLARE_DYNAMIC(CVideoManager)
+				DECLARE_DYNAMIC(CFont);
 
 			public:
 
-				CVideoManager();
-				virtual ~CVideoManager();
+				CFont(const CGraphicsManager* pGraphicsManager);
+				virtual ~CFont();
 
 #pragma endregion
 #pragma region Attributes
@@ -63,16 +64,17 @@ namespace scion
 			private:
 
 				mutable LONG m_nRef;
+				const CGraphicsManager* m_pGraphicsManager;
+
+			
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
-				HRESULT Initialize() override;
-				void Quit() override;
-				HRESULT CreateVideoBuffer(IVideoBuffer** ppVideoBuffer) override;
-				HRESULT CreateVideo(IVideo** ppVideo) override;
+				HRESULT LoadFromFile(LPCTSTR pszFileName) override;
+				void Unload() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
@@ -86,5 +88,3 @@ namespace scion
 		}
 	}
 }
-
-#define VideoManager scion::engine::vfx::CVideoManager::GetInstance()

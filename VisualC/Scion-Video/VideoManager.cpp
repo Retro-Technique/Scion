@@ -40,6 +40,7 @@
 #include "pch.h"
 #include "VideoManager.h"
 #include "VideoBuffer.h"
+#include "Video.h"
 
 namespace scion
 {
@@ -106,6 +107,23 @@ namespace scion
 				}
 
 				*ppVideoBuffer = pListener;
+
+				return S_OK;
+			}
+
+			HRESULT CVideoManager::CreateVideo(IVideo** ppVideo)
+			{
+				ASSERT_POINTER(this, CVideoManager);
+				ASSERT_VALID(this);
+				ASSERT_NULL_OR_POINTER(*ppVideo, IVideo);
+
+				IVideo* pListener = new CVideo(this);
+				if (!pListener)
+				{
+					return E_OUTOFMEMORY;
+				}
+
+				*ppVideo = pListener;
 
 				return S_OK;
 			}

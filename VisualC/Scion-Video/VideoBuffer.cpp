@@ -55,8 +55,9 @@ namespace scion
 			CVideoBuffer::CVideoBuffer(CVideoManager* pVideoManager)
 				: m_nRef(1)
 				, m_pVideoManager(pVideoManager)
-				, m_pAviFile(NULL)
-				, m_pAviStream(NULL)
+				, m_pAVIFile(NULL)
+				, m_pAVIStream(NULL)
+				, m_pGetFrame(NULL)
 			{
 				m_pVideoManager->AddRef();
 			}
@@ -75,6 +76,29 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
+			LONG CVideoBuffer::GetFirstFrameIndex() const
+			{
+				if (!m_pAVIStream)
+				{
+					return -1;
+				}
+
+				return AVIStreamStart(m_pAVIStream);
+			}
+
+			const LPBYTE CVideoBuffer::GetFrameBuffer(LONG nIndex) const
+			{
+				if (!m_pGetFrame)
+				{
+					return NULL;
+				}
+
+				return static_cast<const LPBYTE>(AVIStreamGetFrame(m_pGetFrame, nIndex));
+			}
+
+#pragma endregion
+#pragma region Overridables
+
 			HRESULT CVideoBuffer::OpenFromFile(LPCTSTR pszFileName)
 			{
 				ASSERT_VALID(this);
@@ -86,26 +110,24 @@ namespace scion
 
 				do
 				{
-					hr = AVIFileOpen(&m_pAviFile, pszFileName, OF_READ, NULL);
+					hr = AVIFileOpen(&m_pAVIFile, pszFileName, OF_READ, NULL);
 					if (FAILED(hr))
 					{
 						break;
 					}
-
-					hr = AVIFileGetStream(m_pAviFile, &m_pAviStream, streamtypeVIDEO, 0);
+					
+					hr = AVIFileGetStream(m_pAVIFile, &m_pAVIStream, streamtypeVIDEO, 0);
 					if (FAILED(hr))
 					{
 						break;
 					}
-
-					/*PGETFRAME pGetFrame = AVIStreamGetFrameOpen(m_pAviStream, NULL);
-					if (!pGetFrame)
+					
+					m_pGetFrame = AVIStreamGetFrameOpen(m_pAVIStream, NULL);
+					if (!m_pGetFrame)
 					{
 						hr = E_AVI_CANNOTFINDDECOMPRESSOR;
 						break;
 					}
-
-					AVIStreamGetFrameClose(pGetFrame);*/
 
 				} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
@@ -117,15 +139,36 @@ namespace scion
 				return hr;
 			}
 
+			void CVideoBuffer::Close()
+			{
+				if (m_pGetFrame)
+				{
+					AVIStreamGetFrameClose(m_pGetFrame);
+					m_pGetFrame = NULL;
+				}
+
+				if (m_pAVIStream)
+				{
+					AVIStreamRelease(m_pAVIStream);
+					m_pAVIStream = NULL;
+				}
+
+				if (m_pAVIFile)
+				{
+					AVIFileRelease(m_pAVIFile);
+					m_pAVIFile = NULL;
+				}
+			}
+
 			FLOAT CVideoBuffer::GetFrameRate() const
 			{
-				if (!m_pAviFile)
+				if (!m_pAVIFile)
 				{
 					return 0.f;
 				}
 
 				AVISTREAMINFO aviStreamInfo = { 0 };
-				HRESULT hr = AVIStreamInfo(m_pAviStream, &aviStreamInfo, sizeof(AVISTREAMINFO));
+				HRESULT hr = AVIStreamInfo(m_pAVIStream, &aviStreamInfo, sizeof(AVISTREAMINFO));
 				if (FAILED(hr))
 				{
 					return 0.f;
@@ -136,41 +179,26 @@ namespace scion
 
 			CTimeSpan CVideoBuffer::GetDuration() const
 			{
-				if (!m_pAviFile)
+				if (!m_pAVIStream)
 				{
 					return CTimeSpan();
 				}
 
-				AVISTREAMINFO aviStreamInfo = { 0 };
-				HRESULT hr = AVIStreamInfo(m_pAviStream, &aviStreamInfo, sizeof(AVISTREAMINFO));
-				if (FAILED(hr))
-				{
-					return CTimeSpan();
-				}
-
-				const FLOAT fSeconds = static_cast<FLOAT>(aviStreamInfo.dwLength) / GetFrameRate();
-				const INT nSeconds = static_cast<INT>(fSeconds);
+				const LONG nStreamLengthTime = AVIStreamLengthTime(m_pAVIStream);
+				const INT nSeconds = static_cast<INT>(nStreamLengthTime / 1000);
 
 				return CTimeSpan(0, 0, 0, nSeconds);
 			}
 
-			void CVideoBuffer::Close()
+			LONG CVideoBuffer::GetFrameCount() const
 			{
-				if (m_pAviStream)
+				if (!m_pAVIStream)
 				{
-					AVIStreamRelease(m_pAviStream);
-					m_pAviStream = NULL;
+					return 0;
 				}
 
-				if (m_pAviFile)
-				{
-					AVIFileRelease(m_pAviFile);
-					m_pAviFile = NULL;
-				}
+				return AVIStreamLength(m_pAVIStream);
 			}
-
-#pragma endregion
-#pragma region Overridables
 
 #ifdef _DEBUG
 

@@ -67,11 +67,19 @@ namespace scion
 				IDWriteFactory8* m_pDWriteFactory;
 				IWICImagingFactory2* m_pWICFactory;
 
+#pragma endregion
+#pragma region Operations
+
 			public:
 
-				inline ID2D1Factory8* GetD2DFactory() const { return m_pD2DFactory; }
-				inline IDWriteFactory8* GetDWriteFactory() const { return m_pDWriteFactory; }
-				inline IWICImagingFactory2* GetWICFactory() const { return m_pWICFactory; }
+				HRESULT WICCreateStream(IWICStream** ppStream) const;
+				HRESULT WICCreateEncoder(IWICBitmapEncoder** ppEncoder) const;
+				HRESULT WICCreateDecoderFromFilename(LPCTSTR pszFileName, IWICBitmapDecoder** ppDecoder) const;
+				HRESULT WICCreateDecoderFromStream(IWICStream* pStream, IWICBitmapDecoder** ppDecoder) const;
+				HRESULT WICCreateFormatConverter(IWICFormatConverter** ppConverter) const;
+				HRESULT WICCreateBitmapFromSource(IWICBitmapSource* pSource, IWICBitmap** ppDestination) const;
+				HRESULT DWCreateFontFileReference(LPCTSTR pszFileName, IDWriteFontFile** ppFontFile) const;
+				HRESULT DWCreateFontSetBuilder(IDWriteFontSetBuilder2** ppFontSetBuild) const;
 
 #pragma endregion
 #pragma region Overridables
