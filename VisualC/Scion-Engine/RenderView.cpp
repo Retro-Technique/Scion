@@ -134,7 +134,7 @@ namespace scion
 				return -1;
 			}
 
-			if (hr = m_pRenderWindow->Create(this); FAILED(hr))
+			if (hr = m_pRenderWindow->CreateFromWindow(this); FAILED(hr))
 			{
 				return -1;
 			}

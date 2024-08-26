@@ -1,5 +1,15 @@
 #pragma once
 
+static inline CString Translate(UINT uID)
+{
+	CString strTranslate;
+
+	BOOL bRet = strTranslate.LoadString(uID);
+	ASSERT(bRet);
+
+	return strTranslate;
+}
+
 static inline CDocument* AcquireActiveDocument(CRuntimeClass* pClass)
 {
 	ASSERT(AfxIsValidAddress(pClass, sizeof(CRuntimeClass), FALSE));
@@ -34,6 +44,7 @@ static inline CDocument* AcquireActiveDocument(CRuntimeClass* pClass)
 	return NULL;
 }
 
+#define I18N(id) Translate(id)
 #define ACQUIRE_ACTIVE_DOCUMENT(x) STATIC_DOWNCAST(x, AcquireActiveDocument(RUNTIME_CLASS(x)))
 #define UPDATE_DATA_BACK_TO_FRONT FALSE
 #define UPDATE_DATA_FRONT_TO_BACK TRUE

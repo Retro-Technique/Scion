@@ -148,6 +148,10 @@ BOOL CMainFrame::CreatePanes()
 	const CRect rcDummy(0, 0, 200, 200);
 
 	// TODO: ajoutez ici votre code de création des volets
+	if (!m_wndResourcePane.Create(I18N(IDS_VIEW_RESOURCES_LIST_LABEL), this, rcDummy, TRUE, ID_VIEW_RESOURCES_LIST, STYLE | CBRS_LEFT))
+	{
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -158,6 +162,8 @@ BOOL CMainFrame::CreatePanes()
 BEGIN_MESSAGE_MAP(CMainFrame, FrameWnd)
 	ON_WM_CREATE()
 	ON_WM_GETMINMAXINFO()
+	ON_COMMAND(ID_VIEW_RESOURCES_LIST, &CMainFrame::OnViewResourcesList)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_RESOURCES_LIST, &CMainFrame::OnUpdateViewResourcesList)
 END_MESSAGE_MAP()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -193,9 +199,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	/* m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY); */
 	/* m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY); */
+	m_wndResourcePane.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndMenuBar);
 	DockPane(&m_wndToolBar);
+	DockPane(&m_wndResourcePane);
 
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
@@ -212,11 +220,22 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainFrame::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
-	// TODO: ajoutez ici le code de votre gestionnaire de messages et/ou les paramètres par défaut des appels
 	lpMMI->ptMinTrackSize.x = 854;
 	lpMMI->ptMinTrackSize.y = 480;
 
 	FrameWnd::OnGetMinMaxInfo(lpMMI);
+}
+
+void CMainFrame::OnViewResourcesList()
+{
+	ShowPane(&m_wndResourcePane, !(m_wndResourcePane.IsVisible()), FALSE, TRUE);
+
+	RecalcLayout();
+}
+
+void CMainFrame::OnUpdateViewResourcesList(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_wndResourcePane.IsVisible());
 }
 
 #pragma endregion

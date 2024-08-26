@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ResourcePane.h"
+
 class CMainFrame : public FrameWnd
 {
 #pragma region Constructors
@@ -20,9 +22,10 @@ public:
 
 protected:
 
-	CMFCMenuBar       m_wndMenuBar;
-	CMFCToolBar       m_wndToolBar;
-	CMFCStatusBar     m_wndStatusBar;
+	CMFCMenuBar     m_wndMenuBar;
+	CMFCToolBar     m_wndToolBar;
+	CMFCStatusBar	m_wndStatusBar;
+	CResourcePane	m_wndResourcePane;
 
 #pragma endregion
 #pragma region Operations
@@ -65,6 +68,8 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg void OnViewResourcesList();
+	afx_msg void OnUpdateViewResourcesList(CCmdUI* pCmdUI);
 	
 #pragma endregion
 };

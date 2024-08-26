@@ -52,6 +52,9 @@
     <Filter Include="Fichiers sources\Views">
       <UniqueIdentifier>{a59475c8-9d13-4688-9dad-6e1acb750f8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Utils">
+      <UniqueIdentifier>{1ce57036-15ae-4257-bff6-99aa78bbc983}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -90,6 +93,12 @@
     <ClInclude Include="ChildFrm.h">
       <Filter>Fichiers d%27en-tête\Frames</Filter>
     </ClInclude>
+    <ClInclude Include="PaneToolBar.h">
+      <Filter>Fichiers d%27en-tête\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourcePane.h">
+      <Filter>Fichiers d%27en-tête\Panes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -112,6 +121,12 @@
     </ClCompile>
     <ClCompile Include="MainView.cpp">
       <Filter>Fichiers sources\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="PaneToolBar.cpp">
+      <Filter>Fichiers sources\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourcePane.cpp">
+      <Filter>Fichiers sources\Panes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
