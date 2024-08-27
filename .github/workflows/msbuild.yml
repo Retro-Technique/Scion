@@ -34,14 +34,9 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
         
       - name: Install Microsoft Visual Studio Installer Projects Extension
-        shell: pwsh
-        run: |
-          $vsixPackage= "VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects"
-          $vsixPackageUrl = Get-VsixExtenstionFromMarketplace -ExtensionMarketPlaceName $vsixPackage
-          $FilePath = Start-DownloadWithRetry -Url $vsixPackageUrl.DownloadUri -Name $vsixPackage.FileName
-          $argumentList = ('/quiet', "`"$FilePath`"")
-          Start-Process -FilePath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VSIXInstaller.exe" -ArgumentList $argumentList -Wait -PassThru
-    
+        shell: bash
+        run: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VSIXInstaller.exe /quiet VisualC/InstallerProjects2022.vsix
+        
       - name: Run MSBuild
         run: msbuild VisualC/Scion.sln -property:Configuration=${{ matrix.configuration }} -property:Platform=${{ matrix.platform }}  
 
@@ -52,12 +47,3 @@ jobs:
             VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/Scion-Audio.Test.dll     
             VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/Scion-Graphics.Test.dll     
             VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/Scion-Video.Test.dll     
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: binaries-artifact
-          path: |
-            include  
-            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/*.dll
-            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/*.lib
-            VisualC/${{ matrix.platform }}/${{ matrix.configuration }}/*.pdb
