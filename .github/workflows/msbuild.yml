@@ -29,7 +29,11 @@ jobs:
         
       - name: Checkout code
         uses: actions/checkout@v3
-            
+        
+      - name: Install Microsoft Visual Studio Installer Projects Extension
+        shell: bash
+        run: "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VSIXInstaller.exe" /quiet VisualC/InstallerProjects2022.vsix
+                    
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
         
