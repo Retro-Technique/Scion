@@ -30,7 +30,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Install Microsoft Visual Studio Installer Projects Extension
+      - if: matrix.configuration == 'Release'
+        name: Install Microsoft Visual Studio Installer Projects Extension
         uses: microcompiler/install-vsix@main
         with: 
           packagename: 'VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects'
