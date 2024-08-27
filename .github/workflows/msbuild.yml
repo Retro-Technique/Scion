@@ -26,6 +26,15 @@ jobs:
 
       - name: Install Sound Device
         uses: LABSN/sound-ci-helpers@v1.0.3
+        
+      - name: Install Microsoft Visual Studio Installer Projects Extension
+        shell: pwsh
+        run: |
+          $vsixPackage= "VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects"
+          $vsixPackageUrl = Get-VsixExtenstionFromMarketplace -ExtensionMarketPlaceName $vsixPackage
+          $FilePath = Start-DownloadWithRetry -Url $vsixPackageUrl.DownloadUri -Name $vsixPackage.FileName
+          $argumentList = ('/quiet', "`"$FilePath`"")
+          Start-Process -FilePath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VSIXInstaller.exe" -ArgumentList $argumentList -Wait -PassThru
             
       - name: Checkout code
         uses: actions/checkout@v3
