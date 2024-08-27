@@ -83,15 +83,8 @@ namespace ScionAudioTest
 
 		HRESULT LoadWav(LPCTSTR pszFileName, CTimeSpan& durSound, BOOL& bIsMemDifferent)
 		{
-#ifdef _DEBUG
-			_CrtMemState State1;
-			_CrtMemState State2;
-			_CrtMemState State3;
-
-			_CrtMemCheckpoint(&State1);
-#endif
-
 			HRESULT hr = S_OK;
+			scion::common::CMemoryLeakChecker MemoryLeakChecker;
 			scion::engine::sfx::IAudioManager* pAudioManager = NULL;
 			scion::engine::sfx::ISoundBuffer* pSoundBuffer = NULL;
 
@@ -99,6 +92,8 @@ namespace ScionAudioTest
 			{
 				HWND hWnd = GetDesktopWindow();
 				CWnd* pWnd = CWnd::FromHandle(hWnd);
+
+				MemoryLeakChecker.Begin();
 
 				if (hr = scion::engine::sfx::CreateAudioManager(&pAudioManager); FAILED(hr))
 				{
@@ -138,13 +133,7 @@ namespace ScionAudioTest
 				pAudioManager = NULL;
 			}
 
-#ifdef _DEBUG
-			_CrtMemCheckpoint(&State2);
-
-			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
-#else
-			bIsMemDifferent = FALSE;
-#endif
+			bIsMemDifferent = MemoryLeakChecker.End();
 
 			return hr;
 		}

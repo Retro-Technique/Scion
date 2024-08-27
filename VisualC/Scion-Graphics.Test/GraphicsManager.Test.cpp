@@ -11,13 +11,7 @@ namespace ScionGraphicsTest
 
 		TEST_METHOD(TestInitialize)
 		{
-#ifdef _DEBUG
-			_CrtMemState State1;
-			_CrtMemState State2;
-			_CrtMemState State3;
-
-			_CrtMemCheckpoint(&State1);
-#endif
+			scion::common::CMemoryLeakChecker MemoryLeakChecker;
 			BOOL bIsMemDifferent = TRUE;
 
 			HRESULT hr = S_OK;
@@ -35,6 +29,8 @@ namespace ScionGraphicsTest
 				{
 					break;
 				}
+
+				MemoryLeakChecker.Begin();
 
 				if (hr = scion::engine::gfx::CreateGraphicsManager(&pGraphicsManager); FAILED(hr))
 				{
@@ -61,13 +57,7 @@ namespace ScionGraphicsTest
 				pD2DState = NULL;
 			}
 
-#ifdef _DEBUG
-			_CrtMemCheckpoint(&State2);
-
-			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
-#else
-			bIsMemDifferent = FALSE;
-#endif
+			bIsMemDifferent = MemoryLeakChecker.End();
 
 			Assert::AreEqual(FALSE, bIsMemDifferent, _T("Memory leak"));
 			Assert::IsTrue(SUCCEEDED(hr), _com_error(hr).ErrorMessage());

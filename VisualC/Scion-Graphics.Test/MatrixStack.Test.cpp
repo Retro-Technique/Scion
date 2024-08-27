@@ -33,14 +33,9 @@ namespace ScionGraphicsTest
 
 		HRESULT Allocate(INT nPushCount, BOOL& bIsMemDifferent)
 		{
-#ifdef _DEBUG
-			_CrtMemState State1;
-			_CrtMemState State2;
-			_CrtMemState State3;
+			scion::common::CMemoryLeakChecker MemoryLeakChecker;
 
-			_CrtMemCheckpoint(&State1);
-#endif
-
+			MemoryLeakChecker.Begin();
 			{
 				scion::engine::gfx::CMatrixStack MatrixStack;
 
@@ -76,13 +71,7 @@ namespace ScionGraphicsTest
 				}
 			}
 
-#ifdef _DEBUG
-			_CrtMemCheckpoint(&State2);
-
-			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
-#else
-			bIsMemDifferent = FALSE;
-#endif
+			bIsMemDifferent = MemoryLeakChecker.End();
 
 			return S_OK;
 		}

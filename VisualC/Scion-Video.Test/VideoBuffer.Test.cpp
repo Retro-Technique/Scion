@@ -55,20 +55,15 @@ namespace ScionVideoTest
 
 		HRESULT LoadVideo(LPCTSTR pszFileName, FLOAT& fFrameRate, CTimeSpan& durVideo, LONG& nFrameCount, BOOL& bIsMemDifferent)
 		{
-#ifdef _DEBUG
-			_CrtMemState State1;
-			_CrtMemState State2;
-			_CrtMemState State3;
-
-			_CrtMemCheckpoint(&State1);
-#endif
-
 			HRESULT hr = S_OK;
+			scion::common::CMemoryLeakChecker MemoryLeakChecker;
 			scion::engine::vfx::IVideoManager* pVideoManager = NULL;
 			scion::engine::vfx::IVideoBuffer* pVideoBuffer = NULL;
 
 			do
 			{
+				MemoryLeakChecker.Begin();
+
 				if (hr = scion::engine::vfx::CreateVideoManager(&pVideoManager); FAILED(hr))
 				{
 					break;
@@ -109,13 +104,7 @@ namespace ScionVideoTest
 				pVideoManager = NULL;
 			}
 
-#ifdef _DEBUG
-			_CrtMemCheckpoint(&State2);
-
-			bIsMemDifferent = _CrtMemDifference(&State3, &State1, &State2);
-#else
-			bIsMemDifferent = FALSE;
-#endif
+			bIsMemDifferent = MemoryLeakChecker.End();
 
 			return hr;
 		}
