@@ -29,12 +29,24 @@ jobs:
         
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - if: matrix.platform == 'x86'
+        name: Install x264 VFW Codec x86
+        run: |
+          3rdParty\x264vfw_x86_v200_x264b159_10bit_20200321.exe /S
+          sleep 1
+
+      - if: matrix.platform == 'x64'
+        name: Install x264 VFW Codec x64
+        run: |
+          3rdParty\x264vfw_x64_v200_x264b159_10bit_20200321.exe /S
+          sleep 1
         
-      - if: matrix.configuration == 'Release'
-        name: Install Microsoft Visual Studio Installer Projects Extension
-        uses: microcompiler/install-vsix@main
-        with: 
-          packagename: 'VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects'
+      #- if: matrix.configuration == 'Release'
+      #  name: Install Microsoft Visual Studio Installer Projects Extension
+      #  uses: microcompiler/install-vsix@main
+      #  with: 
+      #    packagename: 'VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects'
       
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
