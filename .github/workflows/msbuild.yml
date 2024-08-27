@@ -27,6 +27,12 @@ jobs:
       - name: Install Sound Device
         uses: LABSN/sound-ci-helpers@v1.0.3
         
+      - name: Checkout code
+        uses: actions/checkout@v3
+            
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+        
       - name: Install Microsoft Visual Studio Installer Projects Extension
         shell: pwsh
         run: |
@@ -35,13 +41,7 @@ jobs:
           $FilePath = Start-DownloadWithRetry -Url $vsixPackageUrl.DownloadUri -Name $vsixPackage.FileName
           $argumentList = ('/quiet', "`"$FilePath`"")
           Start-Process -FilePath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VSIXInstaller.exe" -ArgumentList $argumentList -Wait -PassThru
-            
-      - name: Checkout code
-        uses: actions/checkout@v3
-            
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-
+    
       - name: Run MSBuild
         run: msbuild VisualC/Scion.sln -property:Configuration=${{ matrix.configuration }} -property:Platform=${{ matrix.platform }}  
 
