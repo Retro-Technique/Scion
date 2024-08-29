@@ -66,7 +66,7 @@ namespace scion
 
 			IMPLEMENT_DYNAMIC(CInputManager, CObject)
 
-			CInputManager::CInputManager()
+				CInputManager::CInputManager()
 				: m_nRef(1)
 				, m_pDevice(NULL)
 			{
@@ -79,23 +79,97 @@ namespace scion
 			}
 
 #pragma endregion
+#pragma region Operations
+
+			HRESULT CInputManager::AcquireJoystick(LPCDIDEVICEINSTANCE pdidInstance)
+			{
+				LPDIRECTINPUTDEVICE8 pInput = NULL;
+
+				if (const HRESULT hr = m_pDevice->CreateDevice(pdidInstance->guidInstance, &pInput, NULL); FAILED(hr))
+				{
+					return DIENUM_CONTINUE;
+				}
+
+				return DIENUM_STOP;
+			}
+
+			HRESULT CInputManager::CreateInput(LPCDIDEVICEINSTANCE pdidInstance)
+			{
+				LPDIRECTINPUTDEVICE8 pInput = NULL;
+
+				if (const HRESULT hr = m_pDevice->CreateDevice(pdidInstance->guidInstance, &pInput, NULL); FAILED(hr))
+				{
+					return hr;
+				}
+
+				m_listInputs.AddTail(pInput);
+
+				return S_OK;
+			}
+
+#pragma endregion
 #pragma region Overridables
 
-			HRESULT CInputManager::Initialize(HINSTANCE hInstance)
+			HRESULT CInputManager::Initialize(HINSTANCE hInstance, CWnd* pWnd, BOOL bKeyboard, BOOL bMouse)
 			{
 				ASSERT_POINTER(hInstance, HINSTANCE);
+				ASSERT_POINTER(pWnd, CWnd);
+				ASSERT_VALID(pWnd);
 
-				HRESULT hr = DirectInput8Create(hInstance,
-					DIRECTINPUT_VERSION,
-					IID_IDirectInput8,
-					reinterpret_cast<void**>(&m_pDevice),
-					NULL);
+				HRESULT hr = S_OK;
+				const auto pfnOnDevice = [](LPCDIDEVICEINSTANCE pdidInstance, LPVOID pData) -> BOOL
+					{
+						CInputManager* pInputManager = reinterpret_cast<CInputManager*>(pData);
+
+						if (const HRESULT hr = pInputManager->CreateInput(pdidInstance); FAILED(hr))
+						{
+							return DIENUM_CONTINUE;
+						}
+
+						return DIENUM_STOP;
+					};
+
+				do
+				{
+					if (hr = DirectInput8Create(hInstance,
+						DIRECTINPUT_VERSION,
+						IID_IDirectInput8,
+						reinterpret_cast<void**>(&m_pDevice),
+						NULL); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = m_pDevice->EnumDevices(DI8DEVCLASS_ALL, pfnOnDevice, this, DIEDFL_ATTACHEDONLY); FAILED(hr))
+					{
+						break;
+					}
+					
+					/*if (hr = AcquireDefaultInput(pWnd, bKeyboard, bMouse); FAILED(hr))
+					{
+						break;
+					}*/
+
+				} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 				return hr;
 			}
 
 			void CInputManager::Quit()
 			{
+				for (INT_PTR i = 0; i < m_arrInputs.GetCount(); i++)
+				{
+					LPDIRECTINPUTDEVICE8 pInput = m_arrInputs.GetAt(i);
+					if (pInput)
+					{
+						pInput->Unacquire();
+						pInput->Release();
+						pInput = NULL;
+					}
+				}
+
+				m_arrInputs.RemoveAll();
+
 				if (m_pDevice)
 				{
 					m_pDevice->Release();
@@ -108,7 +182,6 @@ namespace scion
 			void CInputManager::AssertValid() const
 			{
 				CObject::AssertValid();
-
 			}
 
 			void CInputManager::Dump(CDumpContext& dc) const
@@ -136,7 +209,108 @@ namespace scion
 			}
 
 #pragma endregion
+#pragma region Implementations
 
+			HRESULT CInputManager::AcquireDefaultInput(CWnd* pWnd, BOOL bKeyboard, BOOL bMouse)
+			{
+				struct
+				{
+					const GUID& _guid;
+					const LPCDIDATAFORMAT pFormat;
+					const BOOL bActive;
+
+				} Inputs[] =
+				{
+					{ GUID_SysKeyboard, &c_dfDIKeyboard, bKeyboard },
+					{ GUID_SysMouse, &c_dfDIMouse, bMouse }
+				};
+				static constexpr const INT INPUT_COUNT = ARRAYSIZE(Inputs);
+
+				HRESULT hr = S_OK;
+
+				for (INT i = 0; i < INPUT_COUNT; i++)
+				{
+					if (!Inputs[i].bActive)
+					{
+						continue;
+					}
+
+					LPDIRECTINPUTDEVICE8 pInput = NULL;
+
+					if (hr = m_pDevice->CreateDevice(Inputs[i]._guid, &pInput, NULL); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = pInput->SetDataFormat(Inputs[i].pFormat); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = pInput->SetCooperativeLevel(pWnd->GetSafeHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE); FAILED(hr))
+					{
+						break;
+					}
+
+					if (hr = pInput->Acquire(); FAILED(hr))
+					{
+						break;
+					}
+
+					m_arrInputs.Add(pInput);
+				}
+
+				return hr;
+			}
+
+			HRESULT CInputManager::AcquireJoysticks(CWnd* pWnd)
+			{
+				/*const auto pfnOnDevice = [](LPCDIDEVICEINSTANCE pdidInstance, LPVOID pData) -> BOOL
+					{
+						CInputManager* pInputManager = reinterpret_cast<CInputManager*>(pData);
+
+						pInputManager->AcquireJoystick(pdidInstance);
+
+						return 
+					};
+
+				return m_pDevice->EnumDevices(DI8DEVCLASS_GAMECTRL, pfnOnDevice, NULL, DIEDFL_ATTACHEDONLY);*/
+				return E_NOTIMPL;
+			}
+
+			HRESULT CInputManager::AcquireInputs(CWnd* pWnd)
+			{
+				HRESULT hr = S_OK;
+
+				POSITION pos = m_listInputs.GetHeadPosition();
+				while (pos)
+				{
+					LPDIRECTINPUTDEVICE8 pInput = m_listInputs.GetNext(pos);
+					if (!pInput)
+					{
+						continue;
+					}
+
+					/*if (hr = pInput->SetDataFormat(Inputs[i].pFormat); FAILED(hr))
+					{
+						continue;
+					}*/
+
+					if (hr = pInput->SetCooperativeLevel(pWnd->GetSafeHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE); FAILED(hr))
+					{
+						continue;
+					}
+
+					if (hr = pInput->Acquire(); FAILED(hr))
+					{
+						continue;
+					}
+				}
+
+				return hr;
+			}
+
+#pragma endregion
 		}
 	}
 }

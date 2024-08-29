@@ -48,6 +48,16 @@ namespace scion
 
 			class CInputManager : public CObject, public IInputManager
 			{
+			private:
+
+				enum EDefaultType : INT
+				{
+					EDefaultType_Keyboard = 0,
+					EDefaultType_Mouse,
+
+					EDeviceType_COUNT
+				};
+
 #pragma region Constructors
 
 				DECLARE_DYNAMIC(CInputManager)
@@ -64,14 +74,24 @@ namespace scion
 
 				mutable LONG m_nRef;
 
-				LPDIRECTINPUT8 m_pDevice;
+				LPDIRECTINPUT8					m_pDevice;
+				CArray<LPDIRECTINPUTDEVICE8>	m_arrInputs;
+				CList<LPDIRECTINPUTDEVICE8>		m_listInputs;
+
+#pragma endregion
+#pragma region Operations
+
+			public:
+
+				HRESULT AcquireJoystick(LPCDIDEVICEINSTANCE pdidInstance);
+				HRESULT CreateInput(LPCDIDEVICEINSTANCE pdidInstance);
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
-				HRESULT Initialize(HINSTANCE hInstance) override;
+				HRESULT Initialize(HINSTANCE hInstance, CWnd* pWnd, BOOL bKeyboard, BOOL bMouse) override;
 				void Quit() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
@@ -79,6 +99,15 @@ namespace scion
 #endif
 				void AddRef() const override;
 				BOOL Release() const override;
+
+#pragma endregion
+#pragma region Implementations
+
+			private:
+
+				HRESULT AcquireDefaultInput(CWnd* pWnd, BOOL bKeyboard, BOOL bMouse);
+				HRESULT AcquireJoysticks(CWnd* pWnd);
+				HRESULT AcquireInputs(CWnd* pWnd);
 
 #pragma endregion
 			};

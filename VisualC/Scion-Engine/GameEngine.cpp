@@ -91,7 +91,7 @@ namespace scion
 					break;
 				}
 
-				if (hr = m_pInputManager->Initialize(hInstance); FAILED(hr))
+				if (hr = m_pInputManager->Initialize(hInstance, pMainWnd); FAILED(hr))
 				{
 					break;
 				}
