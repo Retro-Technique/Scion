@@ -53,6 +53,7 @@ namespace scion
 			, m_pAudioManager(NULL)
 			, m_pVideoManager(NULL)
 			, m_pInputManager(NULL)
+			, m_pNetworkManager(NULL)
 		{
 			
 		}
@@ -95,6 +96,11 @@ namespace scion
 				{
 					break;
 				}
+	
+				if (hr = m_pNetworkManager->Initialize(); FAILED(hr))
+				{
+					break;
+				}
 
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
@@ -103,6 +109,7 @@ namespace scion
 
 		void CGameEngine::Quit()
 		{
+			m_pNetworkManager->Quit();
 			m_pGraphicsManager->Quit();
 			m_pInputManager->Quit();
 			m_pVideoManager->Quit();
@@ -120,6 +127,7 @@ namespace scion
 		{
 			CObject::AssertValid();
 
+			ASSERT_POINTER(m_pNetworkManager, net::INetworkManager);
 			ASSERT_POINTER(m_pInputManager, ifx::IInputManager);
 			ASSERT_POINTER(m_pVideoManager, vfx::IVideoManager);
 			ASSERT_POINTER(m_pAudioManager, sfx::IAudioManager);
@@ -162,6 +170,11 @@ namespace scion
 					break;
 				}
 
+				if (hr = net::CreateNetworkManager(&m_pNetworkManager); FAILED(hr))
+				{
+					break;
+				}
+
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 			return hr;
@@ -169,6 +182,12 @@ namespace scion
 
 		void CGameEngine::DestroyManagers()
 		{
+			if (m_pNetworkManager)
+			{
+				m_pNetworkManager->Release();
+				m_pNetworkManager = NULL;
+			}
+
 			if (m_pInputManager)
 			{
 				m_pInputManager->Release();

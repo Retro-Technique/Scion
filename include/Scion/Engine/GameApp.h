@@ -68,6 +68,7 @@ namespace scion
 
 		public:
 
+			inline ifx::IInputManager* GetInputManager() { return m_GameEngine.GetInputManager(); }
 			inline const gfx::IGraphicsManager* GetGraphicsManager() const { return m_GameEngine.GetGraphicsManager(); }
 
 #pragma endregion

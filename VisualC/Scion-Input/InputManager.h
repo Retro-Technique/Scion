@@ -74,17 +74,16 @@ namespace scion
 
 				mutable LONG m_nRef;
 
-				LPDIRECTINPUT8					m_pDevice;
-				CArray<LPDIRECTINPUTDEVICE8>	m_arrInputs;
-				CList<LPDIRECTINPUTDEVICE8>		m_listInputs;
+				LPDIRECTINPUT8				m_pDevice;
+				CList<LPDIRECTINPUTDEVICE8>	m_listInputs;
 
 #pragma endregion
 #pragma region Operations
 
 			public:
 
-				HRESULT AcquireJoystick(LPCDIDEVICEINSTANCE pdidInstance);
-				HRESULT CreateInput(LPCDIDEVICEINSTANCE pdidInstance);
+				HRESULT CreateInput(CWnd* pWnd, LPCDIDEVICEINSTANCE pdidInstance);
+				BOOL IsValidInput(const GUID& guid);
 
 #pragma endregion
 #pragma region Overridables
@@ -93,6 +92,7 @@ namespace scion
 
 				HRESULT Initialize(HINSTANCE hInstance, CWnd* pWnd, BOOL bKeyboard, BOOL bMouse) override;
 				void Quit() override;
+				void PollEvent() override;
 #ifdef _DEBUG
 				void AssertValid() const override;
 				void Dump(CDumpContext& dc) const override;
@@ -105,9 +105,7 @@ namespace scion
 
 			private:
 
-				HRESULT AcquireDefaultInput(CWnd* pWnd, BOOL bKeyboard, BOOL bMouse);
-				HRESULT AcquireJoysticks(CWnd* pWnd);
-				HRESULT AcquireInputs(CWnd* pWnd);
+				LPCDIDATAFORMAT GetFormatFromInput(const GUID& guid);
 
 #pragma endregion
 			};

@@ -29,17 +29,6 @@ namespace scion
 		}
 
 #pragma endregion
-#pragma region Attributes
-
-//#ifdef _DEBUG
-//		CMainDocument* CRenderView::GetDocument() const
-//		{
-//			ASSERT_KINDOF(CMainDocument, m_pDocument);
-//			return STATIC_DOWNCAST(CMainDocument, m_pDocument);
-//		}
-//#endif
-
-#pragma endregion
 #pragma region Overridables
 
 		BOOL CRenderView::PreCreateWindow(CREATESTRUCT& cs)
@@ -72,6 +61,16 @@ namespace scion
 			ASSERT_VALID(pRenderTarget);
 
 			pDoc->UpdateScene();*/
+
+			CWinApp* pWinApp = AfxGetApp();
+			ASSERT_POINTER(pWinApp, CWinApp);
+			ASSERT_VALID(pWinApp);
+			ASSERT_KINDOF(CGameApp, pWinApp);
+
+			CGameApp* pGameApp = STATIC_DOWNCAST(CGameApp, pWinApp);
+			ifx::IInputManager* pInputManager = pGameApp->GetInputManager();
+
+			pInputManager->PollEvent();
 
 			Invalidate();
 		}
@@ -158,11 +157,11 @@ namespace scion
 
 		void CRenderView::OnTimer(UINT_PTR nIDEvent)
 		{
-			/*if (TIMER_REFRESH_ID == nIDEvent)
+			if (TIMER_REFRESH_ID == nIDEvent)
 			{
-				CMainDocument* pDoc = GetDocument();
+				CDocument* pDoc = GetDocument();
 				pDoc->UpdateAllViews(NULL);
-			}*/
+			}
 
 			CView::OnTimer(nIDEvent);
 		}

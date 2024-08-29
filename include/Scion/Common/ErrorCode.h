@@ -187,3 +187,12 @@
 //
 #define E_AVI_CANNOTFINDDECOMPRESSOR     0xE000100FL
 
+//
+// MessageId: E_NETWORK_INIT_FAILED
+//
+// MessageText:
+//
+// La bibliothèque de socket n'a pas pu être initialisée
+//
+#define E_NETWORK_INIT_FAILED            0xE0001010L
+

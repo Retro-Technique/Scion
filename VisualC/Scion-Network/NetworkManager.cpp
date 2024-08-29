@@ -37,74 +37,95 @@
  *
  */
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#error Do not include GameEngine.h directly, include the Engine.h file
-#endif
-
-#pragma once
+#include "pch.h"
+#include "NetworkManager.h"
 
 namespace scion
 {
 	namespace engine
 	{
-
-		class AFX_EXT_CLASS CGameEngine : public CObject
+		namespace net
 		{
+
 #pragma region Constructors
 
-		public:
+			HRESULT CreateNetworkManager(INetworkManager** ppNetworkManager)
+			{
+				ASSERT_NULL_OR_POINTER(*ppNetworkManager, INetworkManager);
 
-			DECLARE_DYNAMIC(CGameEngine);
+				INetworkManager* pNetworkManager = new CNetworkManager;
+				if (!pNetworkManager)
+				{
+					return E_OUTOFMEMORY;
+				}
 
-		public:
+				*ppNetworkManager = pNetworkManager;
 
-			CGameEngine();
-			virtual ~CGameEngine();
+				return S_OK;
+			}
 
-#pragma endregion
-#pragma region Attributes
+			IMPLEMENT_DYNAMIC(CNetworkManager, CObject)
 
-		private:
+			CNetworkManager::CNetworkManager()
+				: m_nRef(1)
+			{
 
-			gfx::IGraphicsManager*	m_pGraphicsManager;
-			sfx::IAudioManager*		m_pAudioManager;
-			vfx::IVideoManager*		m_pVideoManager;
-			ifx::IInputManager*		m_pInputManager;
-			net::INetworkManager*	m_pNetworkManager;
+			}
 
-		public:
+			CNetworkManager::~CNetworkManager()
+			{
 
-			inline ifx::IInputManager* GetInputManager() { return m_pInputManager; }
-			inline const gfx::IGraphicsManager* GetGraphicsManager() const { return m_pGraphicsManager; }
-
-#pragma endregion
-#pragma region Operations
-
-		public:
-
-			HRESULT Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState);
-			void Quit();
+			}
 
 #pragma endregion
 #pragma region Overridables
 
-		public:
+			HRESULT CNetworkManager::Initialize()
+			{
+				BOOL bSucceeded = AfxSocketInit();
+
+				return bSucceeded ? S_OK : E_NETWORK_INIT_FAILED;
+			}
+
+			void CNetworkManager::Quit()
+			{
+				AfxSocketTerm();
+			}
 
 #ifdef _DEBUG
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
+
+			void CNetworkManager::AssertValid() const
+			{
+				CObject::AssertValid();
+
+			}
+
+			void CNetworkManager::Dump(CDumpContext& dc) const
+			{
+				CObject::Dump(dc);
+			}
+
 #endif
 
+			void CNetworkManager::AddRef() const
+			{
+				InterlockedIncrement(&m_nRef);
+			}
+
+			BOOL CNetworkManager::Release() const
+			{
+				const LONG nRefCount = InterlockedDecrement(&m_nRef);
+				if (0l == nRefCount)
+				{
+					delete this;
+					return TRUE;
+				}
+
+				return FALSE;
+			}
+
 #pragma endregion
-#pragma region Implementations
 
-		private:
-
-			HRESULT CreateManagers();
-			void DestroyManagers();
-
-#pragma endregion
-		};
-
+		}
 	}
 }

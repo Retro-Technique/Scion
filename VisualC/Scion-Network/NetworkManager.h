@@ -37,74 +37,50 @@
  *
  */
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#error Do not include GameEngine.h directly, include the Engine.h file
-#endif
-
 #pragma once
 
 namespace scion
 {
 	namespace engine
 	{
-
-		class AFX_EXT_CLASS CGameEngine : public CObject
+		namespace net
 		{
+
+			class CNetworkManager : public CObject, public INetworkManager
+			{
 #pragma region Constructors
 
-		public:
+				DECLARE_DYNAMIC(CNetworkManager)
 
-			DECLARE_DYNAMIC(CGameEngine);
+			public:
 
-		public:
-
-			CGameEngine();
-			virtual ~CGameEngine();
+				CNetworkManager();
+				virtual ~CNetworkManager();
 
 #pragma endregion
 #pragma region Attributes
 
-		private:
+			private:
 
-			gfx::IGraphicsManager*	m_pGraphicsManager;
-			sfx::IAudioManager*		m_pAudioManager;
-			vfx::IVideoManager*		m_pVideoManager;
-			ifx::IInputManager*		m_pInputManager;
-			net::INetworkManager*	m_pNetworkManager;
-
-		public:
-
-			inline ifx::IInputManager* GetInputManager() { return m_pInputManager; }
-			inline const gfx::IGraphicsManager* GetGraphicsManager() const { return m_pGraphicsManager; }
-
-#pragma endregion
-#pragma region Operations
-
-		public:
-
-			HRESULT Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState);
-			void Quit();
+				mutable LONG m_nRef;
 
 #pragma endregion
 #pragma region Overridables
 
-		public:
+			public:
 
+				HRESULT Initialize() override;
+				void Quit() override;
 #ifdef _DEBUG
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
+				void AssertValid() const override;
+				void Dump(CDumpContext& dc) const override;
 #endif
+				void AddRef() const override;
+				BOOL Release() const override;
 
 #pragma endregion
-#pragma region Implementations
+			};
 
-		private:
-
-			HRESULT CreateManagers();
-			void DestroyManagers();
-
-#pragma endregion
-		};
-
+		}
 	}
 }

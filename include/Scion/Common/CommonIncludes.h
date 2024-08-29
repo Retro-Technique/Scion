@@ -46,7 +46,6 @@
 #include <afxwin.h>
 #include <afxmt.h>
 #include <afxwinappex.h>
-#include <DirectXMath.h>
 
 #define SCION_NULL_WHILE_LOOP_CONDITION (-1 == __LINE__)
 

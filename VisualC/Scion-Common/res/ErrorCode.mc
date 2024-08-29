@@ -153,3 +153,12 @@ Le système ne trouve pas de décompresseur capable de décompresser l'AVI au forma
 Language=English
 The system cannot find a decompressor that can decompress the AVI to the given format
 .
+
+MessageId=+1
+SymbolicName=E_NETWORK_INIT_FAILED
+Language=French
+La bibliothèque de socket n'a pas pu être initialisée
+.
+Language=English
+The socket library hasn't been initialized
+.

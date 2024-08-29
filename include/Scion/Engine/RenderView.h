@@ -71,7 +71,6 @@ namespace scion
 		public:
 
 			gfx::IRenderWindow* m_pRenderWindow;
-			//CMainDocument* GetDocument() const;
 
 #pragma endregion
 #pragma region Overridables
@@ -103,13 +102,6 @@ namespace scion
 
 #pragma endregion
 		};
-
-//#ifndef _DEBUG 
-//		inline CMainDocument* CRenderView::GetDocument() const
-//		{
-//			return STATIC_DOWNCAST(CMainDocument, m_pDocument);
-//		}
-//#endif
 
 	}
 }

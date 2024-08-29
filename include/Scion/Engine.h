@@ -44,6 +44,7 @@
 #include <Scion/Audio.h>
 #include <Scion/Video.h>
 #include <Scion/Input.h>
+#include <Scion/Network.h>
 
 #ifndef __SCION_ENGINE_H_INCLUDED__
 #define __SCION_ENGINE_H_INCLUDED__
