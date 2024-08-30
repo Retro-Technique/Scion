@@ -67,10 +67,10 @@ namespace scion
 		private:
 
 			gfx::IGraphicsManager*	m_pGraphicsManager;
-			sfx::IAudioManager*		m_pAudioManager;
 			vfx::IVideoManager*		m_pVideoManager;
-			ifx::IInputManager*		m_pInputManager;
 			net::INetworkManager*	m_pNetworkManager;
+			sfx::IAudioManager*		m_pAudioManager;
+			ifx::IInputManager*		m_pInputManager;
 
 		public:
 
@@ -82,8 +82,11 @@ namespace scion
 
 		public:
 
-			HRESULT Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState);
+			HRESULT Create();
+			HRESULT PreWindowInitialize(_AFX_D2D_STATE* pD2DState);
+			HRESULT PostWindowInitialize(HINSTANCE hInstance, CWnd* pMainWnd);
 			void Quit();
+			void Destroy();
 
 #pragma endregion
 #pragma region Overridables
@@ -94,14 +97,6 @@ namespace scion
 			void AssertValid() const override;
 			void Dump(CDumpContext& dc) const override;
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-		private:
-
-			HRESULT CreateManagers();
-			void DestroyManagers();
 
 #pragma endregion
 		};

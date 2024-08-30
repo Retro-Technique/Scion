@@ -76,8 +76,11 @@ namespace scion
 
 		public:
 
-			BOOL InitScionEngine();
-			void QuitScionEngine();
+			BOOL CreateEngine();
+			BOOL PreInitializeEngine();
+			BOOL PostInitializeEngine();
+			void QuitEngine();
+			void DestroyEngine();
 
 #pragma endregion
 		};

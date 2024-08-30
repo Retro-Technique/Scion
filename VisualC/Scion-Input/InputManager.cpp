@@ -103,10 +103,10 @@ namespace scion
 						break;
 					}
 
-					/*if (hr = pInput->Acquire(); FAILED(hr))
+					if (hr = pInput->Acquire(); FAILED(hr))
 					{
 						break;
-					}*/
+					}
 
 					m_listInputs.AddTail(pInput);
 

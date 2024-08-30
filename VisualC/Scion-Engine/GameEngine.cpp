@@ -50,10 +50,10 @@ namespace scion
 
 		CGameEngine::CGameEngine()
 			: m_pGraphicsManager(NULL)
-			, m_pAudioManager(NULL)
 			, m_pVideoManager(NULL)
-			, m_pInputManager(NULL)
 			, m_pNetworkManager(NULL)
+			, m_pAudioManager(NULL)
+			, m_pInputManager(NULL)
 		{
 			
 		}
@@ -66,23 +66,49 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CGameEngine::Initialize(HINSTANCE hInstance, CWnd* pMainWnd, _AFX_D2D_STATE* pD2DState)
+		HRESULT CGameEngine::Create()
 		{
 			HRESULT hr = S_OK;
 
 			do
 			{
-				if (hr = CreateManagers(); FAILED(hr))
+				if (hr = gfx::CreateGraphicsManager(&m_pGraphicsManager); FAILED(hr))
 				{
 					break;
 				}
 
+				if (hr = vfx::CreateVideoManager(&m_pVideoManager); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = net::CreateNetworkManager(&m_pNetworkManager); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = sfx::CreateAudioManager(&m_pAudioManager); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = ifx::CreateInputManager(&m_pInputManager); FAILED(hr))
+				{
+					break;
+				}
+
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			return hr;
+		}
+
+		HRESULT CGameEngine::PreWindowInitialize(_AFX_D2D_STATE* pD2DState)
+		{
+			HRESULT hr = S_OK;
+
+			do
+			{
 				if (hr = m_pGraphicsManager->Initialize(pD2DState); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = m_pAudioManager->Initialize(pMainWnd); FAILED(hr))
 				{
 					break;
 				}
@@ -92,12 +118,28 @@ namespace scion
 					break;
 				}
 
-				if (hr = m_pInputManager->Initialize(hInstance, pMainWnd); FAILED(hr))
+				if (hr = m_pNetworkManager->Initialize(); FAILED(hr))
 				{
 					break;
 				}
-	
-				if (hr = m_pNetworkManager->Initialize(); FAILED(hr))
+
+			} while (SCION_NULL_WHILE_LOOP_CONDITION);
+
+			return hr;
+		}
+
+		HRESULT CGameEngine::PostWindowInitialize(HINSTANCE hInstance, CWnd* pMainWnd)
+		{
+			HRESULT hr = S_OK;
+
+			do
+			{
+				if (hr = m_pAudioManager->Initialize(pMainWnd); FAILED(hr))
+				{
+					break;
+				}
+
+				if (hr = m_pInputManager->Initialize(hInstance, pMainWnd); FAILED(hr))
 				{
 					break;
 				}
@@ -109,13 +151,63 @@ namespace scion
 
 		void CGameEngine::Quit()
 		{
-			m_pNetworkManager->Quit();
-			m_pGraphicsManager->Quit();
-			m_pInputManager->Quit();
-			m_pVideoManager->Quit();
-			m_pAudioManager->Quit();
+			if (m_pInputManager)
+			{
+				m_pInputManager->Quit();
+			}
 
-			DestroyManagers();
+			if (m_pAudioManager)
+			{
+				m_pAudioManager->Quit();
+			}
+
+			if (m_pNetworkManager)
+			{
+				m_pNetworkManager->Quit();
+			}
+
+			if (m_pVideoManager)
+			{
+				m_pVideoManager->Quit();
+			}
+
+			if (m_pGraphicsManager)
+			{
+				m_pGraphicsManager->Quit();
+			}
+		}
+
+		void CGameEngine::Destroy()
+		{
+			if (m_pInputManager)
+			{
+				m_pInputManager->Release();
+				m_pInputManager = NULL;
+			}
+
+			if (m_pAudioManager)
+			{
+				m_pAudioManager->Release();
+				m_pAudioManager = NULL;
+			}
+
+			if (m_pNetworkManager)
+			{
+				m_pNetworkManager->Release();
+				m_pNetworkManager = NULL;
+			}
+
+			if (m_pVideoManager)
+			{
+				m_pVideoManager->Release();
+				m_pVideoManager = NULL;
+			}
+
+			if (m_pGraphicsManager)
+			{
+				m_pGraphicsManager->Release();
+				m_pGraphicsManager = NULL;
+			}
 		}
 
 #pragma endregion
@@ -140,78 +232,6 @@ namespace scion
 		}
 
 #endif
-
-#pragma endregion
-#pragma region Implementations
-
-		HRESULT CGameEngine::CreateManagers()
-		{
-			HRESULT hr = S_OK;
-
-			do
-			{
-				if (hr = gfx::CreateGraphicsManager(&m_pGraphicsManager); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = sfx::CreateAudioManager(&m_pAudioManager); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = vfx::CreateVideoManager(&m_pVideoManager); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = ifx::CreateInputManager(&m_pInputManager); FAILED(hr))
-				{
-					break;
-				}
-
-				if (hr = net::CreateNetworkManager(&m_pNetworkManager); FAILED(hr))
-				{
-					break;
-				}
-
-			} while (SCION_NULL_WHILE_LOOP_CONDITION);
-
-			return hr;
-		}
-
-		void CGameEngine::DestroyManagers()
-		{
-			if (m_pNetworkManager)
-			{
-				m_pNetworkManager->Release();
-				m_pNetworkManager = NULL;
-			}
-
-			if (m_pInputManager)
-			{
-				m_pInputManager->Release();
-				m_pInputManager = NULL;
-			}
-
-			if (m_pVideoManager)
-			{
-				m_pVideoManager->Release();
-				m_pVideoManager = NULL;
-			}
-
-			if (m_pAudioManager)
-			{
-				m_pAudioManager->Release();
-				m_pAudioManager = NULL;
-			}
-
-			if (m_pGraphicsManager)
-			{
-				m_pGraphicsManager->Release();
-				m_pGraphicsManager = NULL;
-			}
-		}
 
 #pragma endregion
 	}

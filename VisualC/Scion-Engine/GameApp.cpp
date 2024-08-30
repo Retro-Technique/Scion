@@ -54,27 +54,34 @@ namespace scion
 #pragma endregion
 #pragma region Implementations
 
-		BOOL CGameApp::InitScionEngine()
+		BOOL CGameApp::CreateEngine()
+		{
+			return SUCCEEDED(m_GameEngine.Create());
+		}
+
+		BOOL CGameApp::PreInitializeEngine()
 		{
 			if (!EnableD2DSupport())
 			{
 				return FALSE;
 			}
 
-			_AFX_D2D_STATE* pD2DState = AfxGetD2DState();
-			CWnd* pMainWnd = CWnd::FromHandle(GetDesktopWindow());
-
-			if (const HRESULT hr = m_GameEngine.Initialize(m_hInstance, pMainWnd, pD2DState); FAILED(hr))
-			{
-				return FALSE;
-			}
-
-			return TRUE;
+			return SUCCEEDED(m_GameEngine.PreWindowInitialize(AfxGetD2DState()));
 		}
 
-		void CGameApp::QuitScionEngine()
+		BOOL CGameApp::PostInitializeEngine()
+		{
+			return SUCCEEDED(m_GameEngine.PostWindowInitialize(m_hInstance, m_pMainWnd));
+		}
+
+		void CGameApp::QuitEngine()
 		{
 			m_GameEngine.Quit();
+		}
+
+		void CGameApp::DestroyEngine()
+		{
+			m_GameEngine.Destroy();
 		}
 
 #pragma endregion

@@ -82,7 +82,12 @@ BOOL CMainApp::InitInstance()
 	m_pMainWnd = pMainFrame;
 #endif
 
-	if (!InitScionEngine())
+	if (!CreateEngine())
+	{
+		return FALSE;
+	}
+
+	if (!PreInitializeEngine())
 	{
 		return FALSE;
 	}
@@ -112,12 +117,18 @@ BOOL CMainApp::InitInstance()
 	m_pMainWnd->UpdateWindow();
 #endif
 
+	if (!PostInitializeEngine())
+	{
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
 int CMainApp::ExitInstance()
 {
-	QuitScionEngine();
+	QuitEngine();
+	DestroyEngine();
 
 	return scion::engine::CGameApp::ExitInstance();
 }
