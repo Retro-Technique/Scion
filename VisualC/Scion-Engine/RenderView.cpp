@@ -52,25 +52,29 @@ namespace scion
 
 		void CRenderView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
 		{
-			/*CMainDocument* pDoc = GetDocument();
-			ASSERT_POINTER(pDoc, CMainDocument);
+			CDocument* pDoc = GetDocument();
+			ASSERT_POINTER(pDoc, CDocument);			
 			ASSERT_VALID(pDoc);
-
-			CHwndRenderTarget* pRenderTarget = GetRenderTarget();
-			ASSERT_POINTER(pRenderTarget, CHwndRenderTarget);
-			ASSERT_VALID(pRenderTarget);
-
-			pDoc->UpdateScene();*/
+			ASSERT_KINDOF(CGameDocument, pDoc);
 
 			CWinApp* pWinApp = AfxGetApp();
 			ASSERT_POINTER(pWinApp, CWinApp);
 			ASSERT_VALID(pWinApp);
 			ASSERT_KINDOF(CGameApp, pWinApp);
 
+			/*CHwndRenderTarget* pRenderTarget = GetRenderTarget();
+			ASSERT_POINTER(pRenderTarget, CHwndRenderTarget);
+			ASSERT_VALID(pRenderTarget);
+
+			pDoc->UpdateScene();*/
+
+			
+			CGameDocument* pGameDoc = STATIC_DOWNCAST(CGameDocument, pDoc);
 			CGameApp* pGameApp = STATIC_DOWNCAST(CGameApp, pWinApp);
 			ifx::IInputManager* pInputManager = pGameApp->GetInputManager();
 
 			pInputManager->PollEvent();
+			pGameDoc->OnUpdate();
 
 			Invalidate();
 		}
@@ -110,13 +114,6 @@ namespace scion
 				return -1;
 			}
 
-			CWinApp* pWinApp = AfxGetApp();
-			ASSERT_POINTER(pWinApp, CWinApp);
-			ASSERT_VALID(pWinApp);
-			ASSERT_KINDOF(CGameApp, pWinApp);
-
-			CGameApp* pGameApp = STATIC_DOWNCAST(CGameApp, pWinApp);
-		
 			EnableD2DSupport();
 
 			if (!IsD2DSupportEnabled())
@@ -124,6 +121,13 @@ namespace scion
 				TRACE(_T("D2D support hasn't been enabled\n"));
 				return -1;
 			}
+
+			CWinApp* pWinApp = AfxGetApp();
+			ASSERT_POINTER(pWinApp, CWinApp);
+			ASSERT_VALID(pWinApp);
+			ASSERT_KINDOF(CGameApp, pWinApp);
+
+			CGameApp* pGameApp = STATIC_DOWNCAST(CGameApp, pWinApp);
 
 			HRESULT hr = S_OK;
 			const gfx::IGraphicsManager* pGraphicsManager = pGameApp->GetGraphicsManager();
@@ -169,12 +173,9 @@ namespace scion
 		afx_msg LRESULT CRenderView::OnAfxDraw2d(WPARAM wParam, LPARAM lParam)
 		{
 			UNREFERENCED_PARAMETER(wParam);
+			UNREFERENCED_PARAMETER(lParam);
 
-			/*CHwndRenderTarget* pRenderTarget = (CHwndRenderTarget*)lParam;
-			ASSERT_POINTER(pRenderTarget, CHwndRenderTarget);
-			ASSERT_VALID(pRenderTarget);
-
-			CMainDocument* pDoc = GetDocument();
+			/*CMainDocument* pDoc = GetDocument();
 			ASSERT_POINTER(pDoc, CMainDocument);
 			ASSERT_VALID(pDoc);
 
@@ -187,6 +188,9 @@ namespace scion
 
 		afx_msg LRESULT CRenderView::OnAfxRecreated2dresources(WPARAM wParam, LPARAM lParam)
 		{
+			UNREFERENCED_PARAMETER(wParam);
+			UNREFERENCED_PARAMETER(lParam);
+
 			TRACE(_T("Render target has been lost and re-created\n"));
 
 			return 0;

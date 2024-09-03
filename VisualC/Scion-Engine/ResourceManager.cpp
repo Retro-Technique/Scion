@@ -37,60 +37,90 @@
  *
  */
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#error Do not include ResourceManager.h directly, include the Engine.h file
-#endif
-
-#pragma once
+#include "pch.h"
 
 namespace scion
 {
 	namespace engine
 	{
 
-		class AFX_EXT_CLASS CResourceManager : public CObject
-		{
-		public:
-
-			typedef void(*ENUMRESOURCEPROC)(LPCTSTR, LONG, LPVOID);
-
 #pragma region Constructors
 
-			DECLARE_SERIAL(CResourceManager)
+		IMPLEMENT_SERIAL(CResourceManager, CObject, 1);
 
-		public:
+		CResourceManager::CResourceManager()
+		{
 
-			CResourceManager();
-			virtual ~CResourceManager();
+		}
+
+		CResourceManager::~CResourceManager()
+		{
+
+		}
 
 #pragma endregion
 #pragma region Operations
 
-		public:
+		void CResourceManager::OnUpdate()
+		{
+			POSITION pos = m_mapResources.GetStartPosition();
+			while (pos)
+			{
+				CString strName;
+				CObject* pObject = NULL;
+				m_mapResources.GetNextAssoc(pos, strName, pObject);
+				if (pObject)
+				{
 
-			void OnUpdate();
-			void EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
+				}
+			}
+		}
 
-#pragma endregion
-#pragma region Attributes
+		void CResourceManager::EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData)
+		{
+			ASSERT(pfnEnumResource);
 
-		private:
-
-			CMapStringToOb m_mapResources;
+			POSITION pos = m_mapResources.GetStartPosition();
+			while (pos)
+			{
+				CString strName;
+				CObject* pObject = NULL;
+				m_mapResources.GetNextAssoc(pos, strName, pObject);
+				if (pObject)
+				{
+					pfnEnumResource(strName.GetString(), 0, pData);
+				}
+			}
+		}
 
 #pragma endregion
 #pragma region Overridables
 
-		public:
+		void CResourceManager::Serialize(CArchive& ar)
+		{
+			CObject::Serialize(ar);
+			
+			m_mapResources.Serialize(ar);
+		}
 
-			void Serialize(CArchive& ar) override;
 #ifdef _DEBUG
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
+
+		void CResourceManager::AssertValid() const
+		{
+			CObject::AssertValid();
+
+			ASSERT_VALID(&m_mapResources);
+		}
+
+		void CResourceManager::Dump(CDumpContext& dc) const
+		{
+			CObject::Dump(dc);
+
+			AFXDUMP(&m_mapResources);
+		}
+
 #endif
 
 #pragma endregion
-		};
-
 	}
 }

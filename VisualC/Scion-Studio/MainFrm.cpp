@@ -162,6 +162,8 @@ BOOL CMainFrame::CreatePanes()
 BEGIN_MESSAGE_MAP(CMainFrame, FrameWnd)
 	ON_WM_CREATE()
 	ON_WM_GETMINMAXINFO()
+	ON_COMMAND(ID_VIEW_FULLSCREEN, &CMainFrame::OnViewFullscreen)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FULLSCREEN, &CMainFrame::OnUpdateViewFullscreen)
 	ON_COMMAND(ID_VIEW_RESOURCES_LIST, &CMainFrame::OnViewResourcesList)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESOURCES_LIST, &CMainFrame::OnUpdateViewResourcesList)
 END_MESSAGE_MAP()
@@ -215,6 +217,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	
 	CDockingManager::SetDockingMode(DT_SMART);
 
+	EnableFullScreenMode(ID_VIEW_FULLSCREEN);
+	EnableFullScreenMainMenu(TRUE);
+
 	return 0;
 }
 
@@ -224,6 +229,16 @@ void CMainFrame::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.y = 480;
 
 	FrameWnd::OnGetMinMaxInfo(lpMMI);
+}
+
+void CMainFrame::OnViewFullscreen()
+{
+	ShowFullScreen();
+}
+
+void CMainFrame::OnUpdateViewFullscreen(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(IsFullScreen());
 }
 
 void CMainFrame::OnViewResourcesList()

@@ -37,60 +37,95 @@
  *
  */
 
-#ifndef __SCION_ENGINE_H_INCLUDED__
-#error Do not include ResourceManager.h directly, include the Engine.h file
-#endif
-
-#pragma once
+#include "pch.h"
 
 namespace scion
 {
 	namespace engine
 	{
 
-		class AFX_EXT_CLASS CResourceManager : public CObject
-		{
-		public:
-
-			typedef void(*ENUMRESOURCEPROC)(LPCTSTR, LONG, LPVOID);
-
 #pragma region Constructors
 
-			DECLARE_SERIAL(CResourceManager)
+		IMPLEMENT_DYNCREATE(CGameDocument, CDocument)
 
-		public:
+		CGameDocument::CGameDocument()
+		{
 
-			CResourceManager();
-			virtual ~CResourceManager();
+		}
+
+		CGameDocument::~CGameDocument()
+		{
+
+		}
 
 #pragma endregion
 #pragma region Operations
 
-		public:
+		HRESULT CGameDocument::AddResource()
+		{
+			CWnd* pWnd = AfxGetMainWnd();
+			ASSERT_POINTER(pWnd, CWnd);
+			ASSERT_VALID(pWnd);
+			
+			//SendMessageToDescendantsEx(WM_UPDATE_PANE, EPane_ResourceList, this);
 
-			void OnUpdate();
-			void EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
+			return E_NOTIMPL;
+		}
 
-#pragma endregion
-#pragma region Attributes
+		void CGameDocument::EnumerateResources(CResourceManager::ENUMRESOURCEPROC pfnEnumResource, LPVOID pData)
+		{
+			m_ResourceManager.EnumerateResources(pfnEnumResource, pData);
+		}
 
-		private:
-
-			CMapStringToOb m_mapResources;
+		void CGameDocument::OnUpdate()
+		{
+			m_ResourceManager.OnUpdate();
+		}
 
 #pragma endregion
 #pragma region Overridables
 
-		public:
+#ifndef _WIN32_WCE
 
-			void Serialize(CArchive& ar) override;
-#ifdef _DEBUG
-			void AssertValid() const override;
-			void Dump(CDumpContext& dc) const override;
+		void CGameDocument::Serialize(CArchive& ar)
+		{
+			if (ar.IsStoring())
+			{
+				// TODO: ajoutez ici le code de stockage
+			}
+			else
+			{
+				// TODO: ajoutez ici le code de chargement
+			}
+			
+			m_ResourceManager.Serialize(ar);
+		}
 #endif
 
-#pragma endregion
-		};
+#ifdef _DEBUG
+		void CGameDocument::AssertValid() const
+		{
+			CDocument::AssertValid();
 
+			ASSERT_VALID(&m_ResourceManager);
+		}
+
+#ifndef _WIN32_WCE
+		void CGameDocument::Dump(CDumpContext& dc) const
+		{
+			CDocument::Dump(dc);
+
+			AFXDUMP(&m_ResourceManager);
+		}
+#endif
+#endif 
+
+#pragma endregion
+#pragma region Messages
+
+		BEGIN_MESSAGE_MAP(CGameDocument, CDocument)
+		END_MESSAGE_MAP()
+
+#pragma endregion
 	}
 }

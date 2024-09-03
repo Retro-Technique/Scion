@@ -9,7 +9,7 @@
 
 #pragma region Constructors
 
-IMPLEMENT_DYNCREATE(CMainDocument, CDocument)
+IMPLEMENT_DYNCREATE(CMainDocument, scion::engine::CGameDocument)
 
 CMainDocument::CMainDocument() noexcept
 {
@@ -45,7 +45,7 @@ void CMainDocument::DrawScene()
 
 BOOL CMainDocument::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
+	if (!scion::engine::CGameDocument::OnNewDocument())
 	{
 		return FALSE;
 	}
@@ -55,7 +55,7 @@ BOOL CMainDocument::OnNewDocument()
 
 BOOL CMainDocument::OnOpenDocument(LPCTSTR pszPathName)
 {
-	if (!CDocument::OnOpenDocument(pszPathName))
+	if (!scion::engine::CGameDocument::OnOpenDocument(pszPathName))
 	{
 		return FALSE;
 	}
@@ -67,30 +67,30 @@ BOOL CMainDocument::OnSaveDocument(LPCTSTR pszPathName)
 {
 	// TODO: ajoutez ici votre code spécialisé et/ou l'appel de la classe de base
 
-	return CDocument::OnSaveDocument(pszPathName);
+	return scion::engine::CGameDocument::OnSaveDocument(pszPathName);
 }
 
 void CMainDocument::OnCloseDocument()
 {
-	CDocument::OnCloseDocument();
+	scion::engine::CGameDocument::OnCloseDocument();
 }
 
 void CMainDocument::Serialize(CArchive& ar)
 {
-	
+	scion::engine::CGameDocument::Serialize(ar);
 }
 
 #ifdef _DEBUG
 
 void CMainDocument::AssertValid() const
 {
-	CDocument::AssertValid();
+	scion::engine::CGameDocument::AssertValid();
 
 }
 
 void CMainDocument::Dump(CDumpContext& dc) const
 {
-	CDocument::Dump(dc);
+	scion::engine::CGameDocument::Dump(dc);
 
 }
 

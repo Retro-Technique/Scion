@@ -2,7 +2,7 @@
 
 #include "ResourcePane.h"
 
-class CMainFrame : public FrameWnd
+class CMainFrame : public CFrameWndEx
 {
 #pragma region Constructors
 
@@ -68,6 +68,8 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg void OnViewFullscreen();
+	afx_msg void OnUpdateViewFullscreen(CCmdUI* pCmdUI);
 	afx_msg void OnViewResourcesList();
 	afx_msg void OnUpdateViewResourcesList(CCmdUI* pCmdUI);
 	

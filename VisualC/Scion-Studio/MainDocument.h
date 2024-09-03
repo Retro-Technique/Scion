@@ -1,6 +1,6 @@
 #pragma once
 
-class CMainDocument : public CDocument
+class CMainDocument : public scion::engine::CGameDocument
 {
 #pragma region Constructors
 

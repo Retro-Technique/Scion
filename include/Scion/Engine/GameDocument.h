@@ -38,7 +38,7 @@
  */
 
 #ifndef __SCION_ENGINE_H_INCLUDED__
-#error Do not include ResourceManager.h directly, include the Engine.h file
+#error Do not include GameDocument.h directly, include the Engine.h file
 #endif
 
 #pragma once
@@ -48,48 +48,55 @@ namespace scion
 	namespace engine
 	{
 
-		class AFX_EXT_CLASS CResourceManager : public CObject
+		class AFX_EXT_CLASS CGameDocument : public CDocument
 		{
-		public:
-
-			typedef void(*ENUMRESOURCEPROC)(LPCTSTR, LONG, LPVOID);
-
 #pragma region Constructors
 
-			DECLARE_SERIAL(CResourceManager)
+			DECLARE_DYNCREATE(CGameDocument)
 
 		public:
 
-			CResourceManager();
-			virtual ~CResourceManager();
-
-#pragma endregion
-#pragma region Operations
-
-		public:
-
-			void OnUpdate();
-			void EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
+			CGameDocument();
+			virtual ~CGameDocument();
 
 #pragma endregion
 #pragma region Attributes
 
 		private:
 
-			CMapStringToOb m_mapResources;
+			CResourceManager	m_ResourceManager;
+
+#pragma endregion
+#pragma region Operations
+
+		public:
+
+			HRESULT AddResource();
+			void EnumerateResources(CResourceManager::ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
+			void OnUpdate();
 
 #pragma endregion
 #pragma region Overridables
 
 		public:
 
+#ifndef _WIN32_WCE
 			void Serialize(CArchive& ar) override;
+#endif
 #ifdef _DEBUG
 			void AssertValid() const override;
+#ifndef _WIN32_WCE
 			void Dump(CDumpContext& dc) const override;
+#endif
 #endif
 
 #pragma endregion
+#pragma region Messages
+
+		protected:
+
+			DECLARE_MESSAGE_MAP()
+
 		};
 
 	}

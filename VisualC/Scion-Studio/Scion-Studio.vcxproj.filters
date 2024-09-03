@@ -99,6 +99,9 @@
     <ClInclude Include="ResourcePane.h">
       <Filter>Fichiers d%27en-tête\Panes</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceWnd.h">
+      <Filter>Fichiers d%27en-tête\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -128,6 +131,9 @@
     <ClCompile Include="ResourcePane.cpp">
       <Filter>Fichiers sources\Panes</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceWnd.cpp">
+      <Filter>Fichiers sources\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Application.rc">
@@ -148,6 +154,9 @@
       <Filter>Fichiers de ressources</Filter>
     </Image>
     <Image Include="res\Toolbar256.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\toolbar1.bmp">
       <Filter>Fichiers de ressources</Filter>
     </Image>
   </ItemGroup>

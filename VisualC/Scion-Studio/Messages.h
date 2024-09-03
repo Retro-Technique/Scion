@@ -7,3 +7,13 @@
 // #define WM_CHANGED_DOCUMENT (WM_USER + 1)
 // #define WM_ROI_UPDATED (WM_CHANGED_DOCUMENT + 1)
 // etc.
+
+enum EWindowMessage : UINT
+{
+	WM_UPDATE_PANE = WM_USER + 1
+};
+
+enum EPane : WPARAM
+{
+	EPane_ResourceList
+};
