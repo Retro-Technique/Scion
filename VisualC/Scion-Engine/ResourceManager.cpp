@@ -38,7 +38,10 @@
  */
 
 #include "pch.h"
-#include "FileResource.h"
+#include "TextureFileResource.h"
+#include "FontFileResource.h"
+#include "SoundFileResource.h"
+#include "VideoFileResource.h"
 
 namespace scion
 {
@@ -62,16 +65,16 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CResourceManager::CreateResource(EResourceType eType, LPCTSTR pszName)
+		HRESULT CResourceManager::CreateResource(EResourceType eType, LPCTSTR pszName, LPCTSTR pszFileName)
 		{
 			ASSERT(AfxIsValidString(pszName));
 
 			static CRuntimeClass* RUNTIME_CLASSES[] =
 			{
-				_T("CTextureFileResource"),
-				_T("CFontFileResource"),
-				_T("CSoundFileResource"),
-				_T("CVideoFileResource")
+				CTextureFileResource::GetThisClass(),
+				CFontFileResource::GetThisClass(),
+				CSoundFileResource::GetThisClass(),
+				CVideoFileResource::GetThisClass()
 			};
 			static constexpr const INT RUNTIME_CLASS_COUNT = ARRAYSIZE(RUNTIME_CLASSES);
 			C_ASSERT(RUNTIME_CLASS_COUNT == EResourceType_COUNT);
@@ -86,10 +89,13 @@ namespace scion
 			CFileResource* pFileResource = STATIC_DOWNCAST(CFileResource, pObject);
 
 			pFileResource->SetName(pszName);
+			HRESULT hr = pFileResource->LoadFromFile(pszFileName);
+			if (SUCCEEDED(hr))
+			{
+				m_mapResources.SetAt(pszName, pFileResource);
+			}
 
-			m_mapResources.SetAt(pszName, pFileResource);
-
-			return S_OK;
+			return hr;
 		}
 
 		void CResourceManager::OnUpdate()

@@ -38,7 +38,7 @@
  */
 
 #include "pch.h"
-#include "FileResource.h"
+#include "TextureFileResource.h"
 
 namespace scion
 {
@@ -47,84 +47,87 @@ namespace scion
 
 #pragma region Constructors
 
-		IMPLEMENT_SERIAL(CFileResource, CObject, 1)
+		IMPLEMENT_SERIAL(CTextureFileResource, CFileResource, 1)
 
-		CFileResource::CFileResource()
-			: m_nRef(1)
+		CTextureFileResource::CTextureFileResource()
+			: m_pTexture(NULL)
 		{
 
 		}
-
-		CFileResource::~CFileResource()
+		
+		CTextureFileResource::~CTextureFileResource()
 		{
-
+			if (m_pTexture)
+			{
+				m_pTexture->Release();
+				m_pTexture = NULL;
+			}
 		}
 
 #pragma endregion
 #pragma region Overridables
 
-		HRESULT CFileResource::LoadFromFile(LPCTSTR pszFileName)
+		BOOL CTextureFileResource::IsExtensionSupported(LPCTSTR pszExt) const
 		{
-			return E_NOTIMPL;
-		}
+			ASSERT(AfxIsValidString(pszExt));
 
-		void CFileResource::Unload()
-		{
-
-		}
-
-		CResourceManager::EResourceType CFileResource::GetType() const
-		{
-			return CResourceManager::EResourceType_COUNT;
-		}
-
-		void CFileResource::Serialize(CArchive& ar)
-		{
-			CObject::Serialize(ar);
-
-			if (ar.IsStoring())
+			static constexpr LPCTSTR EXTENSIONS[] =
 			{
-				ar << m_strName;
-			}
-			else
+				_T("bmp"), _T("png"), _T("jpg"), _T("jpeg")
+			};
+			static constexpr const INT_PTR EXTENSION_COUNT = ARRAYSIZE(EXTENSIONS);
+
+			for (INT_PTR i = 0; i < EXTENSION_COUNT; i++)
 			{
-				ar >> m_strName;
-			}
-		}
-
-#ifdef _DEBUG
-
-		void CFileResource::AssertValid() const
-		{
-			CObject::AssertValid();
-
-		}
-
-		void CFileResource::Dump(CDumpContext& dc) const
-		{
-			CObject::Dump(dc);
-
-		}
-
-#endif
-
-		void CFileResource::AddRef() const
-		{
-			InterlockedIncrement(&m_nRef);
-		}
-
-		BOOL CFileResource::Release() const
-		{
-			const LONG nRefCount = InterlockedDecrement(&m_nRef);
-			if (0l == nRefCount)
-			{
-				delete this;
-				return TRUE;
+				if (StrCmp(pszExt, EXTENSIONS[i]) == 0)
+				{
+					return TRUE;
+				}
 			}
 
 			return FALSE;
 		}
 
+		HRESULT CTextureFileResource::LoadFromFile(LPCTSTR pszFileName)
+		{
+			ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
+
+			if (m_pTexture)
+			{
+				return m_pTexture->LoadFromFile(pszFileName);
+			}
+
+			return E_POINTER;
+		}
+
+		void CTextureFileResource::Unload()
+		{
+			if (m_pTexture)
+			{
+				return m_pTexture->Unload();
+			}
+		}
+
+		CResourceManager::EResourceType CTextureFileResource::GetType() const
+		{
+			return CResourceManager::EResourceType_Texture;
+		}
+
+#ifdef _DEBUG
+
+		void CTextureFileResource::AssertValid() const
+		{
+			CFileResource::AssertValid();
+		}
+
+		void CTextureFileResource::Dump(CDumpContext& dc) const
+		{
+			CFileResource::Dump(dc);
+		}
+
+#endif
+
 #pragma endregion
+
 	}
 }

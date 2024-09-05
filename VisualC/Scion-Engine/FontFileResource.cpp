@@ -38,7 +38,7 @@
  */
 
 #include "pch.h"
-#include "FileResource.h"
+#include "FontFileResource.h"
 
 namespace scion
 {
@@ -47,84 +47,19 @@ namespace scion
 
 #pragma region Constructors
 
-		IMPLEMENT_SERIAL(CFileResource, CObject, 1)
+		IMPLEMENT_SERIAL(CFontFileResource, CFileResource, 1)
 
-		CFileResource::CFileResource()
-			: m_nRef(1)
+		CFontFileResource::CFontFileResource()
 		{
 
 		}
-
-		CFileResource::~CFileResource()
+		
+		CFontFileResource::~CFontFileResource()
 		{
 
 		}
 
 #pragma endregion
-#pragma region Overridables
 
-		HRESULT CFileResource::LoadFromFile(LPCTSTR pszFileName)
-		{
-			return E_NOTIMPL;
-		}
-
-		void CFileResource::Unload()
-		{
-
-		}
-
-		CResourceManager::EResourceType CFileResource::GetType() const
-		{
-			return CResourceManager::EResourceType_COUNT;
-		}
-
-		void CFileResource::Serialize(CArchive& ar)
-		{
-			CObject::Serialize(ar);
-
-			if (ar.IsStoring())
-			{
-				ar << m_strName;
-			}
-			else
-			{
-				ar >> m_strName;
-			}
-		}
-
-#ifdef _DEBUG
-
-		void CFileResource::AssertValid() const
-		{
-			CObject::AssertValid();
-
-		}
-
-		void CFileResource::Dump(CDumpContext& dc) const
-		{
-			CObject::Dump(dc);
-
-		}
-
-#endif
-
-		void CFileResource::AddRef() const
-		{
-			InterlockedIncrement(&m_nRef);
-		}
-
-		BOOL CFileResource::Release() const
-		{
-			const LONG nRefCount = InterlockedDecrement(&m_nRef);
-			if (0l == nRefCount)
-			{
-				delete this;
-				return TRUE;
-			}
-
-			return FALSE;
-		}
-
-#pragma endregion
 	}
 }

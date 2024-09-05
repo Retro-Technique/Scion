@@ -37,7 +37,8 @@
  *
  */
 
-#include "pch.h"
+#pragma once
+
 #include "FileResource.h"
 
 namespace scion
@@ -45,86 +46,40 @@ namespace scion
 	namespace engine
 	{
 
+		class CTextureFileResource : public CFileResource
+		{
 #pragma region Constructors
 
-		IMPLEMENT_SERIAL(CFileResource, CObject, 1)
+			DECLARE_SERIAL(CTextureFileResource)
 
-		CFileResource::CFileResource()
-			: m_nRef(1)
-		{
+		public:
 
-		}
+			CTextureFileResource();
+			virtual ~CTextureFileResource();
 
-		CFileResource::~CFileResource()
-		{
+#pragma endregion
+#pragma region Attributes
 
-		}
+		private:
+
+			gfx::ITexture* m_pTexture;
 
 #pragma endregion
 #pragma region Overridables
 
-		HRESULT CFileResource::LoadFromFile(LPCTSTR pszFileName)
-		{
-			return E_NOTIMPL;
-		}
+		public:
 
-		void CFileResource::Unload()
-		{
-
-		}
-
-		CResourceManager::EResourceType CFileResource::GetType() const
-		{
-			return CResourceManager::EResourceType_COUNT;
-		}
-
-		void CFileResource::Serialize(CArchive& ar)
-		{
-			CObject::Serialize(ar);
-
-			if (ar.IsStoring())
-			{
-				ar << m_strName;
-			}
-			else
-			{
-				ar >> m_strName;
-			}
-		}
-
+			BOOL IsExtensionSupported(LPCTSTR pszExt) const override;
+			HRESULT LoadFromFile(LPCTSTR pszFileName) override;
+			void Unload() override;
+			CResourceManager::EResourceType GetType() const override;
 #ifdef _DEBUG
-
-		void CFileResource::AssertValid() const
-		{
-			CObject::AssertValid();
-
-		}
-
-		void CFileResource::Dump(CDumpContext& dc) const
-		{
-			CObject::Dump(dc);
-
-		}
-
+			void AssertValid() const override;
+			void Dump(CDumpContext& dc) const override;
 #endif
 
-		void CFileResource::AddRef() const
-		{
-			InterlockedIncrement(&m_nRef);
-		}
-
-		BOOL CFileResource::Release() const
-		{
-			const LONG nRefCount = InterlockedDecrement(&m_nRef);
-			if (0l == nRefCount)
-			{
-				delete this;
-				return TRUE;
-			}
-
-			return FALSE;
-		}
-
 #pragma endregion
+		};
+
 	}
 }

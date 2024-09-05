@@ -75,6 +75,9 @@ namespace scion
 
 		public:
 
+			virtual BOOL IsExtensionSupported(LPCTSTR pszExt) const;
+			virtual HRESULT LoadFromFile(LPCTSTR pszFileName);
+			virtual void Unload();
 			virtual CResourceManager::EResourceType GetType() const;
 
 			void Serialize(CArchive& ar) override;

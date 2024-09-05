@@ -66,7 +66,7 @@ namespace scion
 
 			IMPLEMENT_DYNAMIC(CInputManager, CObject)
 
-				CInputManager::CInputManager()
+			CInputManager::CInputManager()
 				: m_nRef(1)
 				, m_pDevice(NULL)
 			{
@@ -130,9 +130,8 @@ namespace scion
 				ASSERT_POINTER(hInstance, HINSTANCE);
 				ASSERT_POINTER(pWnd, CWnd);
 				ASSERT_VALID(pWnd);
-
-				HRESULT hr = S_OK;
-				const auto pfnOnDevice = [](LPCDIDEVICEINSTANCE pdidInstance, LPVOID pData) -> BOOL
+				
+				static constexpr const auto PFN_ON_DEVICE_PROC = [](LPCDIDEVICEINSTANCE pdidInstance, LPVOID pData) -> BOOL
 					{
 						LPVOID* pDatas = reinterpret_cast<LPVOID*>(pData);
 						CInputManager* pInputManager = reinterpret_cast<CInputManager*>(pDatas[0]);
@@ -150,6 +149,8 @@ namespace scion
 
 						return DIENUM_CONTINUE;
 					};
+
+				HRESULT hr = S_OK;
 				LPCVOID pDatas[] = { this, pWnd };
 
 				do
@@ -163,7 +164,7 @@ namespace scion
 						break;
 					}
 
-					if (hr = m_pDevice->EnumDevices(DI8DEVCLASS_ALL, pfnOnDevice, pDatas, DIEDFL_ATTACHEDONLY); FAILED(hr))
+					if (hr = m_pDevice->EnumDevices(DI8DEVCLASS_ALL, PFN_ON_DEVICE_PROC, pDatas, DIEDFL_ATTACHEDONLY); FAILED(hr))
 					{
 						break;
 					}
