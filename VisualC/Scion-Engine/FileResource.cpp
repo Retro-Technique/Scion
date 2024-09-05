@@ -38,6 +38,7 @@
  */
 
 #include "pch.h"
+#include "FileResource.h"
 
 namespace scion
 {
@@ -46,79 +47,73 @@ namespace scion
 
 #pragma region Constructors
 
-		IMPLEMENT_DYNCREATE(CGameDocument, CDocument)
+		IMPLEMENT_SERIAL(CFileResource, CObject, 1)
 
-		CGameDocument::CGameDocument()
+		CFileResource::CFileResource()
+			: m_nRef(1)
 		{
 
 		}
 
-		CGameDocument::~CGameDocument()
+		CFileResource::~CFileResource()
 		{
 
-		}
-
-#pragma endregion
-#pragma region Operations
-
-		HRESULT CGameDocument::AddResource()
-		{
-			return E_NOTIMPL;
-		}
-
-		void CGameDocument::EnumerateResources(CResourceManager::ENUMRESOURCEPROC pfnEnumResource, LPVOID pData)
-		{
-			m_ResourceManager.EnumerateResources(pfnEnumResource, pData);
-		}
-
-		void CGameDocument::OnUpdate()
-		{
-			m_ResourceManager.OnUpdate();
 		}
 
 #pragma endregion
 #pragma region Overridables
 
-#ifndef _WIN32_WCE
-
-		void CGameDocument::Serialize(CArchive& ar)
+		CResourceManager::EResourceType CFileResource::GetType() const
 		{
+			return CResourceManager::EResourceType_COUNT;
+		}
+
+		void CFileResource::Serialize(CArchive& ar)
+		{
+			CObject::Serialize(ar);
+
 			if (ar.IsStoring())
 			{
-				// TODO: ajoutez ici le code de stockage
+				ar << m_strName;
 			}
 			else
 			{
-				// TODO: ajoutez ici le code de chargement
+				ar >> m_strName;
 			}
-			
-			m_ResourceManager.Serialize(ar);
 		}
-#endif
 
 #ifdef _DEBUG
-		void CGameDocument::AssertValid() const
-		{
-			CDocument::AssertValid();
 
-			ASSERT_VALID(&m_ResourceManager);
+		void CFileResource::AssertValid() const
+		{
+			CObject::AssertValid();
+
 		}
 
-#ifndef _WIN32_WCE
-		void CGameDocument::Dump(CDumpContext& dc) const
+		void CFileResource::Dump(CDumpContext& dc) const
 		{
-			CDocument::Dump(dc);
+			CObject::Dump(dc);
 
-			AFXDUMP(&m_ResourceManager);
 		}
+
 #endif
-#endif 
 
-#pragma endregion
-#pragma region Messages
+		void CFileResource::AddRef() const
+		{
+			InterlockedIncrement(&m_nRef);
+		}
 
-		BEGIN_MESSAGE_MAP(CGameDocument, CDocument)
-		END_MESSAGE_MAP()
+		BOOL CFileResource::Release() const
+		{
+			const LONG nRefCount = InterlockedDecrement(&m_nRef);
+			if (0l == nRefCount)
+			{
+				delete this;
+				return TRUE;
+			}
+
+			return FALSE;
+		}
 
 #pragma endregion
 	}

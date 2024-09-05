@@ -38,6 +38,7 @@
  */
 
 #include "pch.h"
+#include "FileResource.h"
 
 namespace scion
 {
@@ -50,7 +51,7 @@ namespace scion
 
 		CResourceManager::CResourceManager()
 		{
-
+	
 		}
 
 		CResourceManager::~CResourceManager()
@@ -60,6 +61,36 @@ namespace scion
 
 #pragma endregion
 #pragma region Operations
+
+		HRESULT CResourceManager::CreateResource(EResourceType eType, LPCTSTR pszName)
+		{
+			ASSERT(AfxIsValidString(pszName));
+
+			static CRuntimeClass* RUNTIME_CLASSES[] =
+			{
+				_T("CTextureFileResource"),
+				_T("CFontFileResource"),
+				_T("CSoundFileResource"),
+				_T("CVideoFileResource")
+			};
+			static constexpr const INT RUNTIME_CLASS_COUNT = ARRAYSIZE(RUNTIME_CLASSES);
+			C_ASSERT(RUNTIME_CLASS_COUNT == EResourceType_COUNT);
+			
+			CObject* pObject = RUNTIME_CLASSES[eType]->CreateObject();
+			if (!pObject)
+			{
+				return E_OUTOFMEMORY;
+			}
+
+			ASSERT_KINDOF(CFileResource, pObject);
+			CFileResource* pFileResource = STATIC_DOWNCAST(CFileResource, pObject);
+
+			pFileResource->SetName(pszName);
+
+			m_mapResources.SetAt(pszName, pFileResource);
+
+			return S_OK;
+		}
 
 		void CResourceManager::OnUpdate()
 		{
@@ -88,7 +119,7 @@ namespace scion
 				m_mapResources.GetNextAssoc(pos, strName, pObject);
 				if (pObject)
 				{
-					pfnEnumResource(strName.GetString(), 0, pData);
+					pfnEnumResource(strName.GetString(), EResourceType_Texture, 0, pData);
 				}
 			}
 		}

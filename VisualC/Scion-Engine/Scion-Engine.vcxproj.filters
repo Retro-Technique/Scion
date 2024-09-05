@@ -38,6 +38,9 @@
     <ClCompile Include="GameDocument.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="FileResource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Scion-Engine.rc2">
@@ -72,9 +75,11 @@
     <ClInclude Include="..\..\include\Scion\Engine\ResourceManager.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="GameDocument.h" />
     <ClInclude Include="..\..\include\Scion\Engine\GameDocument.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="FileResource.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

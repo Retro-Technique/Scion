@@ -37,89 +37,56 @@
  *
  */
 
-#include "pch.h"
+#pragma once
 
 namespace scion
 {
 	namespace engine
 	{
 
+		class CFileResource : public CObject, public common::IReferenceCounter
+		{
 #pragma region Constructors
 
-		IMPLEMENT_DYNCREATE(CGameDocument, CDocument)
+			DECLARE_SERIAL(CFileResource)
 
-		CGameDocument::CGameDocument()
-		{
+		public:
 
-		}
-
-		CGameDocument::~CGameDocument()
-		{
-
-		}
+			CFileResource();
+			virtual ~CFileResource();
 
 #pragma endregion
-#pragma region Operations
+#pragma region Attributes
 
-		HRESULT CGameDocument::AddResource()
-		{
-			return E_NOTIMPL;
-		}
+		private:
 
-		void CGameDocument::EnumerateResources(CResourceManager::ENUMRESOURCEPROC pfnEnumResource, LPVOID pData)
-		{
-			m_ResourceManager.EnumerateResources(pfnEnumResource, pData);
-		}
+			mutable LONG m_nRef;
 
-		void CGameDocument::OnUpdate()
-		{
-			m_ResourceManager.OnUpdate();
-		}
+			CString m_strName;
+
+		public:
+
+			inline void SetName(LPCTSTR pszName) { m_strName = pszName; }
+			inline LPCTSTR GetName() const { return m_strName.GetString(); }
+			inline LONG GetReferenceCount() const { return m_nRef; }
 
 #pragma endregion
 #pragma region Overridables
 
-#ifndef _WIN32_WCE
+		public:
 
-		void CGameDocument::Serialize(CArchive& ar)
-		{
-			if (ar.IsStoring())
-			{
-				// TODO: ajoutez ici le code de stockage
-			}
-			else
-			{
-				// TODO: ajoutez ici le code de chargement
-			}
-			
-			m_ResourceManager.Serialize(ar);
-		}
-#endif
+			virtual CResourceManager::EResourceType GetType() const;
 
+			void Serialize(CArchive& ar) override;
 #ifdef _DEBUG
-		void CGameDocument::AssertValid() const
-		{
-			CDocument::AssertValid();
-
-			ASSERT_VALID(&m_ResourceManager);
-		}
-
-#ifndef _WIN32_WCE
-		void CGameDocument::Dump(CDumpContext& dc) const
-		{
-			CDocument::Dump(dc);
-
-			AFXDUMP(&m_ResourceManager);
-		}
+			void AssertValid() const override;
+			void Dump(CDumpContext& dc) const override;
 #endif
-#endif 
+			void AddRef() const override;
+			BOOL Release() const override;
 
 #pragma endregion
-#pragma region Messages
+		};
 
-		BEGIN_MESSAGE_MAP(CGameDocument, CDocument)
-		END_MESSAGE_MAP()
-
-#pragma endregion
 	}
 }

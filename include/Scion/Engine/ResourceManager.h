@@ -52,7 +52,17 @@ namespace scion
 		{
 		public:
 
-			typedef void(*ENUMRESOURCEPROC)(LPCTSTR, LONG, LPVOID);
+			enum EResourceType : INT
+			{
+				EResourceType_Texture,
+				EResourceType_Font,
+				EResourceType_Sound,
+				EResourceType_Video,
+
+				EResourceType_COUNT
+			};
+
+			typedef void(*ENUMRESOURCEPROC)(LPCTSTR, EResourceType, LONG, LPVOID);
 
 #pragma region Constructors
 
@@ -68,6 +78,7 @@ namespace scion
 
 		public:
 
+			HRESULT CreateResource(EResourceType eType, LPCTSTR pszName);
 			void OnUpdate();
 			void EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
 

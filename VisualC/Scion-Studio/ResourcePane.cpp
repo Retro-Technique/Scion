@@ -71,12 +71,12 @@ afx_msg LRESULT CResourcePane::OnUpdatePane(WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 
-	if (wParam & EPane_ResourceList)
-	{
+	//if (wParam & EPane_ResourceList)
+	//{
 		scion::engine::CGameDocument* pDocument = reinterpret_cast<scion::engine::CGameDocument*>(lParam);
 
 		m_wndResourceList.UpdateItems(pDocument);
-	}
+	//}
 
 	return 0;
 }

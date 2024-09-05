@@ -2,6 +2,7 @@
 #include "framework.h"
 #include "MainApp.h"
 #include "MainDocument.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -49,6 +50,14 @@ BOOL CMainDocument::OnNewDocument()
 	{
 		return FALSE;
 	}
+
+	CWnd* pWnd = AfxGetMainWnd();
+	ASSERT_POINTER(pWnd, CWnd);
+	ASSERT_VALID(pWnd);
+	ASSERT_KINDOF(CMainFrame, pWnd);
+	CMainFrame* pMainFrame = STATIC_DOWNCAST(CMainFrame, pWnd);
+
+	pMainFrame->SendMessageToDescendantsEx(WM_UPDATE_PANE, EPane_ResourceList, reinterpret_cast<LPARAM>(this));
 
 	return TRUE;
 }

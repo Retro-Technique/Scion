@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ResourceWnd.h"
+#include "MainApp.h"
+#include "resource.h"
 
 #pragma region Constructors
 
@@ -23,7 +25,7 @@ void CResourceWnd::UpdateItems(scion::engine::CGameDocument* pDocument)
 	ASSERT_POINTER(pDocument, scion::engine::CGameDocument);
 	ASSERT_VALID(pDocument);
 
-	static const auto ENUM_RESOURCES_PROC = [](LPCTSTR pszName, LONG nRefCount, LPVOID pData)
+	static const auto ENUM_RESOURCES_PROC = [](LPCTSTR pszName, scion::engine::CResourceManager::EResourceType eType, LONG nRefCount, LPVOID pData)
 		{
 			static INT s_nIndex = 0;
 
@@ -33,22 +35,24 @@ void CResourceWnd::UpdateItems(scion::engine::CGameDocument* pDocument)
 
 			LVITEM lvItem = { 0 };
 
+			/* 1ère colonne : icône type de ressource */
 			lvItem.iItem = s_nIndex;
-
 			lvItem.mask = LVIF_IMAGE;
-			lvItem.iSubItem = 0;
-			lvItem.iImage = 0; //TODO Resource Type
+			lvItem.iImage = eType;
 			pListCtrl->InsertItem(&lvItem);
 
+			/* 2nde colonne : nom de la ressource */
+			lvItem.iSubItem++;
 			lvItem.mask = LVIF_TEXT;
-			lvItem.iSubItem = 1;
 			lvItem.pszText = StrDup(pszName);
 			pListCtrl->SetItem(&lvItem);
 
-			lvItem.iSubItem = 2;
+			/* 3ème colonne : nombre de référence sur la ressource */
+			lvItem.iSubItem++;
 			lvItem.pszText = StrDup(strRefCount.GetString());
 			pListCtrl->SetItem(&lvItem);
 			
+			/* handle sur la ressource */
 			pListCtrl->SetItemData(s_nIndex, reinterpret_cast<DWORD_PTR>(pszName));
 
 			s_nIndex++;
@@ -76,10 +80,16 @@ int CResourceWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	SetFont(&GetGlobalData()->fontRegular);
 
-	//m_ImageList.Create(16, 16, ILC_COLOR24 | ILC_MASK, 2, 0);
-	//CPngImage PngImage;
-	//
-	//m_ImageList.Add(&PngImage, RGB(255, 0, 255));
+	m_ImageList.Create(16, 16, ILC_COLOR24 | ILC_MASK, 4, 0);
+	{
+		CBitmap Bitmap;
+		Bitmap.LoadBitmap(IDB_BITMAP_RESOURCES);
+
+		m_ImageList.Add(&Bitmap, RGB(255, 255, 255));
+
+		Bitmap.Detach();
+	}
+	SetImageList(&m_ImageList, LVSIL_SMALL);
 
 	SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 

@@ -21,6 +21,7 @@
 #define IDS_RESOURCE_COL_TYPE           132
 #define IDS_EDIT_MENU                   306
 #define IDR_TOOLBAR_RESOURCE            311
+#define IDB_BITMAP_RESOURCES            314
 #define IDC_STATIC_PRODUCT_VER          1000
 #define IDC_STATIC_COPYRIGHT            1001
 #define ID_AFFICHAGE_AFFICHAGEDESRESSOURCES 32771
@@ -35,7 +36,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        313
+#define _APS_NEXT_RESOURCE_VALUE        315
 #define _APS_NEXT_COMMAND_VALUE         32782
 #define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           310

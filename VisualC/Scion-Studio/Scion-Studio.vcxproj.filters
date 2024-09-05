@@ -159,6 +159,12 @@
     <Image Include="res\toolbar1.bmp">
       <Filter>Fichiers de ressources</Filter>
     </Image>
+    <Image Include="res\resources.png">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\resources.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Application.rc2">

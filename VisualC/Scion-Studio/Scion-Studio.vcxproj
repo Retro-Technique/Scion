@@ -254,6 +254,8 @@
   <ItemGroup>
     <Image Include="res\Application.ico" />
     <Image Include="res\ApplicationDoc.ico" />
+    <Image Include="res\resources.bmp" />
+    <Image Include="res\resources.png" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\toolbar1.bmp" />
     <Image Include="res\Toolbar256.bmp" />
