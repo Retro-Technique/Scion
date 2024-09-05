@@ -64,7 +64,14 @@ namespace scion
 
 		private:
 
+			CString				m_strWorkingDirectory;
+			CString				m_strGameName;
 			CResourceManager	m_ResourceManager;
+
+		public:
+
+			inline LPCTSTR GetWorkingDirectory() const { return m_strWorkingDirectory.GetString(); }
+			inline LPCTSTR GetGameName() const { return m_strGameName.GetString(); }
 
 #pragma endregion
 #pragma region Operations
