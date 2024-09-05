@@ -2,7 +2,7 @@
 
 #include "ResourcePane.h"
 
-class CMainFrame : public CFrameWndEx
+class CMainFrame : public FrameWnd
 {
 #pragma region Constructors
 

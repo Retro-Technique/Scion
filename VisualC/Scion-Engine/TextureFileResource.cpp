@@ -67,27 +67,6 @@ namespace scion
 #pragma endregion
 #pragma region Overridables
 
-		BOOL CTextureFileResource::IsExtensionSupported(LPCTSTR pszExt) const
-		{
-			ASSERT(AfxIsValidString(pszExt));
-
-			static constexpr LPCTSTR EXTENSIONS[] =
-			{
-				_T("bmp"), _T("png"), _T("jpg"), _T("jpeg")
-			};
-			static constexpr const INT_PTR EXTENSION_COUNT = ARRAYSIZE(EXTENSIONS);
-
-			for (INT_PTR i = 0; i < EXTENSION_COUNT; i++)
-			{
-				if (StrCmp(pszExt, EXTENSIONS[i]) == 0)
-				{
-					return TRUE;
-				}
-			}
-
-			return FALSE;
-		}
-
 		HRESULT CTextureFileResource::LoadFromFile(LPCTSTR pszFileName)
 		{
 			ASSERT(AfxIsValidString(pszFileName, MAX_PATH));

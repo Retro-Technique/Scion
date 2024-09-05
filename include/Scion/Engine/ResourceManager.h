@@ -78,7 +78,8 @@ namespace scion
 
 		public:
 
-			HRESULT CreateResource(EResourceType eType, LPCTSTR pszName, LPCTSTR pszFileName);
+			HRESULT CreateResource(LPCTSTR pszName, LPCTSTR pszFileName);
+			BOOL IsExists(LPCTSTR pszName) const;
 			void OnUpdate();
 			void EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
 

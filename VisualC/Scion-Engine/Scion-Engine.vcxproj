@@ -234,6 +234,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="FileResource.cpp" />
+    <ClCompile Include="FontFileResource.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameDocument.cpp" />
     <ClCompile Include="GameEngine.cpp" />
@@ -246,6 +247,9 @@
     <ClCompile Include="RenderView.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scion-Engine.cpp" />
+    <ClCompile Include="SoundFileResource.cpp" />
+    <ClCompile Include="TextureFileResource.cpp" />
+    <ClCompile Include="VideoFileResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Scion-Engine.rc2" />
@@ -258,10 +262,14 @@
     <ClInclude Include="..\..\include\Scion\Engine\RenderView.h" />
     <ClInclude Include="..\..\include\Scion\Engine\ResourceManager.h" />
     <ClInclude Include="FileResource.h" />
+    <ClInclude Include="FontFileResource.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SoundFileResource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TextureFileResource.h" />
+    <ClInclude Include="VideoFileResource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Scion-Engine.rc" />

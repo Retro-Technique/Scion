@@ -15,5 +15,5 @@ enum EWindowMessage : UINT
 
 enum EPane : WPARAM
 {
-	EPane_ResourceList
+	EPane_ResourceList = 1 << 0
 };

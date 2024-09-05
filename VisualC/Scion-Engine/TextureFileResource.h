@@ -60,6 +60,14 @@ namespace scion
 #pragma endregion
 #pragma region Attributes
 
+		public:
+
+			static constexpr LPCTSTR EXTENSIONS[] =
+			{
+				_T("bmp"), _T("png"), _T("jpg"), _T("jpeg")
+			};
+			static constexpr const INT_PTR EXTENSION_COUNT = ARRAYSIZE(EXTENSIONS);
+
 		private:
 
 			gfx::ITexture* m_pTexture;
@@ -69,7 +77,6 @@ namespace scion
 
 		public:
 
-			BOOL IsExtensionSupported(LPCTSTR pszExt) const override;
 			HRESULT LoadFromFile(LPCTSTR pszFileName) override;
 			void Unload() override;
 			CResourceManager::EResourceType GetType() const override;

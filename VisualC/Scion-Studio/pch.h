@@ -19,7 +19,7 @@
 #include "Messages.h"
 #include "Helpers.h"
 
-#define APP_MODE_SDI
+#define APP_MODE_MDI
 
 #ifdef APP_MODE_MDI
 #define FrameWnd CMDIFrameWndEx

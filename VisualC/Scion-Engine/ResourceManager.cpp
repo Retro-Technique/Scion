@@ -65,21 +65,20 @@ namespace scion
 #pragma endregion
 #pragma region Operations
 
-		HRESULT CResourceManager::CreateResource(EResourceType eType, LPCTSTR pszName, LPCTSTR pszFileName)
+		HRESULT CResourceManager::CreateResource(LPCTSTR pszName, LPCTSTR pszFileName)
 		{
 			ASSERT(AfxIsValidString(pszName));
-
-			static CRuntimeClass* RUNTIME_CLASSES[] =
-			{
-				CTextureFileResource::GetThisClass(),
-				CFontFileResource::GetThisClass(),
-				CSoundFileResource::GetThisClass(),
-				CVideoFileResource::GetThisClass()
-			};
-			static constexpr const INT RUNTIME_CLASS_COUNT = ARRAYSIZE(RUNTIME_CLASSES);
-			C_ASSERT(RUNTIME_CLASS_COUNT == EResourceType_COUNT);
+			ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
 			
-			CObject* pObject = RUNTIME_CLASSES[eType]->CreateObject();
+			if (IsExists(pszName))
+			{
+				return E_FAIL;
+			}
+
+			LPCTSTR pszExtension = PathFindExtension(pszFileName);
+			CRuntimeClass* pRuntimeClass = CFileResource::GetRuntimeClassFromExt(pszExtension);
+
+			CObject* pObject = pRuntimeClass->CreateObject();
 			if (!pObject)
 			{
 				return E_OUTOFMEMORY;
@@ -96,6 +95,13 @@ namespace scion
 			}
 
 			return hr;
+		}
+
+		BOOL CResourceManager::IsExists(LPCTSTR pszName) const
+		{
+			CObject* pObj = NULL;
+
+			return m_mapResources.Lookup(pszName, pObj);
 		}
 
 		void CResourceManager::OnUpdate()

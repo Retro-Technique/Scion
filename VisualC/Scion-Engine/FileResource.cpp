@@ -39,6 +39,10 @@
 
 #include "pch.h"
 #include "FileResource.h"
+#include "TextureFileResource.h"
+#include "FontFileResource.h"
+#include "SoundFileResource.h"
+#include "VideoFileResource.h"
 
 namespace scion
 {
@@ -58,6 +62,43 @@ namespace scion
 		CFileResource::~CFileResource()
 		{
 
+		}
+
+#pragma endregion
+#pragma region Operations
+
+		CRuntimeClass* CFileResource::GetRuntimeClassFromExt(LPCTSTR pszExt)
+		{
+			ASSERT(AfxIsValidString(pszExt));
+
+			static constexpr const INT_PTR EXTENSION_COUNT = 4;
+			static struct
+			{
+				CRuntimeClass*	_pRuntimeClass;
+				LPCTSTR			_aExtensions[EXTENSION_COUNT];
+
+			} RUNTIME_CLASSES[] =
+			{
+				{ CTextureFileResource::GetThisClass(), { _T("bmp"), _T("png"), _T("jpg"), _T("jpeg") } },
+				{ CFontFileResource::GetThisClass(), { _T("ttf"), NULL, NULL, NULL } },
+				{ CSoundFileResource::GetThisClass(), { _T("wav"), _T("wave"), NULL, NULL } },
+				{ CVideoFileResource::GetThisClass(), { _T("avi"), NULL, NULL, NULL } },
+			};
+			static constexpr const INT RUNTIME_CLASS_COUNT = ARRAYSIZE(RUNTIME_CLASSES);
+			C_ASSERT(RUNTIME_CLASS_COUNT == CResourceManager::EResourceType_COUNT);
+
+			for (INT_PTR i = 0; i < RUNTIME_CLASS_COUNT; i++)
+			{
+				for (INT_PTR j = 0; j < EXTENSION_COUNT; j++)
+				{
+					if (StrCmp(pszExt, RUNTIME_CLASSES[i]._aExtensions[j]) == 0)
+					{
+						return RUNTIME_CLASSES[i]._pRuntimeClass;
+					}
+				}
+			}
+
+			return NULL;
 		}
 
 #pragma endregion

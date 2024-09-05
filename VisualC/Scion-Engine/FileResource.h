@@ -56,6 +56,13 @@ namespace scion
 			virtual ~CFileResource();
 
 #pragma endregion
+#pragma region Operations
+
+		public:
+
+			static CRuntimeClass* GetRuntimeClassFromExt(LPCTSTR pszExt);
+
+#pragma endregion
 #pragma region Attributes
 
 		private:
@@ -75,7 +82,6 @@ namespace scion
 
 		public:
 
-			virtual BOOL IsExtensionSupported(LPCTSTR pszExt) const;
 			virtual HRESULT LoadFromFile(LPCTSTR pszFileName);
 			virtual void Unload();
 			virtual CResourceManager::EResourceType GetType() const;

@@ -51,4 +51,6 @@ protected:
 
 #pragma endregion
 
+public:
+	afx_msg void OnAddResource();
 };
