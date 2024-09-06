@@ -109,12 +109,6 @@ void CMainDocument::Dump(CDumpContext& dc) const
 #pragma region Messages
 
 BEGIN_MESSAGE_MAP(CMainDocument, CDocument)
-	ON_COMMAND(ID_ADD_RESOURCE, &CMainDocument::OnAddResource)
 END_MESSAGE_MAP()
-
-void CMainDocument::OnAddResource()
-{
-	TRACE(_T("\tOnAddResource()\n"));
-}
 
 #pragma endregion

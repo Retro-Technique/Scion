@@ -50,7 +50,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 #pragma endregion
-
-public:
-	afx_msg void OnAddResource();
 };

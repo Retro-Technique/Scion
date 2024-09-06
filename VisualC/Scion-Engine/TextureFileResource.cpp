@@ -69,7 +69,7 @@ namespace scion
 
 		HRESULT CTextureFileResource::LoadFromFile(LPCTSTR pszFileName)
 		{
-			ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
+			CFileResource::LoadFromFile(pszFileName);
 
 			if (m_pTexture)
 			{

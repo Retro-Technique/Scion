@@ -70,6 +70,7 @@ namespace scion
 			mutable LONG m_nRef;
 
 			CString m_strName;
+			CString m_strFileName;
 
 		public:
 

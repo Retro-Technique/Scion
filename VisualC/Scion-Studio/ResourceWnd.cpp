@@ -32,7 +32,7 @@ void CResourceWnd::UpdateItems(scion::engine::CGameDocument* pDocument)
 			CListCtrl* pListCtrl = reinterpret_cast<CListCtrl*>(pData);
 			CString strRefCount;
 			strRefCount.Format(_T("%d"), nRefCount);
-
+			
 			LVITEM lvItem = { 0 };
 
 			/* 1ère colonne : icône type de ressource */
@@ -51,7 +51,7 @@ void CResourceWnd::UpdateItems(scion::engine::CGameDocument* pDocument)
 			lvItem.iSubItem++;
 			lvItem.pszText = StrDup(strRefCount.GetString());
 			pListCtrl->SetItem(&lvItem);
-			
+
 			/* handle sur la ressource */
 			pListCtrl->SetItemData(s_nIndex, reinterpret_cast<DWORD_PTR>(pszName));
 

@@ -41,13 +41,13 @@
     <ClCompile Include="FileResource.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="TextureFileResource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="FontFileResource.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="SoundFileResource.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureFileResource.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="VideoFileResource.cpp">
@@ -93,13 +93,13 @@
     <ClInclude Include="FileResource.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="TextureFileResource.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="FontFileResource.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="SoundFileResource.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureFileResource.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="VideoFileResource.h">

@@ -50,7 +50,7 @@ namespace scion
 
 		CGameDocument::CGameDocument()
 		{
-
+			
 		}
 
 		CGameDocument::~CGameDocument()
@@ -79,17 +79,45 @@ namespace scion
 #pragma endregion
 #pragma region Overridables
 
+		BOOL CGameDocument::OnNewDocument()
+		{
+			if (!CDocument::OnNewDocument())
+			{
+				return FALSE;
+			}
+
+			/* https://learn.microsoft.com/en-us/cpp/mfc/property-sheets-as-wizards?view=msvc-170 */
+			/* CGameWizard().DoModal(); */
+			
+			return TRUE;
+		}
+
+		BOOL CGameDocument::OnOpenDocument(LPCTSTR pszPathName)
+		{
+			if (!CDocument::OnOpenDocument(pszPathName))
+			{
+				return FALSE;
+			}
+
+			if (!PathIsDirectory(m_strWorkingDirectory.GetString()))
+			{
+				return FALSE;
+			}
+
+			return TRUE;
+		}
+
 #ifndef _WIN32_WCE
 
 		void CGameDocument::Serialize(CArchive& ar)
 		{
 			if (ar.IsStoring())
 			{
-				// TODO: ajoutez ici le code de stockage
+				ar << m_strWorkingDirectory << m_strGameName;
 			}
 			else
 			{
-				// TODO: ajoutez ici le code de chargement
+				ar >> m_strWorkingDirectory >> m_strGameName;
 			}
 			
 			m_ResourceManager.Serialize(ar);

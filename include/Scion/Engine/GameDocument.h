@@ -87,6 +87,8 @@ namespace scion
 
 		public:
 
+			BOOL OnNewDocument() override;
+			BOOL OnOpenDocument(LPCTSTR pszPathName) override;
 #ifndef _WIN32_WCE
 			void Serialize(CArchive& ar) override;
 #endif

@@ -81,7 +81,7 @@ namespace scion
 			{
 				{ CTextureFileResource::GetThisClass(), { _T("bmp"), _T("png"), _T("jpg"), _T("jpeg") } },
 				{ CFontFileResource::GetThisClass(), { _T("ttf"), NULL, NULL, NULL } },
-				{ CSoundFileResource::GetThisClass(), { _T("wav"), _T("wave"), NULL, NULL } },
+				{ CSoundFileResource::GetThisClass(), { _T("wav"), NULL, NULL, NULL } },
 				{ CVideoFileResource::GetThisClass(), { _T("avi"), NULL, NULL, NULL } },
 			};
 			static constexpr const INT RUNTIME_CLASS_COUNT = ARRAYSIZE(RUNTIME_CLASSES);
@@ -106,7 +106,11 @@ namespace scion
 
 		HRESULT CFileResource::LoadFromFile(LPCTSTR pszFileName)
 		{
-			return E_NOTIMPL;
+			ASSERT(AfxIsValidString(pszFileName, MAX_PATH));
+
+			m_strFileName = pszFileName;
+
+			return S_OK;
 		}
 
 		void CFileResource::Unload()
@@ -125,11 +129,11 @@ namespace scion
 
 			if (ar.IsStoring())
 			{
-				ar << m_strName;
+				ar << m_strName << m_strFileName;
 			}
 			else
 			{
-				ar >> m_strName;
+				ar >> m_strName >> m_strFileName;
 			}
 		}
 

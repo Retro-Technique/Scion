@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ResourcePane.h"
 #include "resource.h"
+#include "MainDocument.h"
+#include "ResourceCreationDlg.h"
 
 #pragma region Constructors
 
@@ -23,6 +25,7 @@ BEGIN_MESSAGE_MAP(CResourcePane, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_UPDATE_PANE, &CResourcePane::OnUpdatePane)
+	ON_COMMAND(ID_ADD_RESOURCE, &CResourcePane::OnAddResource)
 END_MESSAGE_MAP()
 
 int CResourcePane::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -67,7 +70,7 @@ void CResourcePane::OnSize(UINT nType, int cx, int cy)
 	m_wndResourceList.SetWindowPos(NULL, 0, cyTlb, cx, cy - cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-afx_msg LRESULT CResourcePane::OnUpdatePane(WPARAM wParam, LPARAM lParam)
+LRESULT CResourcePane::OnUpdatePane(WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 
@@ -79,6 +82,23 @@ afx_msg LRESULT CResourcePane::OnUpdatePane(WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+void CResourcePane::OnAddResource()
+{
+	CMainDocument* pDocument = ACQUIRE_ACTIVE_DOCUMENT(CMainDocument);
+	if (!pDocument)
+	{
+		return;
+	}
+
+	CResourceCreationDlg Dlg;
+	
+	if (const INT_PTR nRet = Dlg.DoModal(); IDOK == nRet)
+	{
+		LPCTSTR pszName = Dlg.GetName();
+		LPCTSTR pszFileName = Dlg.GetFileName();
+	}
 }
 
 #pragma endregion

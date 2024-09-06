@@ -131,7 +131,8 @@ namespace scion
 				m_mapResources.GetNextAssoc(pos, strName, pObject);
 				if (pObject)
 				{
-					pfnEnumResource(strName.GetString(), EResourceType_Texture, 0, pData);
+					const CFileResource* pResource = STATIC_DOWNCAST_CONST(CFileResource, pObject);
+					pfnEnumResource(pResource->GetName(), pResource->GetType(), pResource->GetReferenceCount(), pData);
 				}
 			}
 		}
