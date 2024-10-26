@@ -10,10 +10,10 @@ static inline CString Translate(UINT uID)
 	return strTranslate;
 }
 
-static inline CDocument* AcquireActiveDocument(CRuntimeClass* pClass)
+static inline CView* AfxGetActiveView(CRuntimeClass* pClass)
 {
 	ASSERT(AfxIsValidAddress(pClass, sizeof(CRuntimeClass), FALSE));
-	ASSERT(pClass->IsDerivedFrom(RUNTIME_CLASS(CDocument)));
+	ASSERT(pClass->IsDerivedFrom(RUNTIME_CLASS(CView)));
 
 	CWnd* pMainWnd = AfxGetMainWnd();
 	if (!pMainWnd)
@@ -29,22 +29,33 @@ static inline CDocument* AcquireActiveDocument(CRuntimeClass* pClass)
 			return NULL;
 		}
 
-		CDocument* pDocument = pFrame->GetActiveDocument();
-		if (pDocument && pDocument->IsKindOf(pClass))
+		CView* pView = pFrame->GetActiveView();
+		if (pView && pView->IsKindOf(pClass))
 		{
-			return pDocument;
+			return pView;
 		}
 	}
 
 	if (pMainWnd->IsKindOf(RUNTIME_CLASS(CFrameWnd)))
 	{
-		return STATIC_DOWNCAST(CFrameWnd, pMainWnd)->GetActiveDocument();
+		return STATIC_DOWNCAST(CFrameWnd, pMainWnd)->GetActiveView();
 	}
 
 	return NULL;
 }
 
+static inline CDocument* AfxGetActiveDocument(CRuntimeClass* pClass)
+{
+	ASSERT(AfxIsValidAddress(pClass, sizeof(CRuntimeClass), FALSE));
+	ASSERT(pClass->IsDerivedFrom(RUNTIME_CLASS(CDocument)));
+
+	CView* pView = AfxGetActiveView(RUNTIME_CLASS(CView));
+	
+	return pView ? pView->GetDocument() : NULL;
+}
+
 #define I18N(id) Translate(id)
-#define ACQUIRE_ACTIVE_DOCUMENT(x) STATIC_DOWNCAST(x, AcquireActiveDocument(RUNTIME_CLASS(x)))
+#define AFX_GET_ACTIVE_DOCUMENT(x) STATIC_DOWNCAST(x, AfxGetActiveDocument(RUNTIME_CLASS(x)))
+#define AFX_GET_ACTIVE_VIEW(x) STATIC_DOWNCAST(x, AfxGetActiveView(RUNTIME_CLASS(x)))
 #define UPDATE_DATA_BACK_TO_FRONT FALSE
 #define UPDATE_DATA_FRONT_TO_BACK TRUE

@@ -35,6 +35,8 @@ protected:
 	afx_msg void OnAddResource();
 
 #pragma endregion
+public:
+	afx_msg void OnRemoveResource();
 };
 
 

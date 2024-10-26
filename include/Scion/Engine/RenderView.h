@@ -68,9 +68,16 @@ namespace scion
 			static constexpr const UINT		TIMER_REFRESH_FRAME_RATE = 25;
 			static constexpr const UINT		TIMER_REFRESH_ELAPSE = 1000 / TIMER_REFRESH_FRAME_RATE;
 
-		public:
+		private:
 
 			gfx::IRenderWindow* m_pRenderWindow;
+
+#pragma endregion
+#pragma region Operations
+
+		public:
+
+			HRESULT CreateTexture(gfx::ITexture** ppTexture) const;
 
 #pragma endregion
 #pragma region Overridables

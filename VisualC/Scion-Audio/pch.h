@@ -19,4 +19,6 @@
 #pragma comment(lib, "Dxguid.lib")
 #pragma comment(lib, "Winmm.lib")
 
+#include <wil/win32_helpers.h>
+
 #endif //PCH_H

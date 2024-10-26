@@ -79,10 +79,10 @@ namespace scion
 
 			} RUNTIME_CLASSES[] =
 			{
-				{ CTextureFileResource::GetThisClass(), { _T("bmp"), _T("png"), _T("jpg"), _T("jpeg") } },
-				{ CFontFileResource::GetThisClass(), { _T("ttf"), NULL, NULL, NULL } },
-				{ CSoundFileResource::GetThisClass(), { _T("wav"), NULL, NULL, NULL } },
-				{ CVideoFileResource::GetThisClass(), { _T("avi"), NULL, NULL, NULL } },
+				{ CTextureFileResource::GetThisClass(), { _T(".bmp"), _T(".png"), _T(".jpg"), _T(".jpeg") } },
+				{ CFontFileResource::GetThisClass(), { _T(".ttf"), NULL, NULL, NULL } },
+				{ CSoundFileResource::GetThisClass(), { _T(".wav"), NULL, NULL, NULL } },
+				{ CVideoFileResource::GetThisClass(), { _T(".avi"), NULL, NULL, NULL } },
 			};
 			static constexpr const INT RUNTIME_CLASS_COUNT = ARRAYSIZE(RUNTIME_CLASSES);
 			C_ASSERT(RUNTIME_CLASS_COUNT == CResourceManager::EResourceType_COUNT);

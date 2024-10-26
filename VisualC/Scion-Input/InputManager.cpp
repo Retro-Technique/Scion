@@ -115,7 +115,7 @@ namespace scion
 				return hr;
 			}
 
-			BOOL CInputManager::IsValidInput(const GUID& guid)
+			BOOL CInputManager::IsValidInput(const GUID& guid) const
 			{
 				return ((GUID_SysKeyboard == guid) ||
 					(GUID_SysMouse == guid) ||
@@ -125,7 +125,7 @@ namespace scion
 #pragma endregion
 #pragma region Overridables
 
-			HRESULT CInputManager::Initialize(HINSTANCE hInstance, CWnd* pWnd, BOOL bKeyboard, BOOL bMouse)
+			HRESULT CInputManager::Initialize(HINSTANCE hInstance, CWnd* pWnd)
 			{
 				ASSERT_POINTER(hInstance, HINSTANCE);
 				ASSERT_POINTER(pWnd, CWnd);
@@ -248,7 +248,7 @@ namespace scion
 #pragma endregion
 #pragma region Implementations
 
-			LPCDIDATAFORMAT CInputManager::GetFormatFromInput(const GUID& guid)
+			LPCDIDATAFORMAT CInputManager::GetFormatFromInput(const GUID& guid) const
 			{
 				if (GUID_SysKeyboard == guid)
 				{

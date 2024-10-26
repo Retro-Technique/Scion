@@ -25,7 +25,7 @@ void CResourceWnd::UpdateItems(scion::engine::CGameDocument* pDocument)
 	ASSERT_POINTER(pDocument, scion::engine::CGameDocument);
 	ASSERT_VALID(pDocument);
 
-	static const auto ENUM_RESOURCES_PROC = [](LPCTSTR pszName, scion::engine::CResourceManager::EResourceType eType, LONG nRefCount, LPVOID pData)
+	static constexpr const auto ENUM_RESOURCES_PROC = [](LPCTSTR pszName, scion::engine::CResourceManager::EResourceType eType, LONG nRefCount, LPVOID pData)
 		{
 			static INT s_nIndex = 0;
 
@@ -46,7 +46,7 @@ void CResourceWnd::UpdateItems(scion::engine::CGameDocument* pDocument)
 			lvItem.mask = LVIF_TEXT;
 			lvItem.pszText = StrDup(pszName);
 			pListCtrl->SetItem(&lvItem);
-
+			
 			/* 3ème colonne : nombre de référence sur la ressource */
 			lvItem.iSubItem++;
 			lvItem.pszText = StrDup(strRefCount.GetString());

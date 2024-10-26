@@ -71,10 +71,10 @@ namespace scion
 
 				mutable LONG m_nRef;
 
-				LPDIRECTSOUND8				m_pDevice;
-				LPDIRECTSOUNDBUFFER			m_pPrimaryBuffer;
-				LPDIRECTSOUND3DLISTENER8	m_pListener;
-				CEvent						m_evAudioLoopExit;
+				CComPtr<IDirectSound8>				m_spDevice;
+				CComPtr<IDirectSoundBuffer>			m_spPrimaryBuffer;
+				CComPtr<IDirectSound3DListener8>	m_spListener;
+				CEvent								m_evAudioLoopExit;
 
 			public:
 
@@ -117,9 +117,6 @@ namespace scion
 				HRESULT CreateListener();
 				HRESULT StartThread();
 				void StopThread();
-				void DestroyListener();
-				void DestroyPrimaryBuffer();
-				void DestroyDevice();
 				void OnAudioLoop();
 
 			private:

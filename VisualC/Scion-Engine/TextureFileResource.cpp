@@ -75,7 +75,7 @@ namespace scion
 			{
 				return m_pTexture->LoadFromFile(pszFileName);
 			}
-
+			
 			return E_POINTER;
 		}
 

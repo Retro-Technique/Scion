@@ -25,8 +25,9 @@ private:
 
 public:
 
-	inline LPCTSTR GetName() const { return m_strName.GetString(); }
-	inline LPCTSTR GetFileName() const { return m_strFileName.GetString(); }
+	/* ACCESSEURS */
+	inline [[nodiscard]] LPCTSTR GetName() const { return m_strName.GetString(); }
+	inline [[nodiscard]] LPCTSTR GetFileName() const { return m_strFileName.GetString(); }
 
 #pragma endregion
 #pragma region Overridables
@@ -36,11 +37,20 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override;
 
 #pragma endregion
+#pragma region Implementations
+
+private:
+
+	void SetDefaultNameFromFileName(LPCTSTR pszFilePath);
+
+#pragma endregion
 #pragma region Messages
 
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnEnChangeMfceditbrowseResourcefile();
+	afx_msg void OnBnClickedOk();
 
 #pragma endregion
 };

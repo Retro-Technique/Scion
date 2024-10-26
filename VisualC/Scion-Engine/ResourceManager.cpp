@@ -77,6 +77,10 @@ namespace scion
 
 			LPCTSTR pszExtension = PathFindExtension(pszFileName);
 			CRuntimeClass* pRuntimeClass = CFileResource::GetRuntimeClassFromExt(pszExtension);
+			if (!pRuntimeClass)
+			{
+				return E_FAIL; //TODO not found
+			}
 
 			CObject* pObject = pRuntimeClass->CreateObject();
 			if (!pObject)

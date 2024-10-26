@@ -62,7 +62,7 @@ namespace scion
 #pragma endregion
 #pragma region Attributes
 
-		private:
+		protected:
 
 			CString				m_strWorkingDirectory;
 			CString				m_strGameName;
@@ -77,8 +77,7 @@ namespace scion
 #pragma region Operations
 
 		public:
-
-			HRESULT AddResource();
+			
 			void EnumerateResources(CResourceManager::ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
 			void OnUpdate();
 

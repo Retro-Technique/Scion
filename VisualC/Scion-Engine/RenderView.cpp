@@ -29,6 +29,19 @@ namespace scion
 		}
 
 #pragma endregion
+#pragma region Operations
+
+		HRESULT CRenderView::CreateTexture(gfx::ITexture** ppTexture) const
+		{
+			if (!m_pRenderWindow)
+			{
+				return E_POINTER;
+			}
+
+			return m_pRenderWindow->CreateTexture(ppTexture);
+		}
+
+#pragma endregion
 #pragma region Overridables
 
 		BOOL CRenderView::PreCreateWindow(CREATESTRUCT& cs)

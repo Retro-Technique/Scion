@@ -48,16 +48,6 @@ namespace scion
 
 			class CInputManager : public CObject, public IInputManager
 			{
-			private:
-
-				enum EDefaultType : INT
-				{
-					EDefaultType_Keyboard = 0,
-					EDefaultType_Mouse,
-
-					EDeviceType_COUNT
-				};
-
 #pragma region Constructors
 
 				DECLARE_DYNAMIC(CInputManager)
@@ -83,14 +73,14 @@ namespace scion
 			public:
 
 				HRESULT CreateInput(CWnd* pWnd, LPCDIDEVICEINSTANCE pdidInstance);
-				BOOL IsValidInput(const GUID& guid);
+				[[nodiscard]] BOOL IsValidInput(const GUID& guid) const;
 
 #pragma endregion
 #pragma region Overridables
 
 			public:
 
-				HRESULT Initialize(HINSTANCE hInstance, CWnd* pWnd, BOOL bKeyboard, BOOL bMouse) override;
+				HRESULT Initialize(HINSTANCE hInstance, CWnd* pWnd) override;
 				void Quit() override;
 				void PollEvent() override;
 #ifdef _DEBUG
@@ -105,7 +95,7 @@ namespace scion
 
 			private:
 
-				LPCDIDATAFORMAT GetFormatFromInput(const GUID& guid);
+				[[nodiscard]] LPCDIDATAFORMAT GetFormatFromInput(const GUID& guid) const;
 
 #pragma endregion
 			};

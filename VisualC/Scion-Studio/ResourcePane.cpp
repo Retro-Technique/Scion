@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "MainDocument.h"
 #include "ResourceCreationDlg.h"
+#include "MainView.h"
 
 #pragma region Constructors
 
@@ -26,6 +27,7 @@ BEGIN_MESSAGE_MAP(CResourcePane, CDockablePane)
 	ON_WM_SIZE()
 	ON_MESSAGE(WM_UPDATE_PANE, &CResourcePane::OnUpdatePane)
 	ON_COMMAND(ID_ADD_RESOURCE, &CResourcePane::OnAddResource)
+	ON_COMMAND(ID_REMOVE_RESOURCE, &CResourcePane::OnRemoveResource)
 END_MESSAGE_MAP()
 
 int CResourcePane::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -86,18 +88,30 @@ LRESULT CResourcePane::OnUpdatePane(WPARAM wParam, LPARAM lParam)
 
 void CResourcePane::OnAddResource()
 {
-	CMainDocument* pDocument = ACQUIRE_ACTIVE_DOCUMENT(CMainDocument);
+	CMainDocument* pDocument = AFX_GET_ACTIVE_DOCUMENT(CMainDocument);
 	if (!pDocument)
 	{
 		return;
 	}
 
-	CResourceCreationDlg Dlg;
-	
+	scion::engine::CRenderView* pView = AFX_GET_ACTIVE_VIEW(scion::engine::CRenderView);
+
+	CResourceCreationDlg Dlg;	
 	if (const INT_PTR nRet = Dlg.DoModal(); IDOK == nRet)
 	{
 		LPCTSTR pszName = Dlg.GetName();
 		LPCTSTR pszFileName = Dlg.GetFileName();
+		
+		pDocument->AddResource(pszName, pszFileName);
+	}
+}
+
+void CResourcePane::OnRemoveResource()
+{
+	CMainView* pView = AFX_GET_ACTIVE_VIEW(CMainView);
+	if (!pView)
+	{
+		return;
 	}
 }
 

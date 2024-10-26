@@ -59,12 +59,7 @@ namespace scion
 		}
 
 #pragma endregion
-#pragma region Operations
-
-		HRESULT CGameDocument::AddResource()
-		{
-			return E_NOTIMPL;
-		}
+#pragma region Operations		
 
 		void CGameDocument::EnumerateResources(CResourceManager::ENUMRESOURCEPROC pfnEnumResource, LPVOID pData)
 		{

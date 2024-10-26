@@ -17,4 +17,6 @@
 #pragma comment(lib, "Dinput8.lib")
 #pragma comment(lib, "Dxguid.lib")
 
+#include <wil/win32_helpers.h>
+
 #endif //PCH_H

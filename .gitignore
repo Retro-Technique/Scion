@@ -397,5 +397,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# 3rdParty
+# Keep 3rdParty
 !3rdParty/**
+
+# Exclude vcpkg
+VisualC/vcpkg_installed/**

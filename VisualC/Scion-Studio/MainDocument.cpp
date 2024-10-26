@@ -26,19 +26,15 @@ CMainDocument::~CMainDocument()
 #pragma endregion
 #pragma region Operations
 
-void CMainDocument::InitialUpdateScene()
+HRESULT CMainDocument::AddResource(LPCTSTR pszName, LPCTSTR pszFileName)
 {
-	
-}
+	const HRESULT hr = m_ResourceManager.CreateResource(pszName, pszFileName);
+	if (SUCCEEDED(hr))
+	{
+		UpdateAllPanes(EPane_ResourceList);
+	}
 
-void CMainDocument::UpdateScene()
-{
-	
-}
-
-void CMainDocument::DrawScene()
-{
-	
+	return hr;
 }
 
 #pragma endregion
@@ -51,14 +47,7 @@ BOOL CMainDocument::OnNewDocument()
 		return FALSE;
 	}
 
-	CWnd* pWnd = AfxGetMainWnd();
-	ASSERT_POINTER(pWnd, CWnd);
-	ASSERT_VALID(pWnd);
-	ASSERT_KINDOF(CMainFrame, pWnd);
-	CMainFrame* pMainFrame = STATIC_DOWNCAST(CMainFrame, pWnd);
-
-	pMainFrame->SendMessageToDescendantsEx(WM_UPDATE_PANE, EPane_ResourceList, reinterpret_cast<LPARAM>(this));
-
+	
 	return TRUE;
 }
 
@@ -87,6 +76,8 @@ void CMainDocument::OnCloseDocument()
 void CMainDocument::Serialize(CArchive& ar)
 {
 	scion::engine::CGameDocument::Serialize(ar);
+
+	m_ResourceDocument.Serialize(ar);
 }
 
 #ifdef _DEBUG
@@ -104,6 +95,20 @@ void CMainDocument::Dump(CDumpContext& dc) const
 }
 
 #endif 
+
+#pragma endregion
+#pragma region Implementations
+
+void CMainDocument::UpdateAllPanes(EPane ePane)
+{
+	CWnd* pWnd = AfxGetMainWnd();
+	ASSERT_POINTER(pWnd, CWnd);
+	ASSERT_VALID(pWnd);
+	ASSERT_KINDOF(CMainFrame, pWnd);
+	CMainFrame* pMainFrame = STATIC_DOWNCAST(CMainFrame, pWnd);
+
+	pMainFrame->SendMessageToDescendantsEx(WM_UPDATE_PANE, ePane, reinterpret_cast<LPARAM>(this));
+}
 
 #pragma endregion
 #pragma region Messages

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ResourceDocument.h"
+
 class CMainDocument : public scion::engine::CGameDocument
 {
 #pragma region Constructors
@@ -16,15 +18,14 @@ protected:
 
 private:
 
+	CResourceDocument m_ResourceDocument;
 
 #pragma endregion
 #pragma region Operations
 
 public:
 
-	void InitialUpdateScene();
-	void UpdateScene();
-	void DrawScene();
+	HRESULT AddResource(LPCTSTR pszName, LPCTSTR pszFileName);
 
 #pragma endregion
 #pragma region Overridables
@@ -41,6 +42,13 @@ public:
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
 #endif
+
+#pragma endregion
+#pragma region Implementations
+
+private:
+
+	void UpdateAllPanes(EPane ePane);
 
 #pragma endregion
 #pragma region Messages

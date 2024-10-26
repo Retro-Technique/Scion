@@ -105,6 +105,9 @@
     <ClInclude Include="ResourceCreationDlg.h">
       <Filter>Fichiers d%27en-tête\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceDocument.h">
+      <Filter>Fichiers d%27en-tête\Documents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -140,6 +143,9 @@
     <ClCompile Include="ResourceCreationDlg.cpp">
       <Filter>Fichiers sources\Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceDocument.cpp">
+      <Filter>Fichiers sources\Documents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Application.rc">
@@ -160,9 +166,6 @@
       <Filter>Fichiers de ressources</Filter>
     </Image>
     <Image Include="res\Toolbar256.bmp">
-      <Filter>Fichiers de ressources</Filter>
-    </Image>
-    <Image Include="res\toolbar1.bmp">
       <Filter>Fichiers de ressources</Filter>
     </Image>
     <Image Include="res\resources.png">

@@ -19,6 +19,9 @@
 #define IDR_ApplicationTYPE             130
 #define ID_WINDOW_MANAGER               131
 #define IDS_RESOURCE_COL_TYPE           132
+#define IDS_RESOURCE_NAME_EMPTY         133
+#define IDS_RESOURCE_FILE_EMPTY         135
+#define IDS_RESOURCE_PATH_TOO_LONG      136
 #define IDS_EDIT_MENU                   306
 #define IDR_TOOLBAR_RESOURCE            311
 #define IDB_BITMAP_RESOURCES            314

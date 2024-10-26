@@ -86,6 +86,10 @@ namespace scion
 #pragma endregion
 #pragma region Attributes
 
+		public:
+
+			static constexpr const INT RESOURCE_NAME_MAX_LEN = 32;
+
 		private:
 
 			CMapStringToOb m_mapResources;

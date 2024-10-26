@@ -56,7 +56,7 @@ namespace scion
 
 			public:
 
-				virtual HRESULT Initialize(HINSTANCE hInstance, CWnd* pWnd, BOOL bKeyboard = FALSE, BOOL bMouse = FALSE) = 0;
+				virtual HRESULT Initialize(HINSTANCE hInstance, CWnd* pWnd) = 0;
 				virtual void Quit() = 0;
 				virtual void PollEvent() = 0;
 
