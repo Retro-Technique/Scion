@@ -50,6 +50,17 @@ jobs:
       
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
+
+      - name: run-vcpkg
+        uses: lukka/run-vcpkg@v11.5
+        with:
+          runVcpkgInstall: true
+          vcpkgJsonGlob: VisualC/vcpkg.json
+          vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
+
+      - name: Restore vcpkg packages
+        working-directory: VisualC
+        run: vcpkg integrate install --vcpkg-root '${{ runner.workspace }}\\b\\vcpkg'
         
       - name: Run MSBuild
         run: msbuild VisualC/Scion.sln -property:Configuration=${{ matrix.configuration }} -property:Platform=${{ matrix.platform }}  
