@@ -108,6 +108,9 @@
     <ClInclude Include="ResourceDocument.h">
       <Filter>Fichiers d%27en-tête\Documents</Filter>
     </ClInclude>
+    <ClInclude Include="PictureControlWnd.h">
+      <Filter>Fichiers d%27en-tête\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="ResourceDocument.cpp">
       <Filter>Fichiers sources\Documents</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureControlWnd.cpp">
+      <Filter>Fichiers sources\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
