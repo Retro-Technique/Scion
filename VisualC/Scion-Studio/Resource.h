@@ -27,12 +27,16 @@
 #define IDB_BITMAP_RESOURCES            314
 #define IDD_DIALOG1                     315
 #define IDD_DIALOG_RESOURCE_CREATION    315
+#define IDD_SPLASHSCREEN                318
+#define IDB_BITMAP1                     320
+#define IDB_BITMAP_LOGO                 320
 #define IDC_STATIC_PRODUCT_VER          1000
 #define IDC_STATIC_COPYRIGHT            1001
 #define IDC_EDIT_RESOURCE_NAME          1002
 #define IDC_MFCEDITBROWSE_RESOURCEFILE  1003
 #define IDC_STATIC_RESOURCE_NAME        1004
 #define IDC_STATIC_RESOURCE_FILE        1005
+#define IDC_STATIC_LOGO                 1006
 #define ID_AFFICHAGE_AFFICHAGEDESRESSOURCES 32771
 #define ID_VIEW_RESOURCES               32772
 #define ID_VIEW_RESOURCES_LIST          32773
@@ -47,9 +51,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        318
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32784
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
