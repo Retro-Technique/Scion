@@ -10,6 +10,7 @@
 #include "MainDocument.h"
 #include "MainView.h"
 #include "AboutDlg.h"
+#include "SplashScreenDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,12 +37,15 @@ BOOL CMainApp::InitInstance()
 
 	EnableTaskbarInteraction(FALSE);
 
-	// SPLASH SCREEN BEGIN
+	InitAppInfo();
+
+	CSplashScreenDlg SplashScreen;
+	SplashScreen.Create(IDD_SPLASHSCREEN);
+	SplashScreen.ShowWindow(SW_SHOW);
+	SplashScreen.UpdateWindow();
 
 	SetRegistryKey(_T("Retro Technique"));
 	LoadStdProfileSettings(4);
-
-	InitAppInfo();
 
 	InitContextMenuManager();
 
@@ -92,7 +96,8 @@ BOOL CMainApp::InitInstance()
 		return FALSE;
 	}
 
-	// SPLASH SCREEN END
+	Sleep(1000);
+	SplashScreen.DestroyWindow();
 
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);

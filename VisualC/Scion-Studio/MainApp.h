@@ -29,9 +29,9 @@ private:
 
 public:
 
-	inline LPCTSTR GetProductVersion() const { return m_strProductVersion.GetString(); }
-	inline LPCTSTR GetProductName() const { return m_strProductName.GetString(); }
-	inline LPCTSTR GetLegalCopyright() const { return m_strLegalCopyright.GetString(); }
+	inline [[nodiscard]] LPCTSTR GetProductVersion() const { return m_strProductVersion.GetString(); }
+	inline [[nodiscard]] LPCTSTR GetProductName() const { return m_strProductName.GetString(); }
+	inline [[nodiscard]] LPCTSTR GetLegalCopyright() const { return m_strLegalCopyright.GetString(); }
 
 #pragma endregion
 #pragma region Overridables

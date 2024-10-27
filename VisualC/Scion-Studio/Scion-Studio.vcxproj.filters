@@ -111,6 +111,9 @@
     <ClInclude Include="PictureControlWnd.h">
       <Filter>Fichiers d%27en-tête\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="SplashScreenDlg.h">
+      <Filter>Fichiers d%27en-tête\Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -152,6 +155,9 @@
     <ClCompile Include="PictureControlWnd.cpp">
       <Filter>Fichiers sources\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="SplashScreenDlg.cpp">
+      <Filter>Fichiers sources\Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Application.rc">
@@ -181,6 +187,9 @@
       <Filter>Fichiers de ressources</Filter>
     </Image>
     <Image Include="res\ToolbarResource.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\logo.bmp">
       <Filter>Fichiers de ressources</Filter>
     </Image>
   </ItemGroup>
