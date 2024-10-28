@@ -86,6 +86,8 @@ void CResourceCreationDlg::OnEnChangeMfceditbrowseResourcefile()
 
 void CResourceCreationDlg::OnBnClickedOk()
 {
+	UpdateData(UPDATE_DATA_FRONT_TO_BACK);
+
 	if (m_strName.IsEmpty())
 	{
 		AfxMessageBox(IDS_RESOURCE_NAME_EMPTY, MB_OK | MB_ICONERROR);
