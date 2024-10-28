@@ -30,16 +30,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - if: matrix.platform == 'x86'
-        name: Install x264 VFW Codec x86
+      - name: Install x264 VFW Codec
         run: |
-          3rdParty\x264vfw_x86_v200_x264b159_10bit_20200321.exe /S
-          sleep 1
-
-      - if: matrix.platform == 'x64'
-        name: Install x264 VFW Codec x64
-        run: |
-          3rdParty\x264vfw_x64_v200_x264b159_10bit_20200321.exe /S
+          3rdParty\x264vfw_${{ matrix.platform }}_v200_x264b159_10bit_20200321.exe /S
           sleep 1
         
       #- if: matrix.configuration == 'Release'
