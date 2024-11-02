@@ -96,7 +96,10 @@ namespace scion
 			if (SUCCEEDED(hr))
 			{
 				m_mapResources.SetAt(pszName, pFileResource);
+				pFileResource->AddRef();
 			}
+
+			pFileResource->Release();
 
 			return hr;
 		}
