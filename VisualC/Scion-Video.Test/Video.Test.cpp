@@ -63,37 +63,53 @@ namespace ScionVideoTest
 
 			do
 			{
+				Logger::WriteMessage("[LoadVideo] MemoryLeakChecker Begin...");
+
 				MemoryLeakChecker.Begin();
+
+				Logger::WriteMessage("[LoadVideo] CreateVideoManager...");
 
 				if (hr = scion::engine::vfx::CreateVideoManager(&pVideoManager); FAILED(hr))
 				{
 					break;
 				}
 
+				Logger::WriteMessage("[LoadVideo] Initialize...");
+
 				if (hr = pVideoManager->Initialize(); FAILED(hr))
 				{
 					break;
 				}
+
+				Logger::WriteMessage("[LoadVideo] CreateVideoBuffer...");
 
 				if (hr = pVideoManager->CreateVideoBuffer(&pVideoBuffer); FAILED(hr))
 				{
 					break;
 				}
 
+				Logger::WriteMessage("[LoadVideo] CreateVideo...");
+
 				if (hr = pVideoManager->CreateVideo(&pVideo); FAILED(hr))
 				{
 					break;
 				}
+
+				Logger::WriteMessage("[LoadVideo] OpenFromFile...");
 
 				if (hr = pVideoBuffer->OpenFromFile(pszFileName); FAILED(hr))
 				{
 					break;
 				}
 
+				Logger::WriteMessage("[LoadVideo] LoadFromBuffer...");
+
 				if (hr = pVideo->LoadFromBuffer(pVideoBuffer); FAILED(hr))
 				{
 					break;
 				}
+
+				Logger::WriteMessage("[LoadVideo] SetStreamCallback...");
 
 				pVideo->SetStreamCallback([](const LPBYTE pData, LPVOID) -> HRESULT
 					{
@@ -140,6 +156,8 @@ namespace ScionVideoTest
 						return S_OK;
 					});
 
+				Logger::WriteMessage("[LoadVideo] Play...");
+
 				pVideo->Play();
 
 				fFrameRate = pVideoBuffer->GetFrameRate();
@@ -147,6 +165,8 @@ namespace ScionVideoTest
 				nFrameCount = pVideoBuffer->GetFrameCount();
 
 				Sleep(durVideo.GetSeconds() * 1100);
+
+				Logger::WriteMessage("[LoadVideo] Done");
 
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
@@ -158,6 +178,8 @@ namespace ScionVideoTest
 				pVideo = NULL;
 			}
 
+			Logger::WriteMessage("[LoadVideo] Video stopped and unloaded");
+			
 			if (pVideoBuffer)
 			{
 				pVideoBuffer->Close();
@@ -165,12 +187,16 @@ namespace ScionVideoTest
 				pVideoBuffer = NULL;
 			}
 
+			Logger::WriteMessage("[LoadVideo] VideoBuffer closed");
+
 			if (pVideoManager)
 			{
 				pVideoManager->Quit();
 				pVideoManager->Release();
 				pVideoManager = NULL;
 			}
+
+			Logger::WriteMessage("[LoadVideo] VideoManager released");
 
 			bIsMemDifferent = MemoryLeakChecker.End();
 
