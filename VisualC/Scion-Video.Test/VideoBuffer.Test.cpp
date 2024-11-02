@@ -62,22 +62,32 @@ namespace ScionVideoTest
 
 			do
 			{
+				Logger::WriteMessage("[LoadVideoBuffer] MemoryLeakChecker Begin...");
+
 				MemoryLeakChecker.Begin();
+
+				Logger::WriteMessage("[LoadVideoBuffer] CreateVideoManager...");
 
 				if (hr = scion::engine::vfx::CreateVideoManager(&pVideoManager); FAILED(hr))
 				{
 					break;
 				}
 
+				Logger::WriteMessage("[LoadVideoBuffer] Initialize...");
+
 				if (hr = pVideoManager->Initialize(); FAILED(hr))
 				{
 					break;
 				}
 
+				Logger::WriteMessage("[LoadVideoBuffer] CreateVideoBuffer...");
+
 				if (hr = pVideoManager->CreateVideoBuffer(&pVideoBuffer); FAILED(hr))
 				{
 					break;
 				}
+
+				Logger::WriteMessage("[LoadVideoBuffer] OpenFromFile...");
 
 				if (hr = pVideoBuffer->OpenFromFile(pszFileName); FAILED(hr))
 				{
@@ -88,6 +98,8 @@ namespace ScionVideoTest
 				durVideo = pVideoBuffer->GetDuration();
 				nFrameCount = pVideoBuffer->GetFrameCount();
 
+				Logger::WriteMessage("[LoadVideoBuffer] Done");
+
 			} while (SCION_NULL_WHILE_LOOP_CONDITION);
 
 			if (pVideoBuffer)
@@ -97,12 +109,16 @@ namespace ScionVideoTest
 				pVideoBuffer = NULL;
 			}
 
+			Logger::WriteMessage("[LoadVideoBuffer] VideoBuffer closed");
+
 			if (pVideoManager)
 			{
 				pVideoManager->Quit();
 				pVideoManager->Release();
 				pVideoManager = NULL;
 			}
+
+			Logger::WriteMessage("[LoadVideoBuffer] VideoManager released");
 
 			bIsMemDifferent = MemoryLeakChecker.End();
 
