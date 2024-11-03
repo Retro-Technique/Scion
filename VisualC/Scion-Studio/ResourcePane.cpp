@@ -95,6 +95,8 @@ void CResourcePane::OnAddResource()
 	}
 
 	scion::engine::CRenderView* pView = AFX_GET_ACTIVE_VIEW(scion::engine::CRenderView);
+	ASSERT_POINTER(pView, scion::engine::CRenderView);
+	ASSERT_VALID(pView);
 
 	CResourceCreationDlg Dlg;	
 	if (const INT_PTR nRet = Dlg.DoModal(); IDOK == nRet)

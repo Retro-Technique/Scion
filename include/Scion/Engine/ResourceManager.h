@@ -82,6 +82,7 @@ namespace scion
 			BOOL IsExists(LPCTSTR pszName) const;
 			void OnUpdate();
 			void EnumerateResources(ENUMRESOURCEPROC pfnEnumResource, LPVOID pData);
+			void Clear();
 
 #pragma endregion
 #pragma region Attributes

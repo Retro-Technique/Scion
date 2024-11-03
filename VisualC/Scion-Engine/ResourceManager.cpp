@@ -144,6 +144,24 @@ namespace scion
 			}
 		}
 
+		void CResourceManager::Clear()
+		{
+			POSITION pos = m_mapResources.GetStartPosition();
+			while (pos)
+			{
+				CString strName;
+				CObject* pObject = NULL;
+				m_mapResources.GetNextAssoc(pos, strName, pObject);
+				if (pObject)
+				{
+					const CFileResource* pResource = STATIC_DOWNCAST_CONST(CFileResource, pObject);
+					pResource->Release();
+				}
+			}
+
+			m_mapResources.RemoveAll();
+		}
+
 #pragma endregion
 #pragma region Overridables
 
