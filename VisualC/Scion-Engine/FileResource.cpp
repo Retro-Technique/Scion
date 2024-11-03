@@ -61,7 +61,7 @@ namespace scion
 
 		CFileResource::~CFileResource()
 		{
-
+			Unload();
 		}
 
 #pragma endregion
